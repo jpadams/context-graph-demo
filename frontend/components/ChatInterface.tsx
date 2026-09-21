@@ -24,6 +24,8 @@ import {
   type Decision,
   type GraphData,
   type AgentContext,
+  type FastAnswer,
+  type FinalRecommendation,
 } from "@/lib/api";
 
 interface ChatInterfaceProps {
@@ -43,6 +45,9 @@ interface MessageWithGraph extends ChatMessage {
   graphData?: GraphData;
   toolCalls?: ToolCall[];
   agentContext?: AgentContext;
+  fastAnswer?: FastAnswer;
+  additionalToolsUsed?: string[];
+  finalRecommendation?: FinalRecommendation | null;
 }
 
 // Helper function to extract entity IDs from tool results
@@ -154,6 +159,9 @@ export function ChatInterface({
       let fullContent = "";
       let graphData: GraphData | undefined;
       let agentContext: AgentContext | undefined;
+      let fastAnswer: FastAnswer | undefined;
+      let additionalToolsUsed: string[] | undefined;
+      let finalRecommendation: FinalRecommendation | null | undefined;
 
       for await (const event of streamChatMessage(
         userMessage.content,
@@ -167,6 +175,23 @@ export function ChatInterface({
               updated[assistantMessageIndex] = {
                 ...updated[assistantMessageIndex],
                 agentContext,
+              };
+              return updated;
+            });
+            break;
+
+          case "fast_answer":
+            fastAnswer = event.fastAnswer;
+            if (fastAnswer.applicable && fastAnswer.graph_data?.nodes?.length) {
+              graphData = fastAnswer.graph_data;
+              onGraphUpdate(graphData);
+            }
+            setMessages((prev) => {
+              const updated = [...prev];
+              updated[assistantMessageIndex] = {
+                ...updated[assistantMessageIndex],
+                fastAnswer,
+                graphData,
               };
               return updated;
             });
@@ -285,6 +310,8 @@ export function ChatInterface({
           case "done":
             // Final update with complete data
             // Use local toolCalls array which has outputs populated from tool_result events
+            additionalToolsUsed = event.additional_tools_used ?? [];
+            finalRecommendation = event.final_recommendation ?? null;
             setMessages((prev) => {
               const updated = [...prev];
               updated[assistantMessageIndex] = {
@@ -293,6 +320,9 @@ export function ChatInterface({
                 toolCalls: toolCalls,
                 graphData,
                 agentContext,
+                fastAnswer,
+                additionalToolsUsed,
+                finalRecommendation,
               };
               return updated;
             });
@@ -318,6 +348,9 @@ export function ChatInterface({
         toolCalls,
         graphData,
         agentContext,
+        fastAnswer,
+        additionalToolsUsed,
+        finalRecommendation,
       };
       onConversationUpdate([...messages, userMessage, finalMessage]);
     } catch (error) {
@@ -554,6 +587,297 @@ function ToolCallDisplay({
   );
 }
 
+// Fast answer card: Jev's typed verdict plus the evidence retrievals behind it
+const VERDICT_COLORS: Record<string, string> = {
+  yes: "green",
+  no: "red",
+  needs_llm_decision: "orange",
+  approve: "green",
+  reject: "red",
+};
+
+const FINAL_RECOMMENDATION_LINE = /^\s*\**\s*FINAL_RECOMMENDATION:.*$/gim;
+
+function stripFinalRecommendation(content: string): string {
+  return content.replace(FINAL_RECOMMENDATION_LINE, "").trim();
+}
+
+function FinalRecommendationRow({
+  recommendation,
+}: {
+  recommendation: FinalRecommendation;
+}) {
+  const final = recommendation.final;
+  if (!final) {
+    return (
+      <Text fontSize="xs" color="gray.600">
+        Claude did not return a final recommendation line.
+      </Text>
+    );
+  }
+  const who = recommendation.escalated ? "Claude (escalated by Jev)" : "Jev";
+  return (
+    <HStack flexWrap="wrap" gap={2}>
+      <Text fontSize="xs" color="gray.700" fontWeight="semibold">
+        Final answer:
+      </Text>
+      <Badge colorPalette={VERDICT_COLORS[final] ?? "gray"} fontSize="md" px={2}>
+        {final}
+      </Badge>
+      <Text fontSize="xs" color="gray.600">
+        decided by {who}
+        {recommendation.escalated && recommendation.confidence !== null
+          ? ` · confidence ${(recommendation.confidence * 100).toFixed(0)}%`
+          : ""}
+      </Text>
+      {recommendation.agrees_with_jev === true && (
+        <Badge colorPalette="green" variant="subtle" fontSize="xs">
+          Claude concurs
+        </Badge>
+      )}
+      {recommendation.agrees_with_jev === false && (
+        <Badge colorPalette="red" variant="subtle" fontSize="xs">
+          Claude disagrees with Jev
+        </Badge>
+      )}
+    </HStack>
+  );
+}
+
+function FastAnswerCard({
+  fastAnswer,
+  additionalToolsUsed,
+  finalRecommendation,
+  isStreaming,
+}: {
+  fastAnswer: FastAnswer;
+  additionalToolsUsed?: string[];
+  finalRecommendation?: FinalRecommendation | null;
+  isStreaming?: boolean;
+}) {
+  const verdict = fastAnswer.verdict;
+  if (!verdict) return null;
+  const routed = verdict.routed_decision ?? verdict.decision;
+  const wasRerouted = routed !== verdict.decision;
+  const escalated = routed === "needs_llm_decision";
+
+  return (
+    <Box
+      mb={3}
+      p={3}
+      bg="white"
+      borderRadius="md"
+      border="1px solid"
+      borderColor={`${VERDICT_COLORS[routed] ?? "gray"}.300`}
+    >
+      <HStack mb={2} flexWrap="wrap" gap={2}>
+        <Badge colorPalette="gray" fontSize="xs">
+          Fast answer · {verdict.model}
+        </Badge>
+        <Badge colorPalette={VERDICT_COLORS[routed] ?? "gray"} fontSize="md" px={2}>
+          {escalated ? "escalated to Claude" : routed}
+        </Badge>
+        <Text fontSize="xs" color="gray.600">
+          confidence {(verdict.confidence * 100).toFixed(0)}% · Jev{" "}
+          {verdict.latency_ms} ms · total {fastAnswer.total_ms} ms
+        </Text>
+      </HStack>
+
+      {fastAnswer.customer && (
+        <Text fontSize="xs" color="gray.700" mb={2}>
+          {fastAnswer.request?.type
+            ? String(fastAnswer.request.type).replace(/_/g, " ")
+            : "request"}{" "}
+          for <strong>{fastAnswer.customer.name}</strong>
+          {fastAnswer.request?.requested_amount_usd
+            ? ` · $${Number(fastAnswer.request.requested_amount_usd).toLocaleString()}`
+            : ""}
+          {fastAnswer.request?.category ? ` · ${fastAnswer.request.category}` : ""}
+        </Text>
+      )}
+
+      {wasRerouted && (
+        <Text fontSize="xs" color="orange.700" mb={2}>
+          Jev&apos;s top pick was &quot;{verdict.decision}&quot;, but{" "}
+          {verdict.routing.reason}.
+        </Text>
+      )}
+
+      <VStack align="stretch" gap={1} mb={2}>
+        {Object.entries(verdict.probabilities).map(([option, p]) => (
+          <HStack key={option} gap={2}>
+            <Text fontSize="xs" w="150px" color="gray.700">
+              {option.replace(/_/g, " ")}
+            </Text>
+            <Box flex={1} h="8px" bg="gray.100" borderRadius="full">
+              <Box
+                h="8px"
+                w={`${Math.round(p * 100)}%`}
+                bg={`${VERDICT_COLORS[option] ?? "gray"}.400`}
+                borderRadius="full"
+              />
+            </Box>
+            <Text fontSize="xs" w="40px" textAlign="right" color="gray.700">
+              {(p * 100).toFixed(0)}%
+            </Text>
+          </HStack>
+        ))}
+      </VStack>
+
+      <Flex gap={1} flexWrap="wrap" mb={2}>
+        {Object.entries(verdict.signals).map(([name, p]) =>
+          p === null ? (
+            <Badge
+              key={name}
+              colorPalette="gray"
+              variant="outline"
+              fontSize="xs"
+              title="Not asked: the evidence this signal depends on was empty"
+            >
+              {name.replace(/_/g, " ")} · no evidence
+            </Badge>
+          ) : (
+            <Badge
+              key={name}
+              colorPalette={p >= 0.5 ? "purple" : "gray"}
+              variant={p >= 0.5 ? "solid" : "subtle"}
+              fontSize="xs"
+            >
+              {name.replace(/_/g, " ")} {(p * 100).toFixed(0)}%
+            </Badge>
+          ),
+        )}
+      </Flex>
+
+      {verdict.item_judgments &&
+        (verdict.item_judgments.precedents.length > 0 ||
+          verdict.item_judgments.policies.length > 0) && (
+          <Accordion.Root collapsible defaultValue={[]} mb={1}>
+            <Accordion.Item value="items" border="none">
+              <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
+                <Box flex="1" textAlign="left">
+                  <Text fontSize="xs" color="gray.600">
+                    How Jev judged each precedent (
+                    {verdict.item_judgments.precedents.length}) and policy (
+                    {verdict.item_judgments.policies.length})
+                  </Text>
+                </Box>
+                <Accordion.ItemIndicator />
+              </Accordion.ItemTrigger>
+              <Accordion.ItemContent>
+                <Accordion.ItemBody px={0} pb={1}>
+                  <VStack align="stretch" gap={1}>
+                    {verdict.item_judgments.precedents.map((p) => (
+                      <HStack key={p.id} gap={2} fontSize="xs" align="start">
+                        <Badge
+                          colorPalette={p.supports_approval >= 0.5 ? "green" : "red"}
+                          fontSize="xs"
+                          minW="72px"
+                          justifyContent="center"
+                        >
+                          {p.supports_approval >= 0.5 ? "for" : "against"}{" "}
+                          {(p.supports_approval * 100).toFixed(0)}%
+                        </Badge>
+                        <Text color="gray.700" flex={1}>
+                          <strong>{p.decision_type}</strong> · {p.category} · {p.summary}
+                        </Text>
+                      </HStack>
+                    ))}
+                    {verdict.item_judgments.policies.map((p) => (
+                      <HStack key={p.id} gap={2} fontSize="xs" align="start">
+                        <Badge
+                          colorPalette={p.violated >= 0.5 ? "red" : "gray"}
+                          variant={p.violated >= 0.5 ? "solid" : "subtle"}
+                          fontSize="xs"
+                          minW="72px"
+                          justifyContent="center"
+                        >
+                          violated {(p.violated * 100).toFixed(0)}%
+                        </Badge>
+                        <Text color="gray.700" flex={1}>
+                          <strong>{p.name}</strong> · {p.description}
+                        </Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                </Accordion.ItemBody>
+              </Accordion.ItemContent>
+            </Accordion.Item>
+          </Accordion.Root>
+        )}
+
+      <Accordion.Root collapsible defaultValue={[]}>
+        <Accordion.Item value="evidence" border="none">
+          <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
+            <Box flex="1" textAlign="left">
+              <Text fontSize="xs" color="gray.600">
+                Evidence: {fastAnswer.retrievals?.length ?? 0} Cypher retrievals
+                run up front (no tool-use LLM)
+              </Text>
+            </Box>
+            <Accordion.ItemIndicator />
+          </Accordion.ItemTrigger>
+          <Accordion.ItemContent>
+            <Accordion.ItemBody px={0} pb={1}>
+              <VStack align="stretch" gap={0}>
+                {fastAnswer.retrievals?.map((r) => (
+                  <HStack key={r.name} gap={2} fontSize="xs">
+                    <Badge
+                      colorPalette={r.status === "ok" ? "blue" : "red"}
+                      fontSize="xs"
+                    >
+                      {r.name}
+                    </Badge>
+                    <Text color="gray.600" flex={1}>
+                      {r.description}
+                    </Text>
+                    <Text color="gray.500">
+                      {r.count} rows · {r.ms} ms
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </Accordion.ItemBody>
+          </Accordion.ItemContent>
+        </Accordion.Item>
+      </Accordion.Root>
+
+      <Box mt={2} pt={2} borderTop="1px dashed" borderColor="gray.200">
+        {!isStreaming && finalRecommendation && (
+          <Box mb={2}>
+            <FinalRecommendationRow recommendation={finalRecommendation} />
+          </Box>
+        )}
+        {isStreaming ? (
+          <HStack fontSize="xs" color="gray.600">
+            <Spinner size="xs" />
+            <Text>
+              {escalated
+                ? "Jev escalated. Claude is making the final call from the same evidence…"
+                : "Claude is explaining the verdict from the same evidence…"}
+            </Text>
+          </HStack>
+        ) : additionalToolsUsed && additionalToolsUsed.length > 0 ? (
+          <HStack fontSize="xs" color="gray.700" flexWrap="wrap">
+            <Text>Claude reached for additional tools:</Text>
+            {additionalToolsUsed.map((t) => (
+              <Badge key={t} colorPalette="blue" fontSize="xs">
+                {t}
+              </Badge>
+            ))}
+          </HStack>
+        ) : (
+          <Text fontSize="xs" color="gray.600">
+            {escalated
+              ? "Claude decided from the pre-collected evidence alone. No additional tools used."
+              : "Claude explained the verdict from the pre-collected evidence alone. No additional tools used."}
+          </Text>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
 // Agent context disclosure component
 function AgentContextDisclosure({
   agentContext,
@@ -736,7 +1060,10 @@ function ChatMessageBubble({
       maxW="85%"
       w={
         message.graphData ||
-        (!isUser && (message.agentContext || message.toolCalls?.length))
+        (!isUser &&
+          (message.agentContext ||
+            message.toolCalls?.length ||
+            message.fastAnswer?.applicable))
           ? "100%"
           : "auto"
       }
@@ -755,6 +1082,16 @@ function ChatMessageBubble({
         borderBottomRightRadius={isUser ? "sm" : "lg"}
         borderBottomLeftRadius={isUser ? "lg" : "sm"}
       >
+        {/* Fast typed verdict from Jev (for assistant messages) */}
+        {!isUser && message.fastAnswer?.applicable && (
+          <FastAnswerCard
+            fastAnswer={message.fastAnswer}
+            additionalToolsUsed={message.additionalToolsUsed}
+            finalRecommendation={message.finalRecommendation}
+            isStreaming={isStreaming}
+          />
+        )}
+
         {/* Agent context disclosure (for assistant messages) */}
         {!isUser && message.agentContext && (
           <AgentContextDisclosure agentContext={message.agentContext} />
@@ -853,7 +1190,7 @@ function ChatMessageBubble({
                   ),
                 }}
               >
-                {message.content}
+                {stripFinalRecommendation(message.content)}
               </ReactMarkdown>
             </Box>
           )}

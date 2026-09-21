@@ -284,6 +284,67 @@ class VectorClient:
             )
             return result.single() is not None
 
+    def batch_update_decision_embeddings(self, limit: int = 100, batch_size: int = 100) -> int:
+        """Embed the reasoning of decisions that have no reasoning_embedding yet."""
+        with self.driver.session(database=self.database) as session:
+            rows = session.run(
+                """
+                MATCH (d:Decision)
+                WHERE d.reasoning_embedding IS NULL AND d.reasoning IS NOT NULL
+                RETURN d.id AS id, d.reasoning AS reasoning
+                LIMIT $limit
+                """,
+                {"limit": limit},
+            ).data()
+
+        updated = 0
+        for start in range(0, len(rows), batch_size):
+            batch = rows[start : start + batch_size]
+            embeddings = self.generate_embeddings_batch([r["reasoning"] for r in batch])
+            with self.driver.session(database=self.database) as session:
+                result = session.run(
+                    """
+                    UNWIND $items AS item
+                    MATCH (d:Decision {id: item.id})
+                    SET d.reasoning_embedding = item.embedding
+                    RETURN count(d) AS updated
+                    """,
+                    {
+                        "items": [
+                            {"id": r["id"], "embedding": e} for r, e in zip(batch, embeddings)
+                        ]
+                    },
+                )
+                updated += result.single()["updated"]
+        return updated
+
+    def batch_update_policy_embeddings(self, limit: int = 100) -> int:
+        """Embed the description of policies that have no description_embedding yet."""
+        with self.driver.session(database=self.database) as session:
+            rows = session.run(
+                """
+                MATCH (p:Policy)
+                WHERE p.description_embedding IS NULL AND p.description IS NOT NULL
+                RETURN p.id AS id, p.description AS description
+                LIMIT $limit
+                """,
+                {"limit": limit},
+            ).data()
+        if not rows:
+            return 0
+        embeddings = self.generate_embeddings_batch([r["description"] for r in rows])
+        with self.driver.session(database=self.database) as session:
+            result = session.run(
+                """
+                UNWIND $items AS item
+                MATCH (p:Policy {id: item.id})
+                SET p.description_embedding = item.embedding
+                RETURN count(p) AS updated
+                """,
+                {"items": [{"id": r["id"], "embedding": e} for r, e in zip(rows, embeddings)]},
+            )
+            return result.single()["updated"]
+
 
 # Singleton instance
 vector_client = VectorClient()

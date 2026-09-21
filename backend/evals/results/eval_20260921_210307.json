@@ -1,0 +1,1489 @@
+{
+  "args": {
+    "customers": "",
+    "sample": 10,
+    "amounts": "5000,25000",
+    "repeats": 1,
+    "skip_original": false
+  },
+  "summary": {
+    "original": {
+      "runs": 20,
+      "mean_seconds": 68.3,
+      "median_seconds": 47.5,
+      "mean_tool_calls": 5.3,
+      "finals": {
+        "reject": 11,
+        "approve": 9
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "fast_answer": {
+      "runs": 20,
+      "mean_seconds": 26.1,
+      "median_seconds": 27.0,
+      "mean_tool_calls": 0,
+      "finals": {
+        "reject": 16,
+        "approve": 4
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "cross_path_agreement": {
+      "agree": 13,
+      "compared": 20
+    }
+  },
+  "rows": [
+    {
+      "customer": "Maria Cooke",
+      "customer_id": "a33dadbe-9e31-41d0-8b0a-4bad35e3db10",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Maria Cooke? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate the credit limit increase request for Maria Cooke. Let me gather the relevant information.Let me get more information about Maria Cooke's decision history and look for more relevant policies.Based on my analysis of Maria Cooke's profile and the available precedent information, I must **recommend rejecting** this credit limit increase request. Here's my detailed reasoning:\n\n## Critical Risk Factors\n\n**1. Credit Score Below Policy Threshold**\n- Maria's credit score: **565**\n- Policy requirement: **Minimum 660**\n- This is **95 points below** the minimum threshold set by the Credit Limit Policy\n\n**2. Very High Credit Utilization**\n- Current utilization: **80%**\n- This indicates Maria is already heavily leveraged on existing credit\n\n**3. Policy Violation on Total Credit Exposure**\n- Current credit limit: $15,500\n- Requested new limit: $20,500 ($15,500 + $5,000)\n- Annual income: $61,500 (verified)\n- New limit would represent: **33.3% of annual income**\n- While this is technically under the 35% policy maximum, combined with the other factors, it presents elevated risk\n\n**4. Employer on Watchlist**\n- Employer: Spencer, Chapman and Smith\n- Sanctions status: **Watchlist**\n- Risk rating: B\n- Country: Russian Federation\n- This adds geopolitical and compliance risk to the credit decision\n\n**5. Recent Fraud Escalation**\n- Maria has a recent fraud escalation decision (September 19, 2026) with velocity triggers\n- Risk score: 0.691 (moderately high)\n\n**6. Flagged Transaction History**\n- One flagged transaction on her trading account (TXN0000001460, $3,035.31, risk score 0.7)\n- Trading account has \"high\" risk tier designation\n\n## Policy Analysis\n\nThe **Credit Limit Policy** clearly states:\n- Minimum credit score of 660 (Maria: 565 \u274c)\n- Total credit limit may not exceed 35% of verified annual income (Would be 33.3% \u2713, but marginal)\n- Maximum increase of 100% of current limit (Request is 32% \u2713)\n\nMaria fails the fundamental credit score requirement, which is a **hard stop** in the policy.\n\n## Precedent Analysis\n\nNo similar precedents were found for credit limit increases in comparable situations. The system did identify a credit rejection decision (ID: 599a7fce-0616-4b52-906f-e52b81a733e4) that rejected an application with a credit score of 593, which is only 28 points higher than Maria's score. That decision cited the credit score being below the minimum threshold of 620 (though our current policy shows 660).\n\n## Recommendation\n\nWhile Maria is employed with verified income and has active accounts with substantial balances, the combination of her subprime credit score (565), high credit utilization (80%), employer watchlist status, and recent fraud escalation creates an unacceptable risk profile for a credit limit increase at this time.\n\n**Alternative Path Forward:**\n- Advise Maria to work on improving her credit score to at least 660\n- Reduce current credit utilization below 50%\n- Wait 6-12 months and reapply after demonstrating improved credit management\n- Complete review of recent fraud escalation before considering any credit expansion\n\nFINAL_RECOMMENDATION: reject (confidence 0.92)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns",
+            "get_policy"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.92,
+          "seconds": 51.5
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected, I must **recommend rejection** of the $5,000 credit limit increase for Maria Cooke. Here's why:\n\n## Critical Policy Violations\n\nThe **Credit Limit Policy** requires:\n- **Minimum credit score of 660** - Maria has a credit score of **565**, falling 95 points short\n- **Maximum 35% of annual income** - Her current limit of $15,500 is already 25.2% of her $61,500 income. Adding $5,000 would bring the total to $20,500 (33.3%), which is within the 35% cap but problematic given other factors\n\n## Elevated Risk Profile\n\nSeveral concerning factors compound the low credit score:\n\n1. **High credit utilization (80%)** - She's using $12,400 of her $15,500 limit, indicating financial strain\n2. **Customer risk score of 0.691** - Above average risk\n3. **High-risk employment**: Works for Spencer, Chapman and Smith (Russian Federation, watchlist status, risk rating B)\n4. **Recent fraud escalation** (Sept 19, 2026) - A velocity trigger escalation is still open on her profile\n5. **High-risk trading account** - $434K balance in a high-risk-tier account\n\n## Precedent Analysis\n\nAll 4 precedents shown were **approvals**, but critically they involved customers with:\n- Credit scores of **606-795** (all above or near the 660 threshold)\n- Incomes of **$142K-$241K** (2-4x Maria's income)\n\nThe supporting signal \"precedents_favor_approval\" scored only **0.38** (38% probability), and \"violates_policy\" scored **0.78** (78% probability) - the evidence does not support approval.\n\n## What Happens Next\n\nGiven the clear policy violation on credit score and the elevated risk indicators, this request should be **formally denied**. If Maria wishes to reapply:\n- She should work on improving her credit score above 660\n- Reduce her credit utilization below 80%\n- Wait for resolution of the recent fraud escalation\n\nAn exception could theoretically be granted with senior approval per the Exception Approval Authority policy, but given the combination of low credit score, high utilization, and active fraud concern, I would not recommend pursuing that path.\n\nFINAL_RECOMMENDATION: reject (confidence 0.87)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.87,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.87,
+          "seconds": 28.2,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.8,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.87,
+            "needs_llm_decision": 0.13
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.3825,
+            "violates_policy": 0.78,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.82,
+            "requires_manual_review": 0.32,
+            "evidence_sufficient": 0.49
+          },
+          "fast_answer_ms": 4383,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Maria Cooke",
+      "customer_id": "a33dadbe-9e31-41d0-8b0a-4bad35e3db10",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Maria Cooke? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Maria Cooke. Let me gather the relevant information.Now let me get Maria Cooke's past decisions and check for any fraud patterns:Based on my analysis of Maria Cooke's credit limit increase request, I have significant concerns and recommend **rejection**. Here's my assessment:\n\n## Critical Risk Factors\n\n**1. Poor Credit Profile:**\n- Credit score: **565** (well below typical approval thresholds of 620-680)\n- Credit utilization: **80%** (extremely high - indicates financial stress)\n- Current credit limit: $15,500\n- Risk score: **0.691** (high risk)\n\n**2. Low Income Relative to Request:**\n- Annual income: $61,500\n- Requesting $25,000 increase (41% of annual income)\n- New total limit would be $40,500 (66% of annual income)\n\n**3. Employer Sanctions Concern:**\n- Maria works as a Manager at \"Spencer, Chapman and Smith\"\n- This employer is on **watchlist** with sanctions status\n- Employer is located in Russian Federation with risk rating \"B\"\n- Multiple transactions show this employer as counterparty\n\n**4. Transaction History Red Flags:**\n- One **flagged transaction** ($3,035.31 with 0.7 risk score, April 2026)\n- One **reversed transaction** ($17,078.60 withdrawal, December 2025)\n- Recent fraud escalation decision (September 2026) with velocity triggers\n- Trading account classified as **high risk tier**\n\n**5. Recent Decision History:**\n- Recent **fraud escalation** (Sept 19, 2026) - just 2 days ago\n- Previous **credit rejection** decision exists in the system (June 2025) for similar credit score issues\n- Past trading approval had risk factors: high_risk_country, geographic_anomaly, round_amount\n\n## Lack of Precedents\n\nNo precedents were found for similar $25,000 credit limit increase requests, making it difficult to benchmark this decision against past approvals.\n\n## Recommendation\n\nThe combination of:\n- Subprime credit score (565)\n- Maximum credit utilization (80%)\n- Watchlist employer with sanctions concerns\n- Recent fraud escalation\n- Flagged and reversed transactions\n- Disproportionate increase relative to income\n\nThese factors create excessive risk exposure. A credit limit increase at this time would likely lead to default risk and potential losses.\n\n**Alternative:** Consider offering a smaller increase (e.g., $5,000-$7,500) contingent on:\n1. Resolution of the recent fraud escalation\n2. Credit utilization reduction below 50%\n3. 6 months of consistent payment history\n4. Clarification on employer sanctions status\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 41.5
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I agree with Jev's **rejection** verdict. Let me explain the key factors:\n\n## Policy Violations (97% confidence)\n\nThe **Credit Limit Policy** has clear thresholds that Maria's request violates:\n\n1. **Minimum Credit Score**: Requires 660, but Maria has only **565** - significantly below threshold\n2. **Total Credit Limit Cap**: Maximum 35% of annual income\n   - Maria's income: $61,500\n   - Maximum allowed total limit: $21,525 (35% of $61,500)\n   - Current limit: $15,500\n   - Requested new limit: $40,500 ($15,500 + $25,000)\n   - This would be **66% of her annual income** - nearly double the policy maximum\n\n3. **Increase Size**: The $25,000 increase is **161% of her current $15,500 limit**, exceeding the 100% maximum single increase threshold\n\n## Elevated Customer Risk (83% confidence)\n\nMaria presents multiple risk factors:\n- **High credit utilization**: 80% (using $12,400 of her $15,500 limit)\n- **Overall risk score**: 0.691 (elevated)\n- **High-risk trading account**: $434K balance in high-risk tier account\n- **Employer sanctions concern**: Works for \"Spencer, Chapman and Smith\" in Russian Federation with **watchlist** sanctions status\n\n## Precedent Analysis (38% favor approval)\n\nAll 5 precedents retrieved were credit **approvals**, but they involved customers with:\n- Credit scores of 591-795 (Maria: **565**, below all precedents)\n- Higher incomes ($73K-$180K vs Maria's $61.5K)\n- The precedents actually **strengthen the case for rejection** - they show approvals go to customers with better credit profiles\n\n## Decision History\n\nMaria's recent history shows an escalation for fraud (velocity trigger) and a trading approval that required Exception Approval Authority due to high-risk country and geographic anomaly flags - suggesting she's already a monitored customer.\n\n## Recommendation\n\nThis request fails multiple hard policy requirements. While the Exception Approval Authority policy could theoretically allow manager override for the $25K amount, the credit score and debt-to-income violations are fundamental underwriting issues that would require addressing first (income increase, credit score improvement, or paying down existing utilization).\n\nFINAL_RECOMMENDATION: reject (confidence 0.94)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.94,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.94,
+          "seconds": 31.7,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.94,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.96,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.382,
+            "violates_policy": 0.97,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.83,
+            "requires_manual_review": 0.92,
+            "evidence_sufficient": 0.65
+          },
+          "fast_answer_ms": 5603,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Raymond Quinn",
+      "customer_id": "43abcef7-c0eb-45cd-81de-e98696c3c091",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Raymond Quinn? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Raymond Quinn. Let me gather the relevant information.Now let me get more details about Raymond Quinn's decision history and look for relevant precedents:Based on my analysis of Raymond Quinn's profile and relevant precedents, here is my assessment:\n\n## Customer Profile Analysis\n\n**Raymond Quinn:**\n- Credit Score: 733 (Good - above policy minimum of 660)\n- Current Credit Limit: $12,500\n- Annual Income: $43,500 (verified)\n- Credit Utilization: 49%\n- Employment Status: Employed\n- Risk Score: 0.287 (moderate)\n- Account Standing: 2 active accounts (checking and margin)\n- Account Balance: ~$449K total across accounts\n\n**Request:** $5,000 credit limit increase (bringing total to $17,500)\n\n## Policy Compliance Check\n\nAccording to the **Credit Limit Policy**:\n- \u2705 Minimum credit score 660: MEETS (733)\n- \u2705 Max total limit 35% of income: MEETS ($17,500 is 40.2% of $43,500 - **EXCEEDS POLICY**)\n- \u2705 Single increase max 100% of current limit: MEETS ($5K is 40% of $12,500)\n- \u2705 Senior review above $50K: Not required\n\n**CRITICAL ISSUE:** The requested increase would bring Raymond's total credit limit to $17,500, which represents **40.2% of his verified annual income** ($43,500). This **exceeds the policy maximum of 35%** ($15,225).\n\n## Risk Factors\n\n**Positive Indicators:**\n- Good credit score (733)\n- Verified income\n- Employed status\n- Established customer with multiple accounts\n- Significant account balances ($449K total)\n- Recent fraud check cleared (April 2026)\n- No fraud patterns detected in account analysis\n\n**Negative Indicators:**\n- High credit utilization at 49% (concerning - typically should be <30%)\n- Works for Jones-Gentry (on watchlist with sanctions status and risk rating C)\n- Open support ticket (low priority complaint)\n- Past trading rejection (January 2025)\n- Credit case escalation in employer's history (January 2026)\n- Request would exceed policy limits for debt-to-income ratio\n\n## Precedent Analysis\n\nFive similar credit approval cases were found, all with:\n- Similar credit scores (637-687 range)\n- Verified stable income\n- Good standing\n- All were **approved** with high confidence (0.86-0.90)\n\nHowever, these precedents had significantly **higher incomes** ($61K-$231K) allowing them to meet the 35% policy threshold.\n\n## Recommendation\n\nGiven that:\n1. The request **violates the Credit Limit Policy** (40.2% vs 35% max debt-to-income)\n2. Customer already has high credit utilization (49%)\n3. Employer has watchlist/sanctions concerns\n4. Customer's income ($43,500) cannot support the requested increase under standard policy\n\n**Alternative:** The maximum compliant increase would be **$2,725** (bringing total to $15,225, which equals 35% of income).\n\nThe customer should be offered the policy-compliant amount of $2,725, or this request should be escalated for senior review if there are compelling relationship or business reasons to grant an exception to policy.\n\nFINAL_RECOMMENDATION: reject (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 48.7
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected, I must **confirm Jev's rejection** of this credit limit increase request. Here's why:\n\n## Policy Violation (95% confidence)\n\nThe **Credit Limit Policy** has clear thresholds that Raymond Quinn fails to meet:\n\n- **Minimum credit score requirement: 660**\n- **Raymond's credit score: 733** \u2713 (passes)\n- **Maximum total credit limit: 35% of verified annual income**\n- **Raymond's annual income: $43,500**\n- **35% of income = $15,225**\n- **Current limit: $12,500**\n- **Requested new limit: $17,500** \u274c (exceeds the $15,225 cap by $2,275)\n\nThis is a hard policy violation. The requested increase would push his total credit limit to **40.2% of his verified annual income**, well above the 35% maximum allowed by policy.\n\n## Sanctioned Party Exposure (96% confidence)\n\nRaymond has concerning relationships with watchlisted entities:\n\n1. **Jones-Gentry** (corporation, Montenegro) - sanctions status: **watchlist**, risk rating C - Raymond is associated with this organization\n2. **Palmer LLC** (employer, Paraguay) - sanctions status: **watchlist**, risk rating A - transaction counterparty on his margin account\n\nThis elevated sanctions exposure adds significant risk to extending additional credit.\n\n## Precedents Do Not Favor Approval (49% probability)\n\nWhile 5 similar credit approvals were found, they all involved customers with:\n- **Higher credit scores** (591-814, with most above 760)\n- **Significantly higher incomes** ($81,560-$248,083/year)\n- **Better debt-to-income ratios**\n\nNone of the precedents show approval for increases that would breach the 35% policy threshold.\n\n## Mitigating Factors\n\nRaymond does have some positive indicators:\n- Good credit score (733)\n- Income verified and employed\n- Moderate credit utilization (49%)\n- Low customer risk score (0.287)\n- Active accounts in good standing\n\nHowever, these do not overcome the policy violation and sanctions exposure.\n\n## Decision\n\nThis requires **rejection** unless Raymond can either:\n1. Request a smaller increase (maximum $2,725 to stay at the 35% cap), OR\n2. Seek a formal policy exception through the Exception Approval Authority (would require manager approval since increase is under $25,000)\n\n**FINAL_RECOMMENDATION: reject (confidence 0.88)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.88,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.88,
+          "seconds": 26.9,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.88,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.92,
+            "needs_llm_decision": 0.08
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.492,
+            "violates_policy": 0.95,
+            "sanctioned_party_exposure": 0.96,
+            "open_fraud_activity": 0.08,
+            "elevated_customer_risk": 0.38,
+            "requires_manual_review": 0.3,
+            "evidence_sufficient": 0.71
+          },
+          "fast_answer_ms": 4684,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 10,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Raymond Quinn",
+      "customer_id": "43abcef7-c0eb-45cd-81de-e98696c3c091",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Raymond Quinn? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate the credit limit increase request for Raymond Quinn. Let me gather the necessary information.Now let me get more information about Raymond Quinn's accounts and past decisions:Now let me check for fraud patterns on Raymond Quinn's accounts:Based on my comprehensive analysis of Raymond Quinn's credit limit increase request, here is my evaluation:\n\n## Customer Profile Analysis\n\n**Raymond Quinn** is requesting a **$25,000 credit limit increase** (from $12,500 to $37,500).\n\n### Key Financial Metrics:\n- **Credit Score:** 733 (good)\n- **Current Credit Limit:** $12,500\n- **Credit Utilization:** 49% (moderate)\n- **Annual Income:** $43,500 (verified)\n- **Employment Status:** Employed\n- **Risk Score:** 0.287 (moderate)\n- **Account Age:** Checking account since Aug 2024, Margin account since Jun 2025\n\n### Account Standing:\n- 2 active accounts (checking balance: $399,771, margin balance: $49,393)\n- Recent fraud decision: Approved after SMS verification (April 2026)\n- One trading decision: Rejected (Jan 2025) due to multiple risk factors\n- One open support ticket (low priority complaint, pending customer response)\n\n### Risk Assessment:\n\n**Concerning Factors:**\n1. **Employment relationship with watchlist organization:** Raymond works as an Executive for Jones-Gentry, which has **watchlist sanctions status** (risk rating C, Montenegro-based)\n2. **Income-to-limit ratio:** The requested limit of $37,500 would represent **86% of annual income** ($43,500), well above policy threshold\n3. **Recent account vintage:** Relatively new customer (accounts opened 2024-2025)\n4. **Requested increase:** 200% of current limit, exceeding the 100% policy maximum\n\n**Policy Violations - Credit Limit Policy:**\nAccording to the **Credit Limit Policy**, the request fails multiple criteria:\n- \u2705 **Credit Score:** 733 meets minimum requirement (660)\n- \u274c **Total Limit vs Income:** Requested limit ($37,500) = 86% of income, **exceeds 35% maximum**\n- \u274c **Increase Size:** 200% increase **exceeds 100% of current limit maximum**\n- \u2705 **Amount:** Below $50,000 senior review threshold\n\n### Precedent Analysis:\n\nI reviewed 5 similar credit limit increase precedents - **all were approved**, but they involved:\n- Higher credit scores (637-687 range vs 733)\n- **Much higher verified incomes** ($61,796 to $227,888 vs $43,500)\n- Better debt-to-income ratios\n- All complied with the 35% income policy threshold\n\n### Fraud Pattern Check:\n- No flagged transactions on Raymond's accounts\n- Low community fraud exposure (3.3% flagged transactions in related network)\n- Previous fraud alert was successfully resolved via verification\n\n## Recommendation\n\nI recommend **REJECTING** this credit limit increase request for the following reasons:\n\n1. **Critical Policy Violation:** The requested $37,500 limit represents 86% of annual income, far exceeding the 35% policy maximum. Even a smaller increase would likely violate this threshold.\n\n2. **Sanctions Exposure:** Raymond's employment with a watchlist organization (Jones-Gentry) adds additional credit risk that should be considered conservatively.\n\n3. **Increase Size:** The 200% increase exceeds policy guidelines (100% maximum).\n\n4. **Income Constraint:** At $43,500 annual income, the maximum compliant credit limit would be approximately **$15,225** (35% of income), allowing only a modest $2,725 increase from the current $12,500.\n\n### Alternative Recommendation:\nOffer a **smaller increase of $2,700** (bringing total to $15,200), which would comply with all policy thresholds while demonstrating goodwill toward the customer. This could be revisited after:\n- Demonstrating 12+ months of responsible credit usage\n- Income verification increase\n- Clarification of the nature of employment relationship with watchlist entity\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 62.0
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the comprehensive evidence collected and Jev's analysis, I must **recommend rejection** of Raymond Quinn's $25,000 credit limit increase request. Here's why:\n\n## Critical Policy Violations\n\n**Credit Limit Policy breach** (97% confidence):\n- Raymond's current limit is $12,500; the requested $25,000 increase is a **200% jump**\n- Policy allows maximum **100% of current limit** in a single increase\n- His verified annual income is $43,500\n- Post-increase total limit would be $37,500, which is **86% of annual income**\n- Policy caps total credit at **35% of income** ($15,225 maximum)\n\n## Sanctions Exposure Concern\n\n**Watchlist party relationship** (97% confidence of sanctions exposure):\n- Raymond is associated with **Jones-Gentry** (Manufacturing, Montenegro) - an organization with **\"watchlist\" sanctions status**\n- Additionally, transaction counterparty **Palmer LLC** (Paraguay) also has watchlist status\n- This elevated sanctions risk requires heightened scrutiny and typically disqualifies automatic approvals\n\n## Precedent Analysis\n\nThe system found 5 similar credit decisions - **all were approvals** (precedents favor approval: 36% only). However, those cases differ significantly:\n- Approved customers had credit scores of 615-814 with incomes of $86K-$248K\n- Raymond has a decent 733 credit score but only $43,500 income\n- None of the precedents involved watchlist party exposure or such severe policy violations\n\n## Additional Risk Factors\n\n- Customer risk score: 0.287 (moderate)\n- Credit utilization: 49% (already using half of current limit)\n- One high-severity alert resolved (amount threshold)\n- Open complaint ticket (pending customer response)\n- Manual review required: 87% confidence\n\n## Recommendation Path\n\nGiven the clear policy violations and sanctions concerns, this request should be **rejected as-is**. If Raymond wishes to increase his credit limit, he could:\n1. Request a smaller increase (\u2264$12,500 to comply with 100% rule)\n2. Address the sanctions watchlist relationships\n3. Wait for income verification showing higher earnings\n\nFINAL_RECOMMENDATION: reject (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.93,
+          "seconds": 26.2,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.93,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.95,
+            "needs_llm_decision": 0.05
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.358,
+            "violates_policy": 0.97,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.09,
+            "elevated_customer_risk": 0.41,
+            "requires_manual_review": 0.87,
+            "evidence_sufficient": 0.69
+          },
+          "fast_answer_ms": 4724,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 10,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Alexandra Rogers",
+      "customer_id": "1335edd5-4340-4365-bab1-bc4c465cc536",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Alexandra Rogers? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate the credit limit increase request for Alexandra Rogers. Let me gather the necessary information.Now let me get more information about Alexandra Rogers' past decisions and check for fraud patterns:Based on my analysis of Alexandra Rogers' profile and decision history, I have the following findings:\n\n## Customer Profile Analysis\n\n**Alexandra Rogers** presents a **strong credit profile**:\n\n### Positive Factors:\n- **Excellent credit score**: 760 (well above typical approval thresholds)\n- **Very low risk score**: 0.106 (on a 0-1 scale, this is excellent)\n- **Strong income**: $106,500 annual income (verified)\n- **Healthy credit utilization**: 35% (well within recommended limits)\n- **Current credit limit**: $29,000\n- **Employment status**: Employed\n- **Account portfolio**: 3 active accounts with substantial balances totaling ~$977k\n- **Clean fraud profile**: No flagged transactions on the primary account analyzed\n- **Low community risk**: Only 5.6% of transactions in the customer's community are flagged\n\n### Historical Decisions:\nAlexandra Rogers has **4 prior decisions** on record:\n1. **2 Support approvals** (2026-09 and 2026-06) - both approved with confidence scores of 0.846 and 0.651\n2. **1 Fraud approval** (2025-07) - Transaction cleared after review with high confidence (0.938), despite initial velocity trigger\n3. **1 Credit rejection** (2025-07) - Previous credit application rejected, though the reasoning mentions a credit score of 746 which is actually above the stated threshold of 620\n\n### Risk Considerations:\n- One prior credit rejection (July 2025), though current credit score (760) is higher than at that time (746)\n- One resolved geographic anomaly alert (medium severity, March 2026)\n- Some transaction risk factors in past decisions (velocity triggers, after-hours activity, unusual patterns) but all were ultimately approved\n\n### Credit Limit Increase Assessment:\nThe requested **$5,000 increase** would bring the total limit to **$34,000**. Given:\n- Annual income of $106,500\n- Current utilization at 35%\n- Strong credit score and payment history\n- The increase represents only ~17% of the current limit\n\n## Recommendation\n\n**No precedents were found** for similar credit limit increase decisions in the system, and **no specific credit limit increase policies** are currently documented. However, based on standard credit risk principles and Alexandra Rogers' strong financial profile, this request presents **low risk**.\n\nThe customer demonstrates:\n- Creditworthiness through excellent credit score\n- Responsible credit management (35% utilization)\n- Verified income sufficient to support the increase\n- Clean recent transaction history\n- Minimal fraud risk exposure\n\nThe only concern is the prior credit rejection in July 2025, but the current credit score has improved since then, and the customer has maintained good standing with multiple accounts.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 43.2
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the comprehensive evidence collected, I can confirm Jev's **approval** recommendation with high confidence (0.88 probability). Here's my analysis:\n\n## Supporting Evidence\n\n**Strong Customer Profile:**\n- Credit score: 760 (well above the 660 minimum threshold in Credit Limit Policy)\n- Annual income: $106,500 (verified)\n- Current credit limit: $29,000\n- Credit utilization: 35% (healthy level)\n- Risk score: 0.106 (very low)\n- Employment status: Employed with verified income\n\n**Policy Compliance:**\nThe Credit Limit Policy requires:\n1. \u2705 Min credit score 660 \u2192 Alexandra has 760\n2. \u2705 Total limit \u2264 35% of income \u2192 New limit would be $34,000 / $106,500 = 32% (under threshold)\n3. \u2705 Single increase \u2264 100% of current limit \u2192 $5,000 / $29,000 = 17% (well under)\n4. \u2705 Senior review above $50K \u2192 This $5K increase doesn't trigger escalation\n\n**Strong Precedents:**\nAll 4 similar precedents were approvals for credit applications with comparable profiles:\n- Semantic similarity scores: 0.75-0.76 (strong matches)\n- Similar credit scores (606-760 range)\n- Similar verified incomes ($142K-$248K range)\n- All resulted in approvals\n\n**Low Risk Signals:**\n- Sanctioned party exposure: 0.03 (minimal - all counterparties show \"clear\" status)\n- Open fraud activity: 0.03 (negligible)\n- No active alerts\n- Transaction patterns normal (27 completed, low avg risk scores)\n- Only 1 support ticket (closed account inquiry)\n\n**Decision History:**\nAlexandra has a positive track record with 3 prior approvals and only 1 rejection (for a different credit matter in 2025).\n\n## Minor Considerations\n\n- 4 pending transactions totaling $24K (but this is normal account activity)\n- One reversed transaction of $18K in February (isolated incident, not a pattern)\n- Customer risk slightly elevated at 0.39 probability, but still below concerning thresholds\n\n## Conclusion\n\nThis is a straightforward approval. Alexandra Rogers meets all policy requirements with significant margin, has an excellent credit profile, strong payment history, and the requested $5,000 increase is conservative relative to her income and current limit. The precedents overwhelmingly support approval for similar cases.\n\n**FINAL_RECOMMENDATION: approve (confidence 0.88)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.88,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve"
+          },
+          "final": "approve",
+          "confidence": 0.88,
+          "seconds": 28.8,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "jev_confidence": 0.82,
+          "jev_probabilities": {
+            "yes": 0.88,
+            "no": 0.04,
+            "needs_llm_decision": 0.08
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.725,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": 0.46,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.39,
+            "requires_manual_review": 0.16,
+            "evidence_sufficient": 0.84
+          },
+          "fast_answer_ms": 4856,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 5,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 4,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Alexandra Rogers",
+      "customer_id": "1335edd5-4340-4365-bab1-bc4c465cc536",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Alexandra Rogers? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Alexandra Rogers. Let me gather the relevant information.Now let me get more specific information about this customer's decision history and look for similar credit limit increase cases:Based on my analysis of Alexandra Rogers' credit limit increase request, here is my assessment:\n\n## Customer Profile Analysis\n\n**Alexandra Rogers** presents a strong credit profile:\n- **Credit Score**: 760 (excellent)\n- **Current Credit Limit**: $29,000\n- **Requested Increase**: $25,000 (to $54,000 total)\n- **Annual Income**: $106,500 (verified)\n- **Credit Utilization**: 35% (healthy level)\n- **Employment Status**: Employed\n- **Risk Score**: 0.106 (very low)\n\n## Account & Transaction History\n\nAlexandra owns 3 active accounts with substantial balances:\n- Margin account (ACC00000167): $150,014.26 - low risk tier\n- Trading account (ACC00000148): $282,127.94 - low risk tier  \n- Savings account (ACC00000122): $266,610.22 - low risk tier\n\nTransaction history shows normal activity patterns with mostly low-risk transactions (0.1 risk scores) across multiple channels.\n\n## Fraud & Compliance Analysis\n\n- **No flagged transactions** on the primary account\n- Community fraud rate is low (5.6% of related transactions flagged)\n- One resolved geographic anomaly alert from March 2026, but this was cleared\n- Past decisions show mostly approvals for fraud and support cases\n\n## Decision History\n\nAlexandra has 4 recorded decisions:\n1. **Fraud approval** (2025-07-16): Transaction cleared after verification, confidence 0.938\n2. **Support approval** (2026-09-03): Standard review, confidence 0.846\n3. **Credit rejection** (2025-07-09): Previous credit application rejected - note this mentions 2 late payments and 18% debt-to-income ratio\n4. **Support approval** (2026-06-30): Standard review, confidence 0.651\n\n## Precedent Analysis\n\nI found 10 similar credit approval precedents with verified income and good credit scores (ranging from 591-692). All were **approved** with confidence scores between 0.835-0.861. These cases involved customers with:\n- Verified stable income\n- Credit scores above 590\n- Good account standing histories\n\n## Key Considerations\n\n**Positive Factors:**\n- Excellent current credit score (760)\n- Strong income verification ($106,500/year)\n- Low credit utilization (35%)\n- Low overall risk score (0.106)\n- Substantial account balances demonstrating financial capacity\n- Multiple long-standing accounts in good standing\n- Strong precedent support for approval\n\n**Concerns:**\n- Past credit rejection in July 2025 mentioned late payments and debt-to-income issues\n- However, current credit score of 760 suggests those issues have been resolved\n- The requested increase of $25,000 represents an 86% increase from current limit\n\n## Recommendation\n\nGiven Alexandra's excellent current credit profile, verified income that comfortably supports the increased limit, low risk indicators, and strong precedent support from similar approved cases, I recommend **approval** of the $25,000 credit limit increase. The previous credit issues appear to have been addressed, as evidenced by the current 760 credit score and 35% utilization rate.\n\nThe customer demonstrates financial responsibility and capacity to manage the increased credit line.\n\nFINAL_RECOMMENDATION: approve (confidence 0.82)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 6,
+          "final": "approve",
+          "confidence": 0.82,
+          "seconds": 50.0
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the comprehensive evidence collected and Jev's analysis, I must **recommend rejection** of this credit limit increase request. Here's why:\n\n## Policy Violation (95% confidence)\n\nThe **Credit Limit Policy** establishes clear thresholds:\n- Maximum total credit limit cannot exceed **35% of verified annual income**\n- Alexandra's annual income: **$106,500**\n- Maximum allowable total limit: **$37,275** (35% of income)\n\n**Current situation:**\n- Current credit limit: **$29,000**\n- Requested increase: **$25,000**\n- Proposed new limit: **$54,000**\n\nThis would put Alexandra at **50.7% of annual income** \u2014 far exceeding the 35% policy threshold by over 15 percentage points.\n\n## Supporting Evidence\n\n**Positive factors:**\n- Excellent credit score: **760**\n- Low credit utilization: **35%**\n- Verified income: **$106,500**\n- Employment status: employed\n- Low customer risk score: **0.106**\n- All accounts in good standing with low risk tiers\n- No sanctions exposure, no fraud alerts, no open compliance issues\n\n**Precedents analysis (56% favor approval):**\nThe four most similar precedents were all approvals for customers with credit scores between 606-760 and stable verified incomes. However, these precedents don't indicate whether those approvals would have violated the 35% income policy threshold \u2014 they simply show that customers with similar profiles have been approved in different contexts.\n\n## The Issue\n\nWhile Alexandra is a strong customer on every qualitative measure, the policy violation is clear and mathematical. The 35% cap exists for sound risk management reasons, and this request would exceed it by 45% (going from 35% allowed to 50.7% actual).\n\nThe policy does allow increases above $50,000 with senior review, but that applies to the *increase amount*, not the policy threshold itself. This increase is $25,000, so it doesn't trigger that senior review requirement \u2014 but it does violate the fundamental income-to-limit ratio.\n\n## What Happens Next\n\nThis requires **manual review** (93% confidence per Jev's signals) because:\n1. Alexandra could request a smaller increase that stays within policy (up to ~$8,275 increase)\n2. An exception could be considered given her strong profile, requiring manager approval per the Exception Approval Authority policy ($25,000 threshold)\n\nFINAL_RECOMMENDATION: reject (confidence 0.82)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.82,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.82,
+          "seconds": 27.7,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.82,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.88,
+            "needs_llm_decision": 0.12
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.5625,
+            "violates_policy": 0.95,
+            "sanctioned_party_exposure": 0.48,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.42,
+            "requires_manual_review": 0.93,
+            "evidence_sufficient": 0.7
+          },
+          "fast_answer_ms": 4444,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 5,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 4,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Justin Anderson",
+      "customer_id": "e61de951-8399-42df-bde3-6402081f0205",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Justin Anderson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate the credit limit increase request for Justin Anderson. Let me search for this customer and gather relevant information.Now let me gather more information about Justin Anderson's decision history and find relevant precedents for credit limit increases.Based on my analysis of Justin Anderson's credit profile and account information, here is my evaluation:\n\n## Customer Profile Analysis\n\n**Justin Anderson** presents the following financial profile:\n- **Credit Score**: 638 (Fair range)\n- **Current Credit Limit**: $6,000\n- **Requested Increase**: $5,000 (to $11,000 total - 83% increase)\n- **Credit Utilization**: 37% (good, below 50% threshold)\n- **Annual Income**: $47,500 (verified)\n- **Employment Status**: Employed since 2020 at Barnes, Cole and Ramirez\n- **Risk Score**: 0.3 (low)\n- **Account Status**: 2 active accounts with healthy balances ($34,672 in trading account, $184,242 in margin account)\n\n## Risk Assessment\n\n**Positive Factors:**\n1. **Low credit utilization** (37%) indicates responsible credit management\n2. **Verified employment** with 6+ years at current employer showing stability\n3. **Low overall risk score** (0.3) \n4. **Active accounts in good standing** with substantial balances\n5. **Clean transaction history** with minimal fraud indicators (only 6.3% flagged transactions in community)\n6. **No prior credit decisions** on file (clean slate)\n7. **Income verified** at $47,500 annually\n\n**Concerns:**\n1. **Credit score of 638** is in the fair range (not excellent)\n2. **Large increase request** (83% increase) relative to current limit\n3. **Post-increase debt-to-income ratio**: If fully utilized, $11,000 would be 23% of annual income (acceptable but notable)\n4. **One pending transaction** with risk score of 0.3 on account ACC00000216\n\n**Notable Observations:**\n- No precedents found for similar credit limit increase scenarios in the system\n- No specific credit limit policies found in the database to apply as standards\n- Customer has one recent support ticket (resolved) showing account engagement\n- Transaction patterns appear normal with mostly deposits and routine transfers\n\n## Recommendation\n\nWhile Justin Anderson has a fair credit score and is requesting a substantial percentage increase, the overall profile is positive. The customer demonstrates:\n- Responsible credit utilization\n- Stable employment and verified income\n- Significant assets in accounts\n- Low risk indicators\n\nHowever, the 83% increase is aggressive for a fair credit score. A more conservative approach would be appropriate.\n\n**I recommend APPROVAL of a $3,000 credit limit increase** (bringing total to $9,000) rather than the full $5,000 requested. This represents a 50% increase which is more aligned with the customer's credit score while still providing meaningful additional credit capacity. The customer can request additional increases after demonstrating positive payment history with the new limit.\n\nIf policy requires approving the full requested amount or denying entirely, **I would approve the full $5,000 increase** given the strong compensating factors (stable income, low utilization, substantial account balances, and low risk score).\n\nFINAL_RECOMMENDATION: approve (confidence 0.72)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.72,
+          "seconds": 46.4
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected and Jev's analysis, I must **reject** this credit limit increase request. Here's why:\n\n## Policy Violations\n\nThe request violates the **Credit Limit Policy** on multiple fronts:\n\n1. **Credit Score Too Low**: Justin Anderson has a credit score of **638**, which falls below the minimum threshold of **660** required by policy.\n\n2. **Income-to-Limit Ratio Exceeded**: \n   - Current credit limit: $6,000\n   - Requested new limit: $11,000 ($6,000 + $5,000)\n   - Annual income: $47,500\n   - New limit would be **23.2% of income** (within the 35% maximum)\n   - However, the credit score deficiency is the primary concern\n\n## Critical Risk Factor: Sanctions Watchlist Exposure\n\nThe evidence shows **sanctioned party exposure** (96% probability signal) - Justin Anderson has transacted with **Campos, Vaughn and Marquez**, a vendor in **Iran** with **\"watchlist\" sanctions status**. This is a significant compliance red flag that alone warrants caution on extending additional credit.\n\n## Mixed Transaction History\n\n- 3 **flagged transactions** totaling $12,121.72 with high risk scores (0.7)\n- Recent flagged activity as recent as April 2026 ($6,429.07)\n- While most transactions (24) are completed successfully, the flagged transactions raise concerns\n\n## Precedent Analysis\n\nThe two precedents shown were both **approvals**, but for customers with:\n- Credit scores of **760** and **670** (both above the 660 threshold)\n- Higher incomes ($146,125 and $73,921)\n- No mention of sanctions exposure\n\nThese precedents actually **support rejection** in this case, as Justin Anderson's profile is materially weaker.\n\n## Recommendation\n\nThe combination of below-threshold credit score and watchlist exposure makes this a clear rejection under policy. The customer would need to:\n1. Improve credit score above 660\n2. Resolve or explain the watchlist counterparty relationship\n\nFINAL_RECOMMENDATION: reject (confidence 0.77)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.77,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.77,
+          "seconds": 23.5,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.65,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.77,
+            "needs_llm_decision": 0.21
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.465,
+            "violates_policy": 0.64,
+            "sanctioned_party_exposure": 0.96,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.19,
+            "requires_manual_review": 0.19,
+            "evidence_sufficient": 0.45
+          },
+          "fast_answer_ms": 4978,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 7,
+            "notable_transactions": 5,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 2,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Justin Anderson",
+      "customer_id": "e61de951-8399-42df-bde3-6402081f0205",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Justin Anderson? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Justin Anderson. Let me gather the relevant information.Now let me gather additional information about Justin Anderson's decision history and check for any fraud patterns:## Credit Limit Increase Analysis for Justin Anderson\n\nBased on my analysis of the Context Graph, here is my assessment of the $25,000 credit limit increase request:\n\n### Customer Profile Summary\n- **Current Credit Limit**: $6,000\n- **Requested Increase**: $25,000 (417% increase)\n- **Credit Score**: 638 (Fair/Below Average)\n- **Credit Utilization**: 37% (Healthy)\n- **Risk Score**: 0.3 (Low)\n- **Annual Income**: $47,500 (Verified)\n- **Employment Status**: Employed at Barnes, Cole and Ramirez since July 2020\n- **Account Age**: Customer since 2022 (4+ years)\n\n### Account Portfolio\nJustin maintains 2 active accounts with combined balances of $218,914:\n- **Margin Account (ACC00000115)**: $184,242 balance, opened Sept 2025, Low risk tier\n- **Trading Account (ACC00000216)**: $34,672 balance, opened July 2022, Low risk tier\n\n### Risk Assessment\n\n**Positive Factors:**\n1. **Low Overall Risk Score (0.3)**: Customer demonstrates responsible financial behavior\n2. **Healthy Credit Utilization (37%)**: Well below concerning thresholds\n3. **Clean Decision History**: No prior decisions on file - no rejections or escalations\n4. **Minimal Fraud Exposure**: Both accounts show low fraud risk patterns (5-6% flagged transactions in their communities, which is acceptable)\n5. **Stable Employment**: 6+ years at current employer\n6. **Verified Income**: Annual income is documented\n7. **Active Transaction History**: Regular, completed transactions across multiple channels\n\n**Concerning Factors:**\n1. **Below-Average Credit Score (638)**: This is the primary concern - falls into \"Fair\" credit range, not \"Good\"\n2. **Disproportionate Increase**: Requesting to increase limit from $6,000 to $31,000 (+417%) is aggressive\n3. **Limited Credit History with Institution**: No prior credit limit increase decisions to reference\n4. **Debt-to-Income Consideration**: With $47,500 income, a $31,000 credit limit represents 65% of annual income\n\n### Precedent Analysis\n**No precedents were found** for credit limit increase decisions in the system, making this a case where institutional policy guidelines should be heavily weighted.\n\n### Policy Gap\n**No policies found** for credit limit increases in the system, which means this decision lacks established institutional guidelines.\n\n### Recommendation\n\nGiven the **credit score of 638** (which is below the typical threshold of 670+ for substantial credit increases) and the **aggressive 417% increase request**, I recommend **REJECTING** this request as submitted.\n\n**Alternative Recommendation**: Approve a **smaller, graduated increase to $12,000-$15,000** instead. This would:\n- Double the current limit (more reasonable progression)\n- Keep total credit exposure around 25-30% of annual income\n- Allow the customer to demonstrate responsible usage before further increases\n- Mitigate risk given the fair credit score\n\nThe customer's low risk score and healthy utilization suggest they manage credit responsibly, but the combination of fair credit score and aggressive increase amount makes the full $25,000 increase too risky without additional compensating factors.\n\nFINAL_RECOMMENDATION: reject (confidence 0.7)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.7,
+          "seconds": 48.5
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected and Jev's analysis, I must recommend **rejection** of this credit limit increase request. Here's why:\n\n## Policy Violations (96% probability)\n\nThe request violates the **Credit Limit Policy** on multiple fronts:\n\n1. **Credit Score Requirement**: Justin Anderson has a credit score of **638**, which falls below the minimum threshold of **660** required by policy.\n\n2. **Income-to-Limit Ratio**: With a verified annual income of $47,500 and a current limit of $6,000, adding $25,000 would bring the total limit to $31,000. This represents **65% of annual income**, significantly exceeding the policy maximum of **35%**.\n\n3. **Increase Size**: The requested $25,000 increase is **417% of the current $6,000 limit**, far exceeding the policy maximum of 100% (doubling the limit).\n\n## Sanctions Exposure (96% probability)\n\nA critical risk factor: Justin Anderson's margin account (ACC00000115) has transaction history with **Campos, Vaughn and Marquez**, a vendor in **Iran** with **watchlist sanctions status**. This watchlist exposure creates compliance concerns that must be addressed before extending additional credit.\n\n## Weak Precedent Support (31% probability)\n\nThe two similar precedents found were both approvals, but for customers with:\n- Credit scores of 760 and 670 (both above the 660 threshold)\n- Higher verified incomes ($146,125 and $73,921)\n- Better risk profiles overall\n\nThese precedents actually argue *against* approval in this case.\n\n## Additional Concerns\n\n- **3 flagged transactions** totaling $12,122 with 0.7 risk scores on the margin account\n- Account co-owned with Miller Group (risk rating D)\n- Multiple transaction counterparties with D-rated risk profiles\n\n## What Happens Next\n\nThis request requires **manual review and escalation** (87% probability per the signals). Given the policy violations and watchlist exposure, it would need senior management exception approval per the Exception Approval Authority policy (requires senior approval above $25,000).\n\n**FINAL_RECOMMENDATION: reject (confidence 0.91)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.91,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.91,
+          "seconds": 22.9,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.94,
+            "needs_llm_decision": 0.06
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.305,
+            "violates_policy": 0.96,
+            "sanctioned_party_exposure": 0.96,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.17,
+            "requires_manual_review": 0.87,
+            "evidence_sufficient": 0.66
+          },
+          "fast_answer_ms": 4059,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 7,
+            "notable_transactions": 5,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 2,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Mr. Timothy Dawson",
+      "customer_id": "218eb95f-b583-407e-9d55-99ec55abe4b9",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Mr. Timothy Dawson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Mr. Timothy Dawson. Let me search for the customer and gather relevant information.Now let me gather more information about past decisions for this customer and find relevant precedents for credit limit increases.Now let me check for any fraud patterns or risk indicators in the customer's accounts.Based on my comprehensive analysis of Mr. Timothy Dawson's credit limit increase request, here is my assessment:\n\n## Customer Profile Analysis\n\n**Current Financial Standing:**\n- Credit Score: 743 (Good)\n- Current Credit Limit: $4,000\n- Requested Increase: $5,000 (to $9,000 total)\n- Annual Income: $44,000 (verified)\n- Credit Utilization: 22% (Excellent)\n- Risk Score: 0.176 (Low)\n- Employment Status: Self-employed\n- Account History: Customer since 2023, with active trading and closed trading accounts\n\n**Transaction History:**\n- 13 transactions on primary account (ACC00000048)\n- No flagged transactions on this account\n- Transaction patterns appear normal with mix of deposits, withdrawals, and trades\n- Community fraud influence: 4.46% flagged transactions in related network (low)\n\n## Policy Compliance Review\n\nAccording to the **Credit Limit Policy**:\n- \u2705 Minimum credit score 660 required \u2192 Customer has 743\n- \u26a0\ufe0f Max total limit 35% of verified annual income \u2192 $44,000 \u00d7 0.35 = $15,400 maximum allowed\n- \u26a0\ufe0f Single increase may not exceed 100% of current limit \u2192 $4,000 \u00d7 1.0 = $4,000 maximum increase\n- \u2705 Increases above $50,000 require senior review \u2192 Not applicable here\n\n**Policy Violations:**\n1. **Requested increase ($5,000) exceeds the 100% limit** - Policy allows maximum $4,000 increase\n2. New total would be $9,000, which is 20.45% of income (well within the 35% cap of $15,400)\n\n## Precedent Analysis\n\nI found 5 relevant precedents for credit applications, all resulting in **approvals** with:\n- Credit scores ranging from 655-775\n- Verified stable income\n- Similar risk profiles\n- Confidence scores: 0.84-0.93\n\n## Risk Assessment\n\n**Positive Factors:**\n- Excellent credit score (743)\n- Very low credit utilization (22%)\n- Low risk score (0.176)\n- Verified income\n- No flagged transactions\n- Clean transaction history\n- Previous trading account in good standing\n\n**Concerns:**\n- Self-employed status (slightly higher risk than traditional employment)\n- One prior escalation decision for trading activity (unrelated to credit)\n- Requested amount exceeds single-increase policy threshold by $1,000\n\n## Recommendation\n\nI recommend **CONDITIONAL APPROVAL** with the following modification:\n\n**Approve a $4,000 credit limit increase** (bringing total to $8,000) rather than the requested $5,000, to comply with the Credit Limit Policy's 100% single-increase cap. This still provides substantial additional credit capacity while adhering to policy.\n\n**Rationale:**\n1. Customer demonstrates excellent creditworthiness with 743 score and 22% utilization\n2. Total limit of $8,000 represents only 18.2% of verified income (well below 35% cap)\n3. Strong precedents support approval for similar profiles\n4. Low fraud risk and clean transaction history\n5. Self-employed status is offset by verified income and strong credit metrics\n\n**Alternative:** If the customer specifically needs $5,000, this would require senior review per policy exception protocols, given it exceeds the standard 100% increase threshold.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 55.0
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze the evidence to make a final determination on this credit limit increase request.\n\n## Analysis of the Evidence\n\n**Customer Profile:**\n- Current credit limit: $4,000\n- Credit score: 743 (excellent, well above the 660 minimum)\n- Annual income: $44,000 (verified)\n- Credit utilization: 22% (healthy)\n- Risk score: 0.176 (low)\n- Employment: Self-employed\n\n**Policy Compliance Check:**\n\nThe **Credit Limit Policy** requires:\n1. \u2705 Min credit score 660: Mr. Dawson has 743\n2. \u274c **Total credit limit \u2264 35% of income**: This is the critical issue\n   - Requested new limit: $4,000 + $5,000 = $9,000\n   - 35% of $44,000 income = $15,400 maximum allowed\n   - $9,000 is well within the $15,400 cap \u2705\n3. \u274c **Single increase \u2264 100% of current limit**: \n   - Requested increase: $5,000\n   - Current limit: $4,000\n   - Increase is 125% of current limit (exceeds the 100% maximum) \u274c\n4. \u2705 Senior review threshold: $5,000 is below the $50,000 threshold\n\n**The Core Issue:**\n\nThe requested $5,000 increase violates the policy cap of 100% of the current limit ($4,000). The maximum allowable increase under policy would be $4,000, bringing the total limit to $8,000.\n\n**Supporting Factors:**\n- All 5 precedents show credit approvals with similar profiles\n- No sanctions exposure (0.04 probability)\n- No fraud concerns (null signal)\n- Clean transaction history (11 completed, avg risk 0.1)\n- No support tickets or alerts\n- Low customer risk (0.15 probability of elevation)\n\n**Jev's Signals:**\n- Precedents favor approval: 0.63\n- **Violates policy: 0.70** \u2190 Key concern\n- Evidence sufficient: 0.59\n\n## Recommendation\n\nI recommend **REJECT** as requested, but with an **alternative approval** of a $4,000 increase (bringing total to $8,000).\n\n**Reasoning:**\n1. Mr. Dawson is an excellent credit candidate (743 score, low utilization, verified income)\n2. However, the $5,000 increase exceeds the policy maximum of 100% of current limit\n3. A $4,000 increase would comply with all policy thresholds and still provide substantial additional credit capacity\n4. The customer could reapply for additional increases after demonstrating responsible use of the higher limit\n\n**What Would Change My Mind:**\n- If this request came with a manager or senior approval for a policy exception (per the Exception Approval Authority policy, manager approval is required for exceptions above $25,000 exposure, which doesn't apply here)\n- If the customer had urgent documented need that justified an exception\n- If there were extenuating circumstances (business expansion, emergency situation, etc.)\n\nThe rejection is purely procedural - the customer's creditworthiness is sound, but the requested amount exceeds policy limits. An alternative offer of $4,000 increase maintains policy compliance while rewarding good credit behavior.\n\nFINAL_RECOMMENDATION: reject (confidence 0.75)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 29.9,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.37,
+          "jev_probabilities": {
+            "yes": 0.32,
+            "no": 0.58,
+            "needs_llm_decision": 0.1
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.63,
+            "violates_policy": 0.7,
+            "sanctioned_party_exposure": 0.04,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.15,
+            "requires_manual_review": 0.4,
+            "evidence_sufficient": 0.59
+          },
+          "fast_answer_ms": 4426,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 2,
+            "transaction_summary": 2,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Mr. Timothy Dawson",
+      "customer_id": "218eb95f-b583-407e-9d55-99ec55abe4b9",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Mr. Timothy Dawson? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Mr. Timothy Dawson. Let me search for his customer profile and review relevant decision history and precedents.Now let me get more details about Mr. Dawson's decision history and check for any fraud patterns:Based on my thorough analysis of Mr. Timothy Dawson's credit limit increase request, here is my assessment:\n\n## Customer Profile Analysis\n\n**Mr. Timothy Dawson** presents a mixed risk profile:\n\n### Positive Factors:\n- **Strong credit score**: 743 (well above the policy minimum of 660)\n- **Low risk score**: 0.176 (indicating low overall risk)\n- **Verified income**: $44,000 annually (verified)\n- **Low credit utilization**: 22% (excellent)\n- **Clean transaction history**: No flagged fraudulent transactions on his account\n- **Low fraud risk**: Account community shows only 4.5% flagged transactions\n- **One past escalated decision**: Related to trading activity in January 2025, but not credit-related\n\n### Concerning Factors:\n- **High debt-to-income ratio concern**: The requested $25,000 increase would bring his total credit limit to $29,000\n  - This equals **65.9% of his annual income** ($29,000 / $44,000)\n  - **EXCEEDS policy maximum** of 35% of verified annual income\n  - Policy allows maximum of $15,400 in total credit ($44,000 \u00d7 0.35)\n- **Massive increase percentage**: The $25,000 increase is **625% of his current $4,000 limit**\n  - **FAR EXCEEDS policy maximum** of 100% of current limit\n  - Policy would allow maximum increase of $4,000\n- **Self-employed status**: May indicate income variability\n- **Requires senior review**: Amount exceeds $50,000 threshold when considering total exposure\n\n## Policy Compliance Check\n\nAccording to the **Credit Limit Policy**:\n1. \u2705 Minimum credit score 660: **PASS** (743)\n2. \u274c Total limit \u2264 35% of income: **FAIL** ($29,000 is 65.9% of $44,000)\n3. \u274c Single increase \u2264 100% of current limit: **FAIL** (625% increase requested)\n4. \u26a0\ufe0f Increases above $50,000 require senior review: Not applicable to increase amount, but total exposure warrants review\n\n## Precedent Analysis\n\nPast credit decisions show approvals were granted to customers with:\n- Credit scores ranging from 606-775\n- Verified stable income\n- Good account standing\n- Reasonable debt-to-income ratios (typically 24-42%)\n\nHowever, **no precedents support** such a large increase relative to both current limit and income.\n\n## Recommendation\n\nI **recommend REJECTION** of the $25,000 credit limit increase request for the following reasons:\n\n1. **Clear policy violations**: The request violates two critical policy thresholds\n2. **Income mismatch**: At $44,000 annual income, Mr. Dawson's financial capacity cannot safely support a $29,000 total credit limit\n3. **Disproportionate increase**: A 625% increase is unusually aggressive and poses significant credit risk\n4. **Alternative path**: Mr. Dawson could be offered a more conservative increase of $4,000-$11,400 to stay within policy guidelines\n\n### Counter-Proposal\nApprove a **$11,400 credit limit increase** (bringing total to $15,400), which represents:\n- 285% of current limit (still aggressive but more reasonable)\n- Exactly 35% of verified annual income (policy compliant)\n- Maintains prudent credit risk management\n\nThis allows Mr. Dawson to access additional credit while protecting both the institution and the customer from overleveraging.\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 56.6
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected, I must **confirm Jev's rejection** of this credit limit increase request. Here's why:\n\n## Policy Violation (95% confidence)\n\nThe **Credit Limit Policy** has three key requirements that create problems here:\n\n1. **Minimum credit score: 660** \u2713 Mr. Dawson passes with a score of 743\n2. **Maximum total credit limit: 35% of verified annual income** \u2717 **This is the critical violation**\n3. **Maximum single increase: 100% of current limit** \u2717 **This is also violated**\n\n### The Math on Policy Violation:\n\n**Income constraint:**\n- Annual income: $44,000 (verified)\n- Maximum allowed total credit limit: $44,000 \u00d7 0.35 = **$15,400**\n- Current credit limit: $4,000\n- Requested new limit: $4,000 + $25,000 = **$29,000**\n- **Exceeds policy by $13,600** (nearly double the allowed maximum)\n\n**Single increase constraint:**\n- Current limit: $4,000\n- Maximum single increase allowed: $4,000 \u00d7 1.0 = $4,000\n- Requested increase: $25,000\n- **Exceeds policy by $21,000** (625% of current limit vs. 100% allowed)\n\n## Precedent Analysis\n\nThe system found 5 similar credit approval precedents (semantic similarity ~0.76), but critically:\n- **Precedents favor approval: only 41.8% confidence**\n- All precedents involved customers with **much higher incomes** ($86K-$248K) making the same percentage calculations work out favorably\n- Mr. Dawson's $44K income is simply too low to support a $29K total credit limit under current policy\n\n## Risk Profile\n\nThe customer's overall risk profile is actually quite good:\n- Credit score: 743 (above minimum)\n- Risk score: 0.176 (low)\n- Credit utilization: 22% (healthy)\n- Income verified: Yes\n- No sanctions exposure (4% confidence only)\n- Low customer risk elevation (14%)\n\nHowever, **requires manual review: 85% confidence** due to the substantial policy violations.\n\n## What Happens Next\n\nPer the **Exception Approval Authority** policy, this request would require **manager approval** since it's exactly at the $25,000 threshold. However, given the magnitude of the policy violations (nearly 2x the income-based limit), this would likely need escalation to senior approval or even credit committee review.\n\n**The customer could be approved for a smaller increase** - up to $11,400 would bring them to the policy maximum of $15,400 total limit (35% of income), though even that would technically violate the 100% single-increase rule and would need manager exception approval.\n\nFINAL_RECOMMENDATION: reject (confidence 0.89)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.89,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.89,
+          "seconds": 27.3,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.89,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.93,
+            "needs_llm_decision": 0.07
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.418,
+            "violates_policy": 0.95,
+            "sanctioned_party_exposure": 0.04,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.14,
+            "requires_manual_review": 0.85,
+            "evidence_sufficient": 0.73
+          },
+          "fast_answer_ms": 4416,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 2,
+            "transaction_summary": 2,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Samantha Conner",
+      "customer_id": "106fb62a-3226-42f4-819c-d47acb93e867",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Samantha Conner? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Samantha Conner. Let me gather the relevant information from the Context Graph.Now let me get the customer's decision history to see their past credit decisions:Based on my analysis of the Context Graph data, I can now provide you with a comprehensive recommendation on Samantha Conner's $5,000 credit limit increase request.\n\n## Customer Profile Analysis\n\n**Samantha Conner** presents a strong credit profile:\n- **Credit Score:** 749 (excellent)\n- **Annual Income:** $87,000 (verified)\n- **Current Credit Limit:** $10,000\n- **Credit Utilization:** 42%\n- **Risk Score:** 0.159 (low)\n- **Employment Status:** Employed\n- **Account Standing:** 2 active accounts in good standing\n\n## Policy Compliance Review\n\nThe **Credit Limit Policy** requires:\n- \u2705 **Minimum Credit Score: 660** - Samantha's 749 exceeds this significantly\n- \u2705 **Max Total Limit % of Income: 35%** - New limit of $15,000 = 17.2% of $87,000 income (well within limits)\n- \u2705 **Max Increase % of Current Limit: 100%** - $5,000 increase = 50% of $10,000 current limit (compliant)\n- \u2705 **Senior Review Threshold: $50,000** - New total of $15,000 does not require escalation\n\n## Precedent Analysis\n\nI reviewed 10 similar credit limit increase cases. Key findings:\n- **All precedent approvals** involved customers with credit scores ranging from 591-775\n- Approved cases showed stable employment and verified income\n- Samantha's credit score of 749 is in the upper quartile of approved cases\n- Her debt-to-income ratio after increase (17.2%) is conservative compared to the policy maximum of 35%\n\n## Risk Assessment\n\n**Positive Indicators:**\n- Excellent credit score (749)\n- Low risk score (0.159)\n- Moderate credit utilization (42%) - increase would improve this ratio\n- Verified income and stable employment\n- Active accounts with substantial balances ($96,213 and $376,220)\n- Clean decision history (only one prior decision - a compliance review that was completed)\n\n**Minor Concerns:**\n- One transaction was reversed (TXN0000000863, $41,292.93) but this appears isolated\n- One pending transaction, but overall transaction history is normal\n\n## Recommendation\n\n**APPROVE** the $5,000 credit limit increase for Samantha Conner.\n\n**Rationale:**\n1. Customer significantly exceeds all policy thresholds for credit score, income verification, and debt-to-income ratio\n2. The requested increase is modest (50% of current limit) and would result in a total credit limit of only 17.2% of verified annual income\n3. Strong precedent support from similar approved cases with comparable or weaker profiles\n4. Low risk profile with excellent credit management demonstrated by 42% utilization\n5. No red flags in transaction history or fraud patterns\n6. Clean compliance history with no prior credit decisions requiring escalation\n\nThis is a straightforward approval that aligns with institutional policy and risk appetite.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 45.8
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the comprehensive evidence collected, I **concur with Jev's recommendation to approve** this credit limit increase for Samantha Conner. Here's my analysis:\n\n## Strong Supporting Factors\n\n**Customer Financial Profile:**\n- Credit score of **749** (well above the 660 minimum threshold in Credit Limit Policy)\n- Current credit limit: $10,000\n- Credit utilization: **42%** (healthy, not maxed out)\n- Verified annual income: **$87,000**\n- Employment status: Employed\n- Low customer risk score: **0.159**\n\n**Policy Compliance:**\nThe Credit Limit Policy requires:\n1. \u2705 **Minimum credit score 660** \u2192 Samantha has 749\n2. \u2705 **Total credit limit \u2264 35% of income** \u2192 New limit of $15,000 would be 17.2% of $87,000 income (well within bounds)\n3. \u2705 **Single increase \u2264 100% of current limit** \u2192 $5,000 increase is 50% of $10,000 current limit\n4. \u2705 **No senior review needed** \u2192 Request is well below the $50,000 threshold\n\n**Precedent Support:**\nFour highly similar past credit approvals were found (semantic similarity scores 0.76-0.77), all involving customers with:\n- Verified stable income\n- Credit scores ranging from 606-760\n- Similar credit increase scenarios\n- All resulted in **approval**\n\n**Risk Assessment:**\n- No open fraud activity (signal: null)\n- No sanctioned party exposure of concern (0.24 probability)\n- Low customer risk elevation (0.12 probability)\n- No policy violations (0.05 probability)\n- Clean alert history (no active alerts)\n- Transaction patterns are normal with mostly completed transactions\n\n## Minor Considerations\n\nThere is one **reversed transaction** of $41,292 on account ACC00000123, but:\n- This represents normal trading account activity\n- The account has 21 completed transactions totaling $506K with low average risk (0.1)\n- The customer maintains two active accounts in good standing\n\n## Conclusion\n\nThis is a straightforward approval. Samantha Conner demonstrates strong creditworthiness, the requested increase is conservative relative to her income and credit profile, all policy requirements are met, and precedent strongly favors approval.\n\n**No additional evidence collection is needed** - the pre-collected data provides everything necessary for this decision.\n\nFINAL_RECOMMENDATION: approve (confidence 0.96)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.96,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve"
+          },
+          "final": "approve",
+          "confidence": 0.96,
+          "seconds": 25.6,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "jev_confidence": 0.96,
+          "jev_probabilities": {
+            "yes": 0.98,
+            "no": 0.0,
+            "needs_llm_decision": 0.02
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.7325,
+            "violates_policy": 0.05,
+            "sanctioned_party_exposure": 0.24,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.12,
+            "requires_manual_review": 0.11,
+            "evidence_sufficient": 0.88
+          },
+          "fast_answer_ms": 4428,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Samantha Conner",
+      "customer_id": "106fb62a-3226-42f4-819c-d47acb93e867",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Samantha Conner? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Samantha Conner. Let me search for the customer and gather relevant information.Great! I found Samantha Conner. Now let me gather more comprehensive information about her decision history and find relevant precedents for credit limit increases.Now let me get more detail on one of the credit precedents to better understand the reasoning:## Credit Limit Increase Analysis for Samantha Conner\n\nBased on my analysis of the Context Graph, here's my comprehensive evaluation:\n\n### **Customer Profile:**\n- **Current Credit Limit:** $10,000\n- **Requested Increase:** $25,000 (new limit would be $35,000)\n- **Credit Score:** 749 (Good)\n- **Annual Income:** $87,000 (verified)\n- **Credit Utilization:** 42%\n- **Employment Status:** Employed\n- **Risk Score:** 0.159 (Low)\n- **Account History:** 2 active accounts with combined balances of $472,433\n\n### **Policy Analysis - Credit Limit Policy:**\nThe institutional Credit Limit Policy specifies:\n- **Minimum credit score:** 660 \u2705 (Samantha: 749)\n- **Maximum total credit limit:** 35% of annual income \u2705 ($87,000 \u00d7 0.35 = **$30,450**)\n- **Maximum single increase:** 100% of current limit \u274c ($25,000 is **250%** of $10,000)\n- **Senior review threshold:** Increases above $50,000\n\n### **Key Issues Identified:**\n\n1. **Policy Violation - Increase Amount:** The $25,000 requested increase exceeds the policy maximum of 100% of current limit ($10,000). This is a **150% overreach**.\n\n2. **Policy Violation - Total Credit Limit:** The new total limit of $35,000 would exceed 35% of her annual income ($30,450 maximum). The request exceeds the cap by **$4,550** (14.9% over policy).\n\n3. **Fraud Pattern Analysis:** The account shows no flagged transactions and only 4.07% of transactions in the related community are flagged, which is acceptable. No fraud concerns.\n\n4. **Account History:** One previous compliance review decision (completed) and several approved fraud reviews indicate normal activity patterns.\n\n### **Precedent Analysis:**\nI reviewed 5 similar credit decisions, all approvals with:\n- Credit scores ranging from 649-775 (Samantha: 749 \u2713)\n- Verified incomes (Samantha: verified \u2713)\n- Similar semantic match of 85% confidence\n\nHowever, these precedents don't address policy violations of this magnitude.\n\n### **Recommendation:**\n\nI recommend **REJECTING** this credit limit increase request as currently structured. However, I propose a **counter-offer**:\n\n**Alternative Approval:** Offer a $10,000 increase (100% of current limit) bringing her total to $20,000, which:\n- Complies with the 100% single increase policy\n- Stays well within the 35% income threshold ($30,450)\n- Recognizes her excellent credit score and low risk profile\n- Maintains institutional risk management standards\n\nIf Samantha requires the full $25,000, this decision should be **escalated to senior review** with a detailed justification for the policy exception.\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns",
+            "execute_cypher"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 57.1
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected, I must **confirm Jev's rejection** of this credit limit increase request. Here's why:\n\n## Policy Violation (96% confidence)\n\nThe request violates the **Credit Limit Policy** in a critical way:\n\n- **Current limit**: $10,000\n- **Requested increase**: $25,000 (250% of current limit)\n- **Policy maximum**: 100% of current limit ($10,000 maximum increase)\n- **Annual income**: $87,000\n- **New total limit would be**: $35,000 (40.2% of income)\n- **Policy maximum total**: 35% of income ($30,450)\n\nThe requested increase is **2.5x the maximum allowed single increase** and would push the total limit **$4,550 above the income-based cap**.\n\n## Customer Profile Analysis\n\n**Positive factors:**\n- Credit score of 749 (exceeds 660 minimum)\n- Income verified at $87,000\n- Low risk score (0.159)\n- Credit utilization at 42% (reasonable)\n- Employed status confirmed\n\n**Risk factors:**\n- One reversed transaction of $41,292 on trading account (June 2026)\n- Request significantly exceeds policy bounds\n- Requires manual review (90% confidence per signals)\n\n## Precedent Analysis\n\nThe system found 4 similar approval precedents, but **all involved smaller, policy-compliant increases**. The precedents favor approval at 57% confidence only because they don't account for the magnitude of this policy violation. None of the precedents show approval of requests exceeding 100% of current limit.\n\n## What Happens Next\n\nThis request **requires senior review** per Exception Approval Authority policy (increases above $25,000). If the customer has compelling circumstances:\n\n1. They could resubmit for a $10,000 increase (the maximum allowed)\n2. Or escalate with documentation justifying the exception to senior management\n\nThe violation is too severe for standard approval, even with the customer's strong credit profile.\n\nFINAL_RECOMMENDATION: reject (confidence 0.86)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.86,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.86,
+          "seconds": 23.6,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.8,
+          "jev_probabilities": {
+            "yes": 0.01,
+            "no": 0.86,
+            "needs_llm_decision": 0.13
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.57,
+            "violates_policy": 0.96,
+            "sanctioned_party_exposure": 0.27,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.13,
+            "requires_manual_review": 0.9,
+            "evidence_sufficient": 0.74
+          },
+          "fast_answer_ms": 4349,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Laurie Li",
+      "customer_id": "5e683112-f8be-4b84-a922-b35b0f0f6c1a",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laurie Li? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll analyze this credit limit increase request for Laurie Li. Let me search for the customer and gather relevant information.Good! I found Laurie Li. Now let me gather more information about their past decisions and search for relevant precedents for credit limit increases.Now let me analyze the data I've collected for Laurie Li's credit limit increase request.\n\n## Analysis of Credit Limit Increase Request for Laurie Li\n\n### Customer Profile\n**Laurie Li** (Customer ID: 5e683112-f8be-4b84-a922-b35b0f0f6c1a)\n\n**Key Financial Metrics:**\n- **Current Credit Limit:** $14,000\n- **Requested Increase:** $5,000 (35.7% increase)\n- **Proposed New Limit:** $19,000\n- **Credit Score:** 704 (Fair to Good)\n- **Annual Income:** $53,500 (verified)\n- **Credit Utilization:** 71% (High - concerning)\n- **Risk Score:** 0.263 (Moderate)\n- **Employment Status:** Employed as Director since 2017\n- **Account Age:** Active accounts since 2022\n\n**Account Details:**\n- 2 active accounts (1 savings, 1 margin)\n- Total balance across accounts: ~$578,323\n- Both accounts in low risk tier\n\n### Risk Assessment\n\n**Concerning Factors:**\n1. **High Credit Utilization (71%):** Using $9,940 of current $14,000 limit - significantly above the recommended 30% threshold\n2. **One Flagged Transaction:** Transaction TXN0000000027 ($97.53) with risk score 0.7 on 2026-01-21\n3. **Transaction Dispute:** Recent support ticket (TKT000011) regarding a transaction dispute, though it was resolved\n4. **Multiple Previous Escalations:** Customer has 4 escalation decisions in their history (fraud, support, trading categories)\n5. **New Limit Would Exceed Policy:** Proposed limit of $19,000 would be 35.5% of annual income ($53,500), exceeding the 35% policy threshold\n\n**Positive Factors:**\n1. **Stable Employment:** Director-level position since 2017 at Garcia, Yang and Gardner (A-rated company)\n2. **Verified Income:** $53,500 annual income confirmed\n3. **Credit Score:** 704 is above minimum threshold of 660 per policy\n4. **Long-term Employment:** 9+ years with current employer\n5. **Substantial Account Balances:** Over $578K in account balances\n6. **No Recent Fraud in Account Community:** The fraud pattern analysis shows 0 flagged transactions directly linked to this account\n\n### Policy Compliance Check\n\n**Credit Limit Policy Requirements:**\n- \u2705 Minimum credit score 660: **PASS** (704)\n- \u274c Max total limit 35% of income: **FAIL** ($19,000 / $53,500 = 35.5%)\n- \u2705 Max increase 100% of current limit: **PASS** ($5,000 / $14,000 = 35.7%)\n- \u26a0\ufe0f Increases above $50,000 require senior review: **N/A**\n\n### Precedent Analysis\n\nI found **5 relevant precedent credit decisions**, all approved with similar profiles:\n- Credit scores ranging from 591-775\n- Verified income ranging from $78,497-$241,489\n- All applications were approved with confidence scores 0.76-0.92\n\nHowever, these precedents don't address the specific concerns present in Laurie Li's case:\n- High existing credit utilization (71%)\n- Policy threshold violation (35.5% vs 35% max)\n\n### Recommendation\n\n**REJECT** - I recommend rejecting this credit limit increase request for the following reasons:\n\n1. **Policy Violation:** The new limit would result in total credit at 35.5% of annual income, exceeding the 35% maximum per Credit Limit Policy\n2. **High Credit Utilization:** At 71% utilization, the customer is already heavily leveraging their existing credit, suggesting they may be overextended\n3. **Risk Trajectory:** Despite substantial account balances, the combination of high utilization, recent transaction disputes, and multiple past escalations suggests elevated risk\n4. **Marginal Exceedance:** While only 0.5% over policy, this sets a precedent for exceptions\n\n**Alternative Recommendation:**\n- Offer a **$3,750 increase** instead, bringing the total limit to $17,750 (33.2% of income), which would comply with policy\n- Encourage customer to reduce utilization below 50% before requesting further increases\n- Monitor account for 6 months before reconsidering larger increases\n\nFINAL_RECOMMENDATION: reject (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 441.0
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze this credit limit increase request for Laurie Li based on the evidence provided.\n\n## Analysis of the Request\n\n**Request Details:**\n- Customer: Laurie Li (risk score: 0.263 - relatively low)\n- Current credit limit: $14,000\n- Requested increase: $5,000\n- New total limit would be: $19,000\n- Annual income: $53,500 (verified)\n- Credit score: 704\n- Current credit utilization: 71% (high)\n\n## Policy Compliance Assessment\n\n**Credit Limit Policy violations identified:**\n\n1. **Credit Score Requirement (FAIL)**: The policy requires a minimum credit score of 660. Laurie Li has a score of 704, which **meets** this requirement.\n\n2. **Total Credit Limit as % of Income (FAIL)**: Policy states total credit limit may not exceed 35% of verified annual income.\n   - Current limit: $14,000 / $53,500 = 26.2% \u2713\n   - Proposed limit: $19,000 / $53,500 = **35.5%** \u2717\n   - This **violates** the 35% cap by 0.5 percentage points\n\n3. **Single Increase Limit (PASS)**: Policy allows increases up to 100% of current limit.\n   - $5,000 / $14,000 = 35.7% \u2713\n\n4. **Senior Review Threshold (PASS)**: Not triggered (under $50,000)\n\n## Risk Factors\n\n**Concerning signals (per Jev's analysis):**\n- **Open fraud activity** (95% probability) - There is an escalated fraud detection alert (ALT000004, medium severity, risk score 0.525) from August 2026 that remains unresolved\n- **Sanctioned party exposure** (79% probability) - One counterparty is in Iran (though marked as \"clear\" sanctions status)\n- **High current utilization** (71%) - Customer is already using most of their available credit\n- **Pending transactions** - 2 pending transactions totaling ~$18k with elevated risk scores (0.3)\n\n**Mitigating factors:**\n- Employment status: employed\n- Income verified: yes\n- Two active accounts in good standing\n- Precedents show 44 credit approvals vs 14 rejections in this category\n- Low overall customer risk score (0.263)\n\n## Precedent Analysis\n\nAll 5 precedents retrieved were **approvals**, but they don't clearly support this case because:\n- The precedents don't specify whether those customers had active fraud alerts\n- Credit scores in precedents ranged from 591-775 (Laurie's 704 falls in range)\n- Income verification was standard across precedents (like this case)\n\n## Decision Rationale\n\nI recommend **REJECTION** for the following reasons:\n\n1. **Hard policy violation**: The proposed limit of $19,000 exceeds 35% of income ($18,725 maximum allowed). This is a clear breach of the Credit Limit Policy threshold.\n\n2. **Unresolved fraud alert**: The escalated fraud detection alert (ALT000004) from August 2026 is still open. Approving a credit increase while fraud investigation is ongoing creates unacceptable risk.\n\n3. **High utilization concern**: At 71% utilization, the customer is already stressed on current credit. Increasing the limit doesn't address underlying financial pressure.\n\n4. **Risk signal convergence**: Jev's model flagged 91% probability of policy violation and 95% probability of open fraud activity - both critical blockers.\n\n**What would change my mind:**\n- If the fraud alert were resolved and closed as false positive\n- If the customer could provide updated income documentation showing annual income above $54,286 (to bring 35% threshold to $19,000)\n- If this were submitted as a formal **exception request** with manager approval per the Exception Approval Authority policy (applies to amounts above $25,000, but could be invoked for policy violations)\n\nThe policy violation alone is sufficient grounds for denial. The active fraud alert makes this decision clear-cut.\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.85,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 28.8,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.59,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.73,
+            "needs_llm_decision": 0.25
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.576,
+            "violates_policy": 0.91,
+            "sanctioned_party_exposure": 0.79,
+            "open_fraud_activity": 0.95,
+            "elevated_customer_risk": 0.52,
+            "requires_manual_review": 0.31,
+            "evidence_sufficient": 0.65
+          },
+          "fast_answer_ms": 1321,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 3,
+            "notable_transactions": 2,
+            "transaction_summary": 2,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 5,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Laurie Li",
+      "customer_id": "5e683112-f8be-4b84-a922-b35b0f0f6c1a",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laurie Li? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Laurie Li. Let me search for the customer and gather relevant information.Now let me gather more information about Laurie Li's decision history and look for relevant precedents for credit limit increase decisions.Now let me gather more information about Laurie Li's decision history and search for precedents related to credit limit increases.Now let me check for any fraud patterns associated with Laurie Li's accounts.Based on my comprehensive analysis of Laurie Li's credit limit increase request, here is my evaluation:\n\n## Customer Profile Analysis\n\n**Laurie Li** is requesting a **$25,000 credit limit increase** (from current $14,000 to $39,000).\n\n### Current Financial Standing:\n- **Credit Score**: 704 (Fair to Good range)\n- **Annual Income**: $53,500 (verified)\n- **Current Credit Limit**: $14,000\n- **Credit Utilization**: 71% (HIGH - concerning)\n- **Employment Status**: Employed as Director at Garcia, Yang and Gardner (since 2017)\n- **Risk Score**: 0.263 (Low-moderate)\n- **Account History**: Two active accounts with substantial balances ($408K savings, $170K margin)\n\n### Key Concerns:\n\n1. **High Credit Utilization (71%)**: This is significantly above the recommended 30% threshold and indicates the customer is already heavily utilizing their existing credit. This is a major red flag.\n\n2. **Policy Violation**: According to the **Credit Limit Policy**, after the increase, the total credit limit would be $39,000, which represents **73% of annual income** ($39K/$53.5K). This **exceeds the policy maximum of 35%** of verified annual income.\n\n3. **Credit Score**: At 704, the score is above the minimum threshold of 660, but it's not strong enough to justify an exception to policy limits, especially given the high utilization.\n\n4. **Recent Decision History**: The customer has had several escalations across fraud, support, and trading categories, including:\n   - Fraud escalation (March 2025) with risk factors including new device, velocity trigger, new account, and high amount\n   - Trading rejection (August 2025)\n   - Multiple support escalations\n\n5. **One Flagged Transaction**: One transaction (TXN0000000027) shows as flagged with a high risk score of 0.7 and significant flagged transaction influence (0.366).\n\n### Precedent Analysis:\n\nThe system found 5 similar credit approval precedents, all involving customers with:\n- Similar or lower credit scores (606-687 range)\n- Higher verified incomes ($61K-$231K range)\n- **These were all NEW credit applications, NOT limit increases on existing high-utilization accounts**\n\n### Policy Requirements Not Met:\n\nThe **Credit Limit Policy** clearly states:\n- **Maximum total limit**: 35% of verified annual income\n- **Requested limit would be**: 73% of income (FAILS)\n- **Increases above $50,000 require senior review** (This is $25K increase, below that threshold)\n\n## Recommendation:\n\nI recommend **REJECTING** this credit limit increase request based on:\n\n1. **Policy violation**: The resulting total credit limit would be more than double the allowed 35% debt-to-income threshold\n2. **High current utilization**: 71% utilization suggests the customer is already overextended\n3. **Risk indicators**: Recent escalations and a flagged transaction in the account history\n4. **Precedents don't support**: Similar approvals were for lower-risk profiles with higher incomes\n\n### Alternative Recommendation:\n\nIf the customer can demonstrate:\n- Reduction in current credit utilization to below 30%\n- Significant income increase with verification\n- Clean transaction history for 6+ months\n\nThen a **smaller increase** (perhaps $5K-$8K, bringing total to $19K-$22K, or 35-41% of income) could be reconsidered with **senior review**.\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 98.6
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected and Jev's analysis, I must **recommend rejection** of this credit limit increase request. Here's why:\n\n## Policy Violations\n\nThe request violates the **Credit Limit Policy** in multiple ways:\n\n1. **Credit Score Below Minimum**: Laurie Li has a credit score of **704**, but after the increase their total credit limit would be $39,000 (current $14,000 + requested $25,000). However, the more critical issue is:\n\n2. **Exceeds Income-Based Limit**: The policy states total credit limit cannot exceed **35% of verified annual income**. \n   - Annual income: $53,500\n   - Maximum allowed limit: $18,725 (35% of $53,500)\n   - Current limit: $14,000\n   - Requested new limit: $39,000\n   - **This would be 73% of income - more than double the policy maximum**\n\n3. **Exceeds Single Increase Cap**: The policy allows a maximum increase of 100% of current limit. The $25,000 request is **179% of the current $14,000 limit**, well above the 100% cap.\n\n## Risk Signals\n\nSeveral concerning signals support rejection (probabilities from Jev):\n\n- **Violates policy**: 97% confidence\n- **Open fraud activity**: 95% confidence - there's an active fraud detection alert (ALT000004) with medium severity, currently **escalated** status\n- **Sanctioned party exposure**: 79% confidence - while direct parties show \"clear\" status, there are counterparties in Iran\n- **Requires manual review**: 93% confidence\n- **Elevated customer risk**: 54% confidence\n\n## Current Account Status\n\n- **High credit utilization**: 71% (concerning indicator of credit stress)\n- **Active fraud alert**: Medium severity, escalated status since August 2026\n- **Pending transactions**: 2 transactions with elevated risk scores (0.3)\n- **Recent escalations**: Multiple recent escalation decisions in the customer's history\n\n## Precedent Analysis\n\nWhile the 5 precedents shown were all approvals, they are **not applicable** here because:\n- Those cases likely involved customers who met the policy requirements\n- Jev assessed \"precedents_favor_approval\" at only **40.6% confidence** - meaning precedents actually lean against approval\n\n## Recommendation\n\nEven if the customer's credit score of 704 is reasonable and income is verified, the fundamental policy violations\u2014especially the income-to-limit ratio\u2014make this request ineligible for approval without a formal policy exception. Combined with the open fraud alert and high credit utilization, this presents elevated risk.\n\nThe customer should either:\n1. Request a smaller increase that stays within the 35% income threshold (maximum ~$4,700 increase)\n2. Seek formal exception approval per the Exception Approval Authority policy (requires manager approval for amounts above $25,000)\n3. Resolve the outstanding fraud alert before reapplying\n\nFINAL_RECOMMENDATION: reject (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.93,
+          "seconds": 23.3,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.9,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.93,
+            "needs_llm_decision": 0.07
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.406,
+            "violates_policy": 0.97,
+            "sanctioned_party_exposure": 0.79,
+            "open_fraud_activity": 0.95,
+            "elevated_customer_risk": 0.54,
+            "requires_manual_review": 0.93,
+            "evidence_sufficient": 0.72
+          },
+          "fast_answer_ms": 1176,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 3,
+            "notable_transactions": 2,
+            "transaction_summary": 2,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 5,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Andrea Davis",
+      "customer_id": "c4da853b-45ba-4352-b052-531c42040cc4",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Andrea Davis? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll analyze this credit limit increase request for Andrea Davis. Let me gather the relevant information.Now let me get more information about Andrea Davis's decision history and check for any fraud patterns on their account.Based on my analysis of Andrea Davis's credit limit increase request for $5,000, here is my assessment:\n\n## Customer Profile - Andrea Davis\n\n**Financial Standing:**\n- **Credit Score:** 719 (Good)\n- **Annual Income:** $213,500 (verified)\n- **Current Credit Limit:** $45,500\n- **Credit Utilization:** 53%\n- **Risk Score:** 0.181 (Low)\n- **Employment Status:** Employed as Contractor at Palmer LLC since 2020\n- **Account Balance:** $161,500.29 in savings account\n\n## Risk Factors and Concerns\n\n**1. Employment Concern:**\nAndrea Davis works for Palmer LLC, which has a **\"watchlist\" sanctions status**. While this doesn't disqualify the customer, it requires heightened scrutiny for any credit decisions.\n\n**2. Account Activity Issues:**\n- **One flagged transaction** (TXN0000001225, $310.24) with risk score 0.7\n- **One fraud rejection decision** from October 2025: Transaction was blocked due to matching fraud typology FT-2354, velocity check failure (3 transactions in 15 minutes), and geographic anomaly\n- **One critical geographic anomaly alert** (resolved in September 2026)\n- The account is classified as **\"high\" risk tier** despite the low individual risk score\n\n**3. Fraud Pattern Analysis:**\n- Account has 1 flagged transaction out of 11 related transactions\n- Community analysis shows 4.07% of transactions in related account network are flagged\n- This is within acceptable ranges but warrants monitoring\n\n**4. Decision History:**\n- **Credit approval** (March 2025, confidence 0.922) - positive precedent\n- **Support escalation** (December 2025, confidence 0.912)\n- **Fraud rejection** (October 2025, confidence 0.705)\n\n## Positive Factors\n\n- **Strong income:** $213,500 annually with verification\n- **Good credit score:** 719\n- **Low overall risk score:** 0.181\n- **Substantial account balance:** $161,500+\n- **Employment verified** and stable since 2020\n\n## Recommendation\n\nWhile Andrea Davis demonstrates strong financial metrics (high income, good credit score, substantial savings), there are **significant concerns** that warrant caution:\n\n1. The **employer's watchlist status** requires enhanced due diligence\n2. **Recent fraud activity** (October 2025 blocked transaction) is a red flag\n3. **53% credit utilization** is moderately high - increasing the limit to $50,500 could enable further utilization that might be risky given the fraud history\n4. The account is designated **\"high\" risk tier** by the system despite good personal metrics\n\nThe requested $5,000 increase would bring the limit to $50,500. Given the fraud concerns and employer watchlist status, I recommend **rejecting this request** or requiring a **manual escalation for senior review** before approval.\n\nNo precedents were found for similar credit limit increase scenarios in the system to provide comparative guidance.\n\nFINAL_RECOMMENDATION: reject (confidence 0.65)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "reject",
+          "confidence": 0.65,
+          "seconds": 33.7
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze the evidence to make a final recommendation on Andrea Davis's $5,000 credit limit increase request.\n\n## Analysis of Key Factors\n\n**Current Financial Profile:**\n- Credit score: 719 (good, above policy minimum of 660)\n- Annual income: $213,500 (verified)\n- Current credit limit: $45,500\n- Credit utilization: 53% (moderate-high)\n- Requested increase: $5,000 (to $50,500 total)\n\n**Policy Compliance Check:**\n\nLooking at the **Credit Limit Policy** thresholds:\n\n1. \u2705 **Minimum credit score (660)**: Andrea's 719 exceeds this\n2. \u2705 **Max increase % of current limit (100%)**: The $5,000 increase is only 11% of the current $45,500 limit\n3. \u26a0\ufe0f **Total limit cannot exceed 35% of income**: \n   - New limit would be: $50,500\n   - 35% of $213,500 income = $74,725\n   - Andrea would be at 24% of income - **well within policy**\n4. \u26a0\ufe0f **Senior review required above $50,000**: The new total of $50,500 slightly exceeds this threshold\n\n**Risk Factors:**\n\n1. **Employer on watchlist**: Palmer LLC (Andrea's employer) has \"watchlist\" sanctions status in Paraguay - this is concerning but not a hard block\n2. **Elevated customer risk**: Jev flagged this at 0.73 probability - Andrea's overall risk score of 0.181 is relatively low, but recent activity raises questions\n3. **Flagged transaction**: One transaction for $739.07 with 0.7 risk score on 2026-01-03\n4. **High-risk account tier**: The savings account is marked \"high\" risk tier with $161,500 balance\n\n**Precedent Analysis:**\n\nAll 4 precedents retrieved were **approvals** for credit applications with similar profiles:\n- Decision 94cd7f9d: Approved with credit score 606 (lower than Andrea's 719)\n- Decision 8450e62e: Approved with credit score 591 and income $81,560\n- Decision fc0d7a21: Approved with credit score 760 and income $146,125\n- Decision 842f5140: Approved with credit score 814 and income $229,269\n\nJev's assessment shows precedents favor approval at 0.6575 probability.\n\n**Decision History:**\nAndrea has one prior credit approval (March 2025) that was granted with confidence 0.922, though that was with a lower credit score (606) and lower income ($142,139).\n\n## Final Assessment\n\n**Factors supporting approval:**\n- Strong credit score (719) and verified high income ($213,500)\n- Request is modest (11% increase) and stays well within income-based limits (24% vs 35% max)\n- Credit utilization at 53% suggests she's using credit but not maxed out\n- Strong precedent support for similar profiles\n- Previous credit approval in her history\n\n**Factors supporting rejection/escalation:**\n- Employer on sanctions watchlist is a compliance concern\n- Recent flagged transaction (January 2026) \n- Account classified as high-risk tier\n- New total limit ($50,500) crosses the $50,000 senior review threshold per policy\n\n## Recommendation\n\nI recommend **APPROVAL** with the condition that this receives senior review as required by policy (new limit exceeds $50,000). The employer watchlist status requires monitoring but is not disqualifying - watchlist differs from sanctioned. The fundamentals are strong: excellent income-to-limit ratio, good credit score, modest increase request, and consistent precedent support. The single flagged transaction appears to be an anomaly among 10 completed transactions totaling $132K.\n\n**What would change my mind:** If the flagged transaction investigation revealed fraud indicators, if the employer's watchlist status escalated to active sanctions, or if additional flagged transactions emerged showing a pattern.\n\nFINAL_RECOMMENDATION: approve (confidence 0.72)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.72,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve"
+          },
+          "final": "approve",
+          "confidence": 0.72,
+          "seconds": 27.1,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.24,
+          "jev_probabilities": {
+            "yes": 0.16,
+            "no": 0.49,
+            "needs_llm_decision": 0.35
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.6575,
+            "violates_policy": 0.25,
+            "sanctioned_party_exposure": 0.04,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.73,
+            "requires_manual_review": 0.64,
+            "evidence_sufficient": 0.65
+          },
+          "fast_answer_ms": 836,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 1,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 3,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Andrea Davis",
+      "customer_id": "c4da853b-45ba-4352-b052-531c42040cc4",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Andrea Davis? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Andrea Davis. Let me search for their customer profile and review their history.Now let me gather more information about Andrea Davis's decision history and look for relevant precedents for credit limit increase decisions.Based on my analysis of Andrea Davis's profile and historical precedents, here is my evaluation of the $25,000 credit limit increase request:\n\n## Customer Profile Analysis\n\n**Andrea Davis** presents a **strong financial profile**:\n- **Credit Score**: 719 (well above the 660 minimum threshold)\n- **Annual Income**: $213,500 (verified)\n- **Current Credit Limit**: $45,500\n- **Credit Utilization**: 53% (moderate)\n- **Risk Score**: 0.181 (low)\n- **Employment**: Employed as Contractor at Palmer LLC since 2020\n- **Account Balance**: $161,500.29 in savings account\n\n## Policy Compliance Check\n\nAccording to the **Credit Limit Policy** (effective 2024-01-01):\n- \u2705 **Minimum Credit Score (660)**: Andrea's 719 exceeds this\n- \u2705 **Maximum Total Limit (35% of income)**: Requested new limit would be $70,500, which is 33% of $213,500 annual income\n- \u2705 **Maximum Single Increase (100% of current limit)**: $25,000 is 55% of current $45,500 limit\n- \u26a0\ufe0f **Senior Review Required**: Since the increase is below $50,000, senior review is not required\n\n## Risk Factors Identified\n\n**Positive Indicators**:\n- Excellent credit score and verified high income\n- Low overall risk score (0.181)\n- Substantial savings balance ($161,500)\n- Stable employment history (6+ years with current employer)\n\n**Concerning Factors**:\n1. **Employer on Watchlist**: Palmer LLC has sanctions_status \"watchlist\" (not sanctioned, but monitored)\n2. **Past Fraud Rejection**: One fraud-related transaction rejection in October 2025 (velocity check failed, geographic anomaly, new device)\n3. **Flagged Transaction**: One transaction currently flagged (risk score 0.7)\n4. **Credit Utilization**: At 53%, relatively high given current limit\n5. **Geographic Anomaly Alert**: Critical alert triggered in December 2025 (now resolved)\n\n## Precedent Analysis\n\nI reviewed 5 similar credit approval precedents, all showing approvals for customers with:\n- Credit scores ranging from 606-763\n- Verified income\n- Good standing accounts\n- Confidence scores between 0.66-0.92\n\nAndrea's profile is **stronger** than most precedents, particularly in terms of income and credit score.\n\n## Recommendation\n\n**I recommend APPROVAL with conditions:**\n\nThe customer has strong fundamentals that support the increase. However, given:\n- The employer watchlist status\n- Recent fraud activity history\n- Current elevated credit utilization\n\n**Conditions**:\n1. **Reduced credit utilization monitoring**: Customer should be encouraged to reduce utilization below 40% within 90 days\n2. **Enhanced fraud monitoring**: Given past fraud rejection and geographic anomalies, implement enhanced transaction monitoring for 6 months\n3. **Consider smaller increase**: Alternatively, approve $15,000-$20,000 initially (bringing total to $60,500-$65,500), with option to reassess in 6 months\n\nThe customer's strong income ($213k), excellent credit score (719), low risk score (0.181), and substantial assets support approval. The watchlist employer status is mitigated by the length of employment and income verification.\n\n**Confidence**: 0.75 - Strong financials support approval, but fraud history and employer watchlist warrant cautious monitoring.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 38.1
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze the evidence to make a final decision on Andrea Davis's $25,000 credit limit increase request.\n\n## Analysis of Key Evidence\n\n**Customer Profile:**\n- Current credit limit: $45,500\n- Requested increase: $25,000 (55% increase)\n- New total would be: $70,500\n- Credit score: 719 (good, above policy minimum of 660)\n- Annual income: $213,500 (verified)\n- Credit utilization: 53% (moderately high)\n- Customer risk score: 0.181 (relatively low)\n\n**Policy Compliance Check:**\n\nLooking at the **Credit Limit Policy** (ID: 39cfe510-5210-4204-bab1-591e2b6b5071):\n1. \u2705 Min credit score 660: Andrea has 719 - **PASS**\n2. \u2705 Max increase 100% of current limit: $25k is 55% of $45.5k - **PASS**\n3. \u274c **Max total limit 35% of income: $70,500 would be 33% of $213,500 - **PASS** (just within limits)\n4. \u26a0\ufe0f Senior review required above $50k: New limit of $70.5k exceeds this threshold\n\n**Risk Factors:**\n\n*Concerning:*\n- Employer (Palmer LLC) has **watchlist sanctions status** - not sanctioned, but monitored\n- One **flagged transaction** ($739.07, risk score 0.7) on January 3, 2026\n- Elevated customer risk signal: 0.73 probability according to Jev\n- High current utilization at 53%\n\n*Favorable:*\n- Strong income-to-limit ratio\n- Good credit score (719)\n- Income verified at $213,500\n- Low sanctioned party exposure (0.04)\n- Account in good standing with $161,500 balance in savings\n\n**Precedent Analysis:**\n\nAll four precedents showed **approvals** for credit increases with similar profiles:\n- ID 842f5140: Approved for customer with 814 credit score, $229k income (similarity: 0.766)\n- ID fc0d7a21: Approved for customer with 760 credit score, $146k income (similarity: 0.765)\n- ID eb611eec: Approved for customer with 674 credit score, $231k income (similarity: 0.763)\n- ID 8450e62e: Approved for customer with 591 credit score, $81k income (similarity: 0.764)\n\nThe precedents favor approval (0.655 probability per Jev), though Andrea's employer watchlist status is a differentiator.\n\n**Decision History:**\n- Previous credit approval in March 2025 with similar risk profile\n- One fraud rejection (October 2025) for velocity/geographic issues\n- One escalation (December 2025) for support case\n\n## Final Decision\n\n**APPROVE with conditions**\n\n**Reasoning:**\n\n1. **Policy Compliance**: Andrea meets all hard requirements of the Credit Limit Policy - credit score well above 660, and the new total of $70,500 represents only 33% of verified annual income (within the 35% limit).\n\n2. **Strong Financial Profile**: Despite 53% utilization, she has substantial verified income ($213,500), a good credit score (719), and significant savings ($161,500).\n\n3. **Precedent Support**: All similar cases resulted in approval, and Andrea's profile is stronger than some of those (particularly the 591 credit score case that was approved).\n\n4. **Risk Mitigation**: While the watchlist employer status and flagged transaction warrant attention, these don't rise to the level of rejection given:\n   - Watchlist \u2260 sanctioned (just enhanced monitoring)\n   - Only 1 flagged transaction out of 11 total\n   - Low overall customer risk score (0.181)\n\n**Conditions:**\n- Requires **senior review** per policy (increase puts total above $50k threshold)\n- Monitor employer sanctions status ongoing\n- Enhanced transaction monitoring for next 90 days given the recent flagged transaction\n\n**What would change my mind:** \n- If Palmer LLC moved from watchlist to active sanctions\n- If additional fraudulent transactions emerge\n- If income verification was not current or became unverified\n- If credit utilization remained above 70% for extended period\n\nFINAL_RECOMMENDATION: approve (confidence 0.72)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.72,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve"
+          },
+          "final": "approve",
+          "confidence": 0.72,
+          "seconds": 30.4,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.23,
+          "jev_probabilities": {
+            "yes": 0.16,
+            "no": 0.49,
+            "needs_llm_decision": 0.35
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.655,
+            "violates_policy": 0.38,
+            "sanctioned_party_exposure": 0.04,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.73,
+            "requires_manual_review": 0.7,
+            "evidence_sufficient": 0.59
+          },
+          "fast_answer_ms": 620,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 1,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 3,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Michael Powell",
+      "customer_id": "611a57d1-ab2f-414c-9564-f82156270421",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Michael Powell? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Michael Powell. Let me gather the relevant information.Now let me get Michael Powell's past decision history and check for fraud patterns:Based on my analysis of Michael Powell's profile and the available data, I have completed my evaluation of this credit limit increase request.\n\n## Customer Profile Analysis\n\n**Michael Powell** presents a strong credit profile:\n- **Credit Score**: 742 (good)\n- **Current Credit Limit**: $9,500\n- **Requested Increase**: $5,000 (to $14,500 total)\n- **Credit Utilization**: 27% (healthy - well below 30% threshold)\n- **Annual Income**: $97,500 (verified)\n- **Employment Status**: Employed at Robinson, Nguyen and Tate (Healthcare sector)\n- **Employer Risk Rating**: A (clear sanctions status)\n- **Customer Risk Score**: 0 (excellent)\n\n## Account Activity\n\nMichael Powell owns 2 accounts:\n1. **Checking Account (ACC00000018)**: Active, $150,779 balance, low risk tier\n2. **Margin Account (ACC00000290)**: Currently frozen, $89,562 balance\n\nThe checking account shows normal transaction activity with no flagged transactions directly associated with it. The fraud pattern analysis shows **0 flagged transactions** on the primary checking account, and the community-level fraud rate is minimal at 6%.\n\n## Decision History\n\nMichael Powell has 3 prior decisions on record:\n- **Trading approval** (Dec 2024) - approved despite some risk factors\n- **Credit exception** (Mar 2026) - approved with 75.6% confidence\n- **Trading rejection** (Aug 2026) - rejected due to unusual patterns\n\nThe prior **credit exception** that was approved suggests this customer has been granted accommodations before, though the recent trading rejection indicates active risk monitoring.\n\n## Key Considerations\n\n**Positive Factors:**\n- Excellent credit score (742)\n- Very low credit utilization (27%)\n- Strong verified income ($97,500)\n- Zero customer risk score\n- Stable employment with A-rated employer\n- No fraud patterns on primary account\n- The $5,000 increase represents a reasonable 53% bump that still keeps total exposure manageable\n\n**Concerns:**\n- One frozen margin account (though this may be standard risk management)\n- Recent trading rejection suggests some behavioral flags\n- Prior credit exception indicates this customer has required policy flexibility before\n- **No specific credit limit increase policies were found in the system**, making this a judgment call\n\n## Recommendation\n\nDespite the lack of formal credit limit increase policies in the system, the fundamentals strongly support approval. Michael Powell demonstrates:\n- Financial capacity (income-to-limit ratio is very healthy)\n- Responsible credit usage (27% utilization)\n- Stable employment and verified income\n- Clean fraud profile\n\nThe requested $5,000 increase would bring the total limit to $14,500, which represents only 14.9% of annual income - a conservative exposure level. The low credit utilization suggests the customer is not overextended and has been managing credit responsibly.\n\nThe prior credit exception and trading rejection are noted but do not outweigh the strong fundamentals. I recommend **approval** with standard monitoring.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "find_precedents",
+            "get_policy",
+            "get_customer_decisions",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 34.6
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Looking at the evidence for Michael Powell's $5,000 credit limit increase request, I need to weigh several competing factors:\n\n## Positive Factors\n\n**Strong Credit Profile:**\n- Credit score of 742 (well above the 660 minimum in Credit Limit Policy)\n- Low credit utilization at 27%\n- Verified annual income of $97,500\n- Employment status: employed\n\n**Policy Compliance:**\n- Current limit: $9,500\n- Requested increase: $5,000 (52.6% of current limit, well under the 100% max)\n- New total would be: $14,500\n- Percentage of income: 14.9% (well under the 35% maximum)\n- Below the $50,000 senior review threshold\n\n**Precedent Support:**\n- Three similar credit approvals found with semantic similarity ~75%\n- Past credit exception was approved (March 2026)\n- Jev signal shows precedents_favor_approval: 68.7%\n\n## Concerning Factors\n\n**Active Risk Indicators:**\n- **Two open alerts under investigation:**\n  - ALT000006: Fraud detection alert (medium severity, risk score 0.773) from Sept 9, 2026\n  - ALT000042: Pattern match alert (critical severity, risk score 0.391) from April 29, 2026\n- One frozen margin account (ACC00000290) with $89,562 balance\n- Jev signals: open_fraud_activity (96%), elevated_customer_risk (78%)\n\n**Counterparty Risk:**\n- Multiple transaction counterparties with D-rated risk ratings\n- Co-owner on checking account is Underwood LLC (Iran-based, C-rated) - though sanctions status is clear\n\n## Analysis\n\nThe fundamental issue is the **timing collision**: Michael Powell has excellent creditworthiness metrics that normally warrant approval, but there are **two active fraud investigations** and one frozen account. The Credit Limit Policy focuses on income ratios and credit scores but doesn't explicitly address pending fraud alerts.\n\n**What would change my mind:** If the fraud detection alert (ALT000006) and pattern match alert (ALT000042) were resolved and showed no actual fraud, or if the frozen margin account were explained by a legitimate compliance hold unrelated to fraud.\n\n## Decision\n\nGiven that:\n1. We have **open fraud investigations** (96% confidence signal)\n2. One account is **currently frozen**\n3. The alerts are recent (critical alert still investigating from April, fraud alert from 9 days ago)\n4. No policy explicitly permits extending credit during active fraud investigations\n\nI recommend **deferring this request** until the alerts are resolved. Extending credit while fraud is being investigated creates unacceptable exposure for the institution.\n\n**FINAL_RECOMMENDATION: reject (confidence 0.75)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 22.1,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.41,
+          "jev_probabilities": {
+            "yes": 0.07,
+            "no": 0.6,
+            "needs_llm_decision": 0.33
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.6867,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": 0.81,
+            "open_fraud_activity": 0.96,
+            "elevated_customer_risk": 0.78,
+            "requires_manual_review": 0.14,
+            "evidence_sufficient": 0.75
+          },
+          "fast_answer_ms": 652,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 2,
+            "decision_history": 3,
+            "precedents": 3,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Michael Powell",
+      "customer_id": "611a57d1-ab2f-414c-9564-f82156270421",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Michael Powell? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Michael Powell. Let me search for the customer and gather relevant information.Now let me gather more detailed information about Michael Powell's credit history and find relevant precedents for credit limit increase decisions.Based on my analysis of Michael Powell's credit profile and relevant precedents, here is my assessment:\n\n## Customer Profile Analysis\n\n**Michael Powell** presents a strong credit profile:\n- **Credit Score**: 742 (well above the policy minimum of 660)\n- **Annual Income**: $97,500 (verified)\n- **Current Credit Limit**: $9,500\n- **Credit Utilization**: 27% (healthy level)\n- **Employment**: Employed at Robinson, Nguyen and Tate (Healthcare industry, since 2021)\n- **Employer Sanctions Status**: Clear\n- **Risk Score**: 0 (excellent)\n- **Account Status**: 2 active accounts with low risk tiers\n\n## Policy Compliance Check\n\nThe **Credit Limit Policy** requires:\n1. \u2705 **Minimum credit score 660**: Powell has 742\n2. \u2705 **Max total limit \u2264 35% of income**: New limit would be $34,500 (35.4% of $97,500) - **SLIGHT CONCERN**\n3. \u2705 **Single increase \u2264 100% of current limit**: $25,000 increase is 263% of current $9,500 limit - **POLICY VIOLATION**\n4. \u274c **Increases below $50,000**: $25,000 is under threshold (no senior review required)\n\n## Precedent Analysis\n\nI found 5 highly relevant credit approvals (86%+ similarity):\n- All involved customers with credit scores between 655-760\n- All had verified income\n- Average approval confidence: 0.825\n- Most common decision: **Approval with standard credit policy applied**\n\n## Risk Assessment\n\n**Positive Factors**:\n- Excellent credit score (742)\n- Low credit utilization (27%)\n- Zero risk score\n- Verified income and employment\n- Clean employer sanctions check\n- No fraud patterns detected in account community (0 flagged transactions on this account)\n- Strong existing account balances ($150,779 in checking account)\n\n**Concerns**:\n- The $25,000 increase represents 263% of current limit, **exceeding the 100% policy threshold**\n- New total limit of $34,500 would be 35.4% of income, **marginally exceeding the 35% policy cap**\n- This requires either policy exception or reduction in requested amount\n\n## Recommendation\n\nI recommend **conditional approval** with one of two options:\n\n**Option 1 (Recommended)**: Approve a **$9,500 increase** (bringing total to $19,000), which:\n- Complies with the 100% increase limit policy\n- Keeps total limit at 19.5% of income (well under 35% cap)\n- Still provides meaningful credit expansion\n\n**Option 2**: Approve the full $25,000 increase as a **policy exception** based on:\n- Outstanding credit score of 742\n- Zero risk indicators\n- Strong financial position\n- Low utilization showing responsible credit management\n\nHowever, Option 2 requires senior review per policy and formal exception documentation.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 35.5
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the evidence collected, I must **reject this credit limit increase request** for Michael Powell. Here's why:\n\n## Critical Risk Factors\n\n**1. Active Fraud Investigation (96% confidence)**\n- Alert ALT000006: Active fraud detection alert (medium severity, investigating)\n- Alert ALT000042: Critical pattern match alert (under investigation)\n- Both alerts are currently open with no resolution\n\n**2. Frozen Account (85% sanctioned party exposure signal)**\n- Account ACC00000290 (margin account with $89,562 balance) is **frozen**\n- This account has transactions with Brown PLC (Yemen, risk rating D)\n- Account freeze indicates serious compliance or fraud concerns\n\n**3. Policy Violation (95% confidence)**\nThe request violates our Credit Limit Policy in multiple ways:\n- **Credit score requirement**: Michael has a 742 score (meets the 660 minimum) \u2713\n- **Income limit breach**: Current limit is $9,500. Requested increase of $25,000 would bring total to $34,500\n  - This equals 35.4% of his $97,500 annual income\n  - Policy maximum: 35% of income = $34,125\n  - **The new limit would exceed the policy cap by $375**\n- **Single increase cap**: The $25,000 increase is 263% of current limit, far exceeding the 100% maximum allowed\n\n**4. Elevated Customer Risk (80% confidence)**\n- Customer risk score is 0, but contextual factors raise concerns\n- Account frozen status\n- Multiple high-risk counterparties (3 organizations with D ratings)\n- Co-ownership with Underwood LLC in Iran (risk rating C)\n\n## Precedents Analysis (48.5% favor approval)\n\nThe two precedents found show approvals with:\n- Similar credit scores (606, 615 vs 742)\n- Higher incomes ($142K, $248K vs $97.5K)\n- **No mention of frozen accounts or active fraud alerts**\n\nThese precedents do not support approval in the presence of active investigations.\n\n## What Happens Next\n\nThis case **requires manual review and escalation** (87% confidence) because:\n1. The frozen account must be resolved before any credit extension\n2. Active fraud alerts must be investigated and closed\n3. If exceptional approval is considered after investigations clear, it requires manager approval per Exception Approval Authority policy (increases above $25,000)\n\n**Recommendation**: Reject the request now. Customer should reapply after:\n- Fraud investigations are resolved\n- Frozen account is addressed\n- Or request a smaller increase that stays within policy limits (~$9,500 or less)\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.85,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 20.8,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.77,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.85,
+            "needs_llm_decision": 0.15
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.485,
+            "violates_policy": 0.95,
+            "sanctioned_party_exposure": 0.85,
+            "open_fraud_activity": 0.96,
+            "elevated_customer_risk": 0.8,
+            "requires_manual_review": 0.87,
+            "evidence_sufficient": 0.62
+          },
+          "fast_answer_ms": 539,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 2,
+            "decision_history": 3,
+            "precedents": 2,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Christian Leblanc",
+      "customer_id": "da05a593-250f-4ffb-abd7-fdbe2875971e",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Christian Leblanc? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Christian Leblanc. Let me search for the customer and gather relevant information.Good! I found Christian Leblanc. Now let me gather more information about their decision history and look for relevant precedents for credit limit increases.Let me check for any fraud patterns on the customer's accounts and get more specific information about their transaction history.Now let me analyze the complete picture. Based on the information gathered, here's my assessment:\n\n## Credit Limit Increase Assessment for Christian Leblanc\n\n### Customer Profile Summary:\n- **Current Credit Limit:** $5,000\n- **Requested Increase:** $5,000 (to total $10,000)\n- **Credit Score:** 691 (Fair range)\n- **Credit Utilization:** 40% (healthy)\n- **Annual Income:** $40,000\n- **Employment Status:** Employed\n- **Income Verified:** No \u274c\n- **Risk Score:** 0 (Low risk)\n- **Account Age:** Multiple active accounts since 2022-2026\n\n### Account Holdings:\nChristian maintains 3 active accounts with substantial balances:\n1. **Checking Account (ACC00000028):** $386,446.76 - Medium risk tier\n2. **Margin Account (ACC00000140):** $257,688.80 - Medium risk tier  \n3. **Trading Account (ACC00000335):** $294,516.18 - Medium risk tier\n\n**Total Assets Under Management:** ~$938,651.74\n\n### Decision History:\nChristian has 4 prior decisions on record:\n1. **Account Management Approval** (March 2025) - Confidence: 80.1%\n2. **Support Case Approval** (October 2025) - Confidence: 95.9%\n3. **Fraud Rejection** (May 2025) - Transaction blocked due to velocity check failure and geographic anomaly\n4. **Support Case Approval** (November 2025) - Confidence: 84.8%\n\n### Key Risk Factors:\n\n**Positive Indicators:**\n- Very low overall risk score (0)\n- Healthy credit utilization at 40%\n- Substantial assets under management (~$938K)\n- Employed status\n- Primarily approved decisions in history\n- Low fraud exposure in community (5.6% flagged transactions)\n- Requested increase is conservative relative to assets\n\n**Concerns:**\n- **Income not verified** - This is a significant gap for credit decisions\n- **Previous fraud incident** (May 2025) - Transaction blocked for unusual patterns and velocity triggers\n- **Credit score of 691** - Fair range, not excellent\n- **Debt-to-Income consideration** - $10K total limit on $40K income = 25% ratio (acceptable but not conservative)\n- **No precedent decisions found** - Unable to reference similar credit limit increase decisions\n- **No relevant policies found** - No specific credit limit increase policies in system\n\n### Recommendation:\n\nGiven the mixed profile, I recommend **CONDITIONAL APPROVAL** with verification requirements:\n\n**Recommended Actions:**\n1. **Verify income** before finalizing the increase\n2. **Approve $3,000 increase** (to $8,000 total) rather than full $5,000 - this represents 20% debt-to-income ratio\n3. **Monitor for 90 days** before considering additional increases\n4. **Require explanation** of the May 2025 fraud incident resolution\n\n**Rationale:**\nWhile Christian has substantial assets under management suggesting financial stability, the unverified income combined with a fair credit score and past fraud incident warrant a cautious approach. The customer's account balances significantly exceed the requested credit limit, suggesting capacity to pay, but proper underwriting requires income verification. A partial increase demonstrates good faith while managing risk appropriately.\n\n**Alternative:** If income verification confirms $40K+ annual income and the fraud incident was satisfactorily resolved, approve the full $5,000 increase.\n\nFINAL_RECOMMENDATION: approve (confidence 0.65)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.65,
+          "seconds": 39.8
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze this credit limit increase request for Christian Leblanc based on the pre-collected evidence.\n\n## Analysis of the Request\n\n**Request Details:**\n- Customer: Christian Leblanc\n- Current credit limit: $5,000\n- Requested increase: $5,000 (100% increase to $10,000 total)\n- Annual income: $40,000 (unverified)\n- Credit score: 691\n\n## Policy Compliance Assessment\n\n**Credit Limit Policy Requirements:**\n1. \u2705 **Minimum credit score 660**: Customer has 691 - meets requirement\n2. \u26a0\ufe0f **Max 35% of verified annual income**: This is the critical issue\n   - New total limit would be: $10,000\n   - 35% of $40,000 income = $14,000 maximum allowed\n   - **However, income is NOT verified** (income_verified: false)\n3. \u2705 **Max 100% increase of current limit**: $5,000 increase on $5,000 limit = 100% - at the policy maximum but acceptable\n4. \u2705 **Senior review threshold ($50,000)**: Not triggered\n\n## Risk Factors\n\n**Positive Indicators:**\n- Credit score of 691 is above the 660 minimum and decent\n- Current credit utilization at 40% shows reasonable use\n- Customer risk score: 0 (clean)\n- Three active accounts with healthy balances ($938,651 total)\n- No sanctions exposure - all parties clear\n- Limited support issues (2 resolved tickets, both low priority)\n- Employment status: employed\n\n**Negative Indicators:**\n- **Income is unverified** - this is the deal-breaker for policy compliance\n- One flagged transaction ($463.61, risk score 0.7) as recently as Sept 14, 2026\n- One geographic anomaly alert (medium severity, resolved)\n- Past fraud decision rejection in the customer's history (May 2025)\n- Elevated customer risk signal probability: 0.62\n- Low annual income ($40,000) relative to existing account balances\n\n## Precedent Analysis\n\nAll 5 precedents found were **approvals** for credit applications with:\n- Similar semantic similarity scores (0.76+)\n- Verified incomes ranging from $81,560 to $248,083\n- Credit scores from 591 to 775\n\n**Key difference**: All precedents mention \"stable income **verified**\" - this case lacks income verification.\n\n## Decision Rationale\n\n**I recommend REJECTION** for the following reasons:\n\n1. **Policy Violation - Unverified Income**: The Credit Limit Policy's 35% income cap explicitly requires \"verified annual income.\" This customer's income is flagged as unverified. We cannot assess compliance with the income-to-credit ratio requirement without verification.\n\n2. **Risk Signal Contradiction**: While the credit score meets minimum requirements, the elevated customer risk signal (0.62 probability) combined with recent flagged activity and past fraud rejection suggests caution is warranted.\n\n3. **Precedent Deviation**: All similar approved cases had verified income. Approving without verification would set a precedent inconsistent with policy.\n\n4. **Low Confidence Appropriate**: Jev's 0.24 confidence and escalation was correct - this case has conflicting signals that required human judgment.\n\n## What Would Change My Mind\n\nI would approve if:\n- Income verification is completed and confirms $40,000+ annual income\n- OR customer requests a smaller increase (e.g., $2,500) while we await income verification\n- OR customer provides alternative creditworthiness documentation (tax returns, pay stubs)\n\n## Recommendation Path Forward\n\nThe customer should be informed that we need income verification before processing this increase. Once verified, this should be an approvable request given the credit score and utilization metrics.\n\nFINAL_RECOMMENDATION: reject (confidence 0.75)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 27.6,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.24,
+          "jev_probabilities": {
+            "yes": 0.13,
+            "no": 0.49,
+            "needs_llm_decision": 0.38
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.46,
+            "violates_policy": 0.17,
+            "sanctioned_party_exposure": 0.29,
+            "open_fraud_activity": 0.08,
+            "elevated_customer_risk": 0.62,
+            "requires_manual_review": 0.16,
+            "evidence_sufficient": 0.62
+          },
+          "fast_answer_ms": 603,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 8,
+            "transaction_summary": 4,
+            "support_tickets": 2,
+            "alerts": 2,
+            "decision_history": 4,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Christian Leblanc",
+      "customer_id": "da05a593-250f-4ffb-abd7-fdbe2875971e",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Christian Leblanc? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Christian Leblanc. Let me gather the necessary information.Now let me gather more information about Christian Leblanc's decision history and look for relevant precedents:## Analysis of Credit Limit Increase Request for Christian Leblanc\n\nBased on my review of the Context Graph and customer profile, here is my assessment:\n\n### Customer Profile Summary:\n- **Current Credit Limit:** $5,000\n- **Requested Increase:** $25,000 (5x increase)\n- **Credit Score:** 691 (Fair/Good range)\n- **Annual Income:** $40,000 (unverified)\n- **Credit Utilization:** 40% ($2,000 of current $5,000 limit)\n- **Employment Status:** Employed\n- **Risk Score:** 0 (low)\n- **Account Count:** 3 active accounts with substantial balances\n  - Checking: $386,446.76\n  - Margin: $257,688.80\n  - Trading: $294,516.18\n\n### Decision History:\nChristian Leblanc has 4 prior decisions on record:\n1. **Support approval** (Nov 2025) - High confidence (0.848), risk factor: high_amount\n2. **Account management approval** (Mar 2025) - High confidence (0.801)\n3. **Fraud rejection** (May 2025) - Transaction blocked due to velocity check failure (10 transactions in 26 minutes) and geographic anomaly\n4. **Support approval** (Oct 2025) - Very high confidence (0.959) despite multiple risk factors\n\n### Risk Factors Identified:\n\n**Concerns:**\n1. **Income-to-Credit Ratio:** The $25,000 requested limit would be 62.5% of the customer's unverified annual income of $40,000. This is extremely high and poses significant repayment risk.\n2. **Unverified Income:** The income has not been verified, adding uncertainty to repayment capacity.\n3. **Previous Fraud Incident:** A transaction was blocked in May 2025 for suspicious velocity patterns and geographic anomalies, suggesting potential account compromise risk.\n4. **No Precedents Found:** No similar credit limit increase decisions were found in the system for this customer profile.\n5. **No Credit Limit Policy:** No specific credit limit increase policy exists in the system to provide guidance on thresholds.\n\n**Positive Factors:**\n1. **Substantial Account Balances:** Total of ~$938,000 across 3 accounts demonstrates significant financial capacity.\n2. **Moderate Credit Utilization:** 40% utilization shows responsible credit management.\n3. **Decent Credit Score:** 691 is in the fair-to-good range.\n4. **Low Overall Risk Score:** Customer has a risk score of 0.\n5. **Fraud Pattern Check:** Only 1 flagged transaction out of 17 related transactions (5.6% community fraud rate is low).\n\n### Recommendation:\n\nI **recommend REJECTING** this request as structured, with a counter-offer for a smaller increase. Here's why:\n\nThe primary concern is the **unverified income of $40,000 versus the requested $25,000 credit limit**. While the customer has substantial balances in investment accounts ($938K total), these are likely brokerage/trading accounts rather than liquid cash reserves. A $25,000 unsecured credit limit represents 62.5% of stated annual income, which exceeds prudent lending standards.\n\n**Alternative Recommendation:** Approve a **$10,000-$15,000 credit limit increase** (bringing total to $15,000-$20,000) conditional on:\n1. Income verification\n2. Confirmation that recent fraud incident was resolved\n3. Review of debt-to-income ratio including other obligations\n\nThis smaller increase would still provide meaningful additional credit (2-3x current limit) while maintaining responsible lending practices at 25-37.5% of income.\n\nFINAL_RECOMMENDATION: reject (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_customer_decisions",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 38.6
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Based on the comprehensive evidence collected and Jev's analysis, I must **confirm the rejection** of this credit limit increase request. Here's why:\n\n## Policy Violations (96% confidence)\n\nThe **Credit Limit Policy** has clear thresholds that Christian Leblanc fails to meet:\n\n1. **Credit Score Requirement**: The policy requires a minimum credit score of **660**. Christian has a score of **691**, which meets this threshold \u2713\n\n2. **Total Credit Limit Cap**: Policy states total credit limit cannot exceed **35% of verified annual income**. This is the critical violation:\n   - Current limit: $5,000\n   - Requested increase: $25,000\n   - New total limit: **$30,000**\n   - Annual income: **$40,000** (unverified)\n   - Percentage: **75% of income** \u274c\n   - Policy maximum: **$14,000** (35% of $40,000)\n\n3. **Income Verification Status**: The customer's income is **not verified** (`income_verified: false`), adding significant uncertainty to the assessment.\n\n4. **Single Increase Cap**: The requested $25,000 increase is **500% of the current $5,000 limit**, far exceeding the 100% maximum increase allowed by policy.\n\n## Supporting Risk Factors\n\n- **Credit utilization**: Currently at 40%, which is moderate but not concerning\n- **Flagged transactions**: 2 transactions flagged with 0.7 risk scores totaling $3,732.86\n- **Recent fraud rejection**: A fraud-related rejection in May 2025 showing \"Transaction blocked. Pattern matches known fraud typology FT-5936\"\n- **Geographic anomaly alert**: Medium severity alert triggered in March 2026\n\n## Precedent Analysis (35% favor approval)\n\nThe 5 precedents retrieved were all **approvals** for credit applications, but they involved customers with:\n- **Higher credit scores** (591-760 vs. 691)\n- **Verified income** (all had verified income ranging from $81,560 to $248,083)\n- **Higher annual incomes** (compared to Christian's unverified $40,000)\n\nThese precedents actually **support rejection** because they show approvals happen when income is verified and policy thresholds are met.\n\n## Recommendation\n\nThe requested $25,000 increase would violate policy by setting a total limit at 215% of the allowed maximum. Even if we approved the maximum policy-compliant increase of $9,000 (bringing total to $14,000), it would only be 35% of unverified income.\n\n**Next steps**: \n- Customer should provide income verification documentation\n- If verified income is substantially higher, resubmit with a policy-compliant request\n- Alternatively, request a policy exception through management (requires manager approval above $25,000 per Exception Approval Authority policy)\n\nFINAL_RECOMMENDATION: reject (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "no",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.93,
+          "seconds": 20.5,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "jev_confidence": 0.89,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.93,
+            "needs_llm_decision": 0.07
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.35,
+            "violates_policy": 0.96,
+            "sanctioned_party_exposure": 0.33,
+            "open_fraud_activity": 0.09,
+            "elevated_customer_risk": 0.63,
+            "requires_manual_review": 0.9,
+            "evidence_sufficient": 0.52
+          },
+          "fast_answer_ms": 1025,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 8,
+            "transaction_summary": 4,
+            "support_tickets": 2,
+            "alerts": 2,
+            "decision_history": 4,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    }
+  ]
+}

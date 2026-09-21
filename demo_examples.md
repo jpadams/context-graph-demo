@@ -25,6 +25,25 @@ Check Alan Kramer's margin account for suspicious activity. He has several flagg
 
 ---
 
+## 1b. Fast Typed Verdict with Jev (Jessica Norris)
+
+**Best for:** Showing a sub-second typed decision from TypeSafe's Jev model, then Claude's explanation
+
+```
+Should we approve a credit limit increase for Jessica Norris? She's requesting a $25,000 limit increase.
+```
+
+**What this demonstrates:**
+- A fixed set of Cypher retrievals runs in code, not via tool calls: customer, flagged transactions,
+  decision history, precedents, category outcomes, policies
+- Jev returns `yes` / `no` / `needs_llm_decision` with probabilities, confidence and supporting signals
+- When Jev escalates, Claude makes the final approve/reject call; the card shows the final recommendation
+- The verdict card appears before Claude starts writing
+- Claude explains the verdict from the same evidence; the card reports which additional tools (if any) it used
+- Requires `TYPESAFE_API_KEY`; otherwise the question falls back to the tool-use agent flow
+
+---
+
 ## 2. Credit Decision with Precedent Search
 
 **Best for:** Semantic search using text embeddings to find similar past decisions

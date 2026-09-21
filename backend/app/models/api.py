@@ -54,6 +54,20 @@ class DecisionRequest(BaseModel):
     confidence_score: float = Field(default=0.8, ge=0.0, le=1.0)
 
 
+class FastAnswerRequest(BaseModel):
+    """Request for the Jev fast path: evidence collection plus a typed verdict."""
+
+    message: str
+
+
+class CreditLineIncreaseRequest(BaseModel):
+    """Run the parameterized credit-line-increase case for any customer and amount."""
+
+    customer: str  # customer id, exact name, or partial name
+    amount: float
+    explain: bool = False  # also run Claude for the explanation / final call
+
+
 class GraphNode(BaseModel):
     """A node in the graph for visualization."""
 

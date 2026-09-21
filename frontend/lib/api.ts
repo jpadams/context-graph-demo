@@ -143,6 +143,80 @@ export interface StreamDoneEvent {
     output?: unknown;
   }>;
   decisions_made: string[];
+  additional_tools_used?: string[];
+  evidence_retrievals?: string[];
+  final_recommendation?: FinalRecommendation | null;
+}
+
+// Final approve/reject answer: Jev's when it decided, Claude's when Jev escalated
+export interface FinalRecommendation {
+  decision: "approve" | "reject" | null;
+  confidence: number | null;
+  source: "jev" | "claude";
+  jev_decision: string;
+  escalated: boolean;
+  agrees_with_jev: boolean | null;
+  final: "approve" | "reject" | null;
+}
+
+// Fast typed verdict from TypeSafe's Jev model, produced before Claude runs
+export interface JevVerdict {
+  model: string;
+  decision: "yes" | "no" | "needs_llm_decision" | string;
+  routed_decision: string;
+  confidence: number;
+  probabilities: Record<string, number>;
+  routing: { confidence_floor: number; reason: string };
+  // null = the evidence this signal depends on was empty, so it was not asked
+  signals: Record<string, number | null>;
+  item_judgments?: {
+    precedents: Array<{
+      id: string;
+      decision_type: string;
+      category: string;
+      summary: string;
+      similarity?: number | null;
+      supports_approval: number;
+    }>;
+    policies: Array<{
+      id: string;
+      name: string;
+      description: string;
+      violated: number;
+    }>;
+  };
+  question_count?: number;
+  latency_ms: number;
+}
+
+export interface EvidenceRetrieval {
+  name: string;
+  description: string;
+  count: number;
+  status: string;
+  ms: number;
+}
+
+export interface FastAnswer {
+  applicable: boolean;
+  reason?: string;
+  intent?: {
+    is_approval_request: number;
+    category: string;
+    request_type: string;
+    latency_ms: number;
+  };
+  customer?: { id: string; name: string; risk_score?: number };
+  request?: Record<string, unknown>;
+  retrievals?: EvidenceRetrieval[];
+  verdict?: JevVerdict;
+  graph_data?: GraphData;
+  total_ms?: number;
+}
+
+export interface StreamFastAnswerEvent {
+  type: "fast_answer";
+  fastAnswer: FastAnswer;
 }
 
 export interface StreamErrorEvent {
@@ -152,6 +226,7 @@ export interface StreamErrorEvent {
 
 export type StreamEvent =
   | StreamAgentContextEvent
+  | StreamFastAnswerEvent
   | StreamTextEvent
   | StreamToolUseEvent
   | StreamToolResultEvent
@@ -209,6 +284,10 @@ export async function* streamChatMessage(
             if ("keepalive" in parsed) {
               // Keep-alive ping - ignore silently
               continue;
+            } else if (parsed.type === "fast_answer") {
+              const fastAnswer = { ...parsed } as FastAnswer & { type?: string };
+              delete fastAnswer.type;
+              yield { type: "fast_answer", fastAnswer };
             } else if (
               "system_prompt" in parsed &&
               "available_tools" in parsed
@@ -224,6 +303,9 @@ export async function* streamChatMessage(
                 type: "done",
                 tool_calls: parsed.tool_calls,
                 decisions_made: parsed.decisions_made || [],
+                additional_tools_used: parsed.additional_tools_used || [],
+                evidence_retrievals: parsed.evidence_retrievals || [],
+                final_recommendation: parsed.final_recommendation ?? null,
               };
             } else if (
               "name" in parsed &&

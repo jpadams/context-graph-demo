@@ -1,0 +1,481 @@
+{
+  "args": {
+    "customers": "Jessica Norris,Katherine Miller,John Walsh",
+    "sample": 0,
+    "amounts": "25000",
+    "repeats": 2,
+    "skip_original": false
+  },
+  "summary": {
+    "original": {
+      "runs": 6,
+      "mean_seconds": 63.5,
+      "median_seconds": 53.4,
+      "mean_tool_calls": 5.83,
+      "finals": {
+        "approve": 4,
+        "reject": 2
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 3,
+      "consistent_cases": 3
+    },
+    "fast_answer": {
+      "runs": 6,
+      "mean_seconds": 32.7,
+      "median_seconds": 31.9,
+      "mean_tool_calls": 0.17,
+      "finals": {
+        "reject": 6
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 3,
+      "consistent_cases": 3
+    },
+    "cross_path_agreement": {
+      "agree": 2,
+      "compared": 6
+    }
+  },
+  "rows": [
+    {
+      "customer": "Jessica Norris",
+      "customer_id": "a5ec33e2-9fcc-4dcd-aaf0-5564c3538e43",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jessica Norris? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate the credit limit increase request for Jessica Norris. Let me search for this customer and gather relevant information.Now let me gather more information about Jessica Norris's account and look for relevant precedents for credit limit increase decisions.Based on my analysis of Jessica Norris's profile and the available data, here is my comprehensive assessment of the $25,000 credit limit increase request:\n\n## Customer Profile Summary\n\n**Jessica Norris** (Customer ID: a5ec33e2-9fcc-4dcd-aaf0-5564c3538e43)\n- **Risk Score**: 0.368 (Low-to-moderate risk)\n- **Account Portfolio**: 3 active accounts with substantial balances\n  - Margin Account (ACC00000077): $400,567.88\n  - Margin Account (ACC00000155): $445,677.67  \n  - Savings Account (ACC00000310): $202,255.67\n- **Total Assets Under Management**: Over $1 million across all accounts\n\n## Key Supporting Factors\n\n### 1. **Strong Financial Position**\nThe customer maintains over $1 million in combined account balances, demonstrating significant financial capacity. The requested $25,000 credit limit increase represents only ~2.5% of their total assets, which is highly conservative.\n\n### 2. **Positive Decision History**\n- Previous account management approval (June 2025) with high confidence (0.983)\n- Fraud alert in August 2025 was cleared after customer verification, demonstrating legitimate activity\n- No history of defaults or serious compliance issues\n\n### 3. **Low Risk Profile**\n- Risk score of 0.368 is below medium threshold\n- All accounts classified as \"medium\" risk tier (not high)\n- Transaction patterns show normal banking activity with low fraud indicators\n- Fraud pattern analysis shows only 5.6% flagged transaction rate in their account community, which is acceptable\n\n## Risk Considerations\n\n### 1. **Sanctions Watchlist Connection**\nThe customer is associated with \"Spencer, Chapman and Smith\" (employer), an organization on the **sanctions watchlist** based in Russian Federation. This requires additional scrutiny but is not an automatic disqualifier if the customer's activities are legitimate.\n\n### 2. **Open Fraud Report**\nThere is an **in-progress support ticket** (TKT000017, submitted Sept 2025) classified as a \"fraud_report\" with low priority. The status and resolution of this ticket should be verified before approval.\n\n### 3. **No Specific Credit Limit Policies Found**\nThe system did not return specific policies for credit limit increases in the account_management category, meaning this decision requires judgment based on general risk principles.\n\n### 4. **Limited Credit Limit Precedents**\nNo direct precedents were found for similar credit limit increase requests, which means we cannot reference comparable past decisions.\n\n## Recommendation\n\nGiven the **substantial account balances, low risk score, and positive history**, I recommend **CONDITIONAL APPROVAL** with the following requirements:\n\n**Before final approval:**\n1. **Verify resolution** of the open fraud report ticket (TKT000017)\n2. **Confirm** the nature of the customer's relationship with the watchlisted organization\n3. **Ensure** the customer's employment and income are documented and verified\n\n**If these conditions are satisfied**, the $25,000 increase is well within acceptable risk parameters given the customer's $1M+ asset base.\n\n**If the fraud ticket reveals concerning activity or the sanctions connection cannot be adequately explained**, this request should be **escalated** to a compliance officer for further review.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 49.1
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze this credit limit increase request for Jessica Norris requesting $25,000.\n\n## Analysis of Evidence\n\n**Customer Profile:**\n- Jessica Norris has a **moderate risk score of 0.368** (medium risk tier)\n- Single savings account (ACC00000310) with a healthy balance of $202,255.67\n- Account opened February 2024 (approximately 19 months old)\n\n**Critical Risk Factors:**\n\n1. **Sanctions Exposure:** The account has a co-owner \"Spencer, Chapman and Smith\" (employer, Healthcare industry) based in **Russian Federation with \"watchlist\" sanctions status**. This is a significant red flag.\n\n2. **Open Fraud Investigation:** There is an **active fraud report ticket (TKT000017)** submitted September 2025, currently \"in_progress\" with low priority. The subject mentions \"Former happy relate\" which is unclear but concerning.\n\n3. **Transaction Activity:** Limited transaction history with only 11 total transactions ($37,289 total volume). One pending transaction for $7,947.97 with elevated risk score of 0.3.\n\n**Policy Compliance:**\n- The Credit Limit Policy has a threshold of $25,914\n- The requested amount of $25,000 is **just under this threshold** (96.5% of policy limit)\n\n**Precedent Analysis:**\nAll 5 precedents are approvals for credit applications with:\n- Credit scores ranging 587-760\n- Verified stable income ($61,796 - $248,083/year)\n- **However, none of these precedents mention sanctions exposure or active fraud investigations**\n\n**Previous Decisions for this Customer:**\n- Two prior approvals (support and account management categories)\n- Both approved with high confidence (0.714 and 0.983)\n- But neither involved credit decisions or addressed the sanctions/fraud concerns\n\n## Key Concerns\n\n1. **Watchlist sanctions status** on a co-owner is a material risk that requires enhanced due diligence\n2. **Active fraud investigation** is unresolved - we lack clarity on the nature and severity\n3. **Insufficient credit history** - no credit score provided for Jessica Norris (unlike all precedents)\n4. **No income verification** documented in the evidence\n\n## Decision\n\nGiven the combination of:\n- Watchlist-sanctioned co-owner from Russian Federation\n- Unresolved fraud investigation in progress\n- Lack of credit score and income verification\n- Limited account history (19 months)\n\nI cannot approve this request without additional information. The sanctions exposure alone would typically require enhanced due diligence and possible escalation to compliance. The active fraud investigation must be resolved before extending additional credit.\n\n**What would change my mind:** \n- Resolution of the fraud investigation showing no material concern\n- Compliance clearance on the watchlist entity relationship\n- Credit score verification showing >680\n- Documented stable income >$100,000/year\n- Or reducing the request to a smaller amount (<$10,000) pending investigation resolution\n\nFINAL_RECOMMENDATION: reject (confidence 0.75)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 32.2,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.3,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.54,
+            "needs_llm_decision": 0.44
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.678,
+            "violates_policy": 0.26,
+            "sanctioned_party_exposure": 0.96,
+            "open_fraud_activity": 0.94,
+            "elevated_customer_risk": 0.25,
+            "requires_manual_review": 0.57,
+            "evidence_sufficient": 0.18
+          },
+          "fast_answer_ms": 3893,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Jessica Norris",
+      "customer_id": "a5ec33e2-9fcc-4dcd-aaf0-5564c3538e43",
+      "amount": 25000.0,
+      "repeat": 2,
+      "message": "Should we approve a credit limit increase for Jessica Norris? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Jessica Norris. Let me gather the necessary information to make an informed recommendation.Now let me gather more information about Jessica Norris's decision history and look for similar credit limit increase precedents.Based on my analysis of Jessica Norris's credit limit increase request for $25,000, I have gathered comprehensive information to make an informed recommendation.\n\n## Customer Profile Analysis\n\n**Jessica Norris** presents a **moderate-risk profile**:\n- **Risk Score**: 0.368 (relatively low on a 0-1 scale)\n- **Account Holdings**: 3 active accounts with substantial balances:\n  - Savings account (ACC00000310): $202,255.67\n  - Margin account (ACC00000077): $400,567.88  \n  - Margin account (ACC00000155): $445,677.67\n- **Total Assets Under Management**: Over $1 million across accounts\n\n## Decision History\n\nJessica has **positive decision history** with the institution:\n1. **Account Management Approval** (June 2025): Approved with 98.3% confidence despite risk factors (unusual pattern, new device, high amount)\n2. **Support Case Approval** (March 2026): Approved with 71.4% confidence\n3. **Fraud Review Approval** (August 2025): Transaction cleared after verification with 98.3% confidence\n\n## Risk Considerations\n\n**Positive Factors**:\n- Substantial account balances demonstrating strong financial capacity\n- Clean approval history with no rejections\n- Successfully passed previous fraud verification\n- Low overall risk score (0.368)\n- Multiple accounts in good standing\n\n**Concerns**:\n- **Sanctions watchlist exposure**: One account (ACC00000310) has an associated organization (\"Spencer, Chapman and Smith\") on watchlist status from Russian Federation\n- **Active fraud report**: Currently has an in-progress fraud report ticket (TKT000017) submitted September 2025, though marked low priority\n- **One pending transaction**: Transaction TXN0000000557 for $7,947.97 with risk score of 0.3 is still pending\n\n**Fraud Pattern Analysis**:\n- No flagged transactions directly associated with customer's account\n- Community fraud rate of 6.2% is relatively low\n- No indication of systematic fraud patterns\n\n## Precedent Review\n\nI reviewed 5 similar credit decisions - all were **approvals** for customers with:\n- Credit scores ranging from 606-763\n- Stable verified incomes ($78k-$248k annually)\n- Debt-to-income ratios of 24-27%\n- Good payment history\n- Confidence scores: 66-82%\n\n## Recommendation\n\nGiven Jessica Norris's substantial asset base (over $1M), positive decision history, low personal risk score, and alignment with approved precedents, the $25,000 credit limit increase is **reasonable in principle**. However, the **active fraud report and watchlist exposure require resolution** before approval.\n\n**Recommended Action**: **Conditional Approval** - Approve the credit limit increase contingent upon:\n1. Resolution of the active fraud report (TKT000017)\n2. Verification that the watchlist organization association does not represent a sanctions risk\n3. Clearance of the pending transaction\n\nIf these conditions cannot be quickly satisfied, this decision should be **escalated** to compliance for review of the sanctions implications.\n\nFINAL_RECOMMENDATION: approve (confidence 0.72)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_customer_decisions",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.72,
+          "seconds": 46.0
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze the evidence to make a final recommendation on this $25,000 credit limit increase request for Jessica Norris.\n\n## Key Evidence Analysis\n\n**Customer Profile:**\n- Jessica Norris has a **risk score of 0.368** (relatively low risk)\n- Account ACC00000310 has a healthy balance of $202,255.67\n- Account is in \"medium\" risk tier and active status\n- Clean decision history with 2 prior approvals (confidence scores of 0.714 and 0.983)\n\n**Critical Risk Factors:**\n\n1. **Sanctions Watchlist Exposure**: The account co-owner \"Spencer, Chapman and Smith\" (an employer in Healthcare) is based in **Russian Federation** with **sanctions_status: \"watchlist\"**. This is a significant compliance red flag.\n\n2. **Open Fraud Investigation**: There is an **in-progress fraud report** (TKT000017, priority: low, submitted Sept 2025) titled \"Former happy relate.\" This unresolved fraud ticket is concerning for a credit increase decision.\n\n3. **Transaction Activity**: Limited recent activity - only 10 completed transactions totaling $29,341 and 1 pending transaction of $7,947.97 with elevated risk score (0.3).\n\n**Policy Alignment:**\n- The Credit Limit Policy has a threshold of $25,914\n- The requested increase of $25,000 is just under this threshold\n- However, the Exception Approval Authority policy (threshold: $48,739) suggests this may require elevated review\n\n**Precedent Analysis:**\nAll 5 precedents show **approvals** for credit applications with semantic similarity scores of 0.756-0.760. However, these appear to be initial credit applications (mentioning credit scores and income verification), not limit increases on accounts with active fraud tickets and watchlist exposure.\n\n## Decision Rationale\n\nI must **recommend rejection** based on:\n\n1. **Unresolved fraud investigation**: Cannot approve credit increases while fraud is being investigated\n2. **Sanctions watchlist exposure**: The co-owner relationship with a Russian Federation entity on the watchlist creates unacceptable compliance risk\n3. **Insufficient recent transaction volume**: $29k in completed transactions doesn't justify a $25k limit increase\n4. **Precedents don't apply**: The similar cases were clean initial applications, not increases on flagged accounts\n\n**What would change my mind:**\n- Closure of the fraud ticket (TKT000017) with \"no fraud found\" determination\n- Clarification/removal of the watchlist co-owner relationship\n- Verification of legitimate business need for the increased limit\n- Documentation of income/financial capacity to support the increase\n\n**FINAL_RECOMMENDATION: reject (confidence 0.75)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 29.3,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.32,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.55,
+            "needs_llm_decision": 0.43
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.676,
+            "violates_policy": 0.27,
+            "sanctioned_party_exposure": 0.96,
+            "open_fraud_activity": 0.94,
+            "elevated_customer_risk": 0.28,
+            "requires_manual_review": 0.59,
+            "evidence_sufficient": 0.18
+          },
+          "fast_answer_ms": 4196,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Katherine Miller",
+      "customer_id": "b555ee5f-af88-4756-beb0-e0f4696a767c",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Katherine Miller? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Katherine Miller. Let me search for the customer and gather relevant information.Found Katherine Miller! Now let me gather more information about her decision history, accounts, and look for relevant precedents for credit limit increase decisions.Now let me check for additional alerts related to Katherine Miller's accounts.Based on my comprehensive analysis of Katherine Miller's profile and relevant precedents, here is my evaluation:\n\n## Customer Profile Analysis\n\n**Katherine Miller** presents a relatively strong credit profile:\n\n- **Risk Score**: 0.229 (low risk - significantly below average)\n- **Current Accounts**: 2 active trading accounts\n  - ACC00000181: $360,184.73 balance (low risk tier)\n  - ACC00000210: $197,906.42 balance (low risk tier)\n- **Combined Balance**: $558,091.15\n- **Employment**: Works as a Contractor for Garcia, Yang and Gardner (A-rated corporation with clear sanctions status)\n- **Account History**: Accounts opened in 2023, demonstrating 3+ years of relationship\n- **Decision History**: Only 1 prior decision - a support case rejection (unrelated to credit)\n\n## Risk Assessment\n\n**Positive Factors**:\n1. **Low personal risk score** (0.229) - well below institutional thresholds\n2. **Substantial existing balances** ($558K+) showing strong financial capacity\n3. **Low-risk tier accounts** in good standing\n4. **Established banking relationship** (3+ years)\n5. **No fraud indicators**: Fraud pattern analysis shows 0 flagged transactions on primary account\n6. **Stable employment** with A-rated corporate entity\n\n**Risk Considerations**:\n1. **One open alert**: Amount threshold alert on ACC00000181 (medium severity, status: open)\n2. **One flagged transaction**: Historical flagged wire transfer ($97.53) from January 2026 with 0.7 risk score\n3. **Community fraud exposure**: 5.58% of transactions in account community are flagged (low but present)\n\n## Policy & Precedent Analysis\n\n**Credit Limit Policy** (Policy ID: 39cfe510-5210-4204-bab1-591e2b6b5071):\n- Standard credit limits based on income and credit score\n- Threshold: $25,914\n\n**Relevant Precedents**: I found 5 highly similar credit approval cases (80%+ semantic similarity) where customers were approved with:\n- Credit scores ranging from 606-775\n- Stable income verification ($142K-$248K/year)\n- Good payment histories\n- All resulted in **approvals** with confidence scores of 0.82-0.92\n\n## Recommendation\n\nThe $25,000 credit limit increase request is **within policy thresholds** and Katherine Miller demonstrates:\n- Financial capacity far exceeding the requested increase\n- Low risk profile across all metrics\n- Established relationship with strong account performance\n- No material credit decision history concerns\n\nThe single open alert should be reviewed, but given the substantial account balances and low overall risk profile, this does not represent a blocking issue. The precedent analysis strongly supports approval for similar or lower-risk profiles.\n\n**However**, I recommend:\n1. **Resolving the open amount threshold alert** before finalizing approval\n2. **Verifying income** consistent with the high account balances\n3. **Confirming** the flagged transaction from January 2026 was appropriately cleared\n\nSubject to resolution of the open alert, this request should be approved.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "detect_fraud_patterns",
+            "get_policy",
+            "execute_cypher"
+          ],
+          "tool_call_count": 6,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 60.4
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Looking at the evidence for Katherine Miller's $25,000 credit limit increase request, I need to carefully weigh several factors:\n\n## Supporting Factors for Approval:\n\n1. **Low Customer Risk Profile**: Katherine has a risk score of 0.229, which is quite low, indicating she's a reliable customer.\n\n2. **Strong Account Performance**: \n   - Two active trading accounts with substantial balances ($197,906 and $360,184)\n   - 12 completed transactions totaling $36,363 with very low average risk (0.1)\n   - Accounts opened in early 2023, showing 3+ years of history\n   - Both accounts classified as \"low\" risk tier\n\n3. **Favorable Precedents**: All 4 similar precedents (semantic similarity 75-76%) were approvals for credit applications with credit scores ranging from 606-760 and verified incomes of $142k-$231k.\n\n4. **Clean Counterparty Profile**: Associated organization (Garcia, Yang and Gardner) has \"A\" risk rating and clear sanctions status.\n\n5. **Policy Alignment**: The Credit Limit Policy threshold is $25,914, and Katherine is requesting exactly $25,000 - just under the standard threshold.\n\n## Concerning Factors:\n\n1. **Open High-Risk Alert**: There's an escalated Pattern Match alert (ALT000034) with high severity and risk score of 0.967 from January 2026 that remains unresolved. This is significant.\n\n2. **Flagged Transaction**: One recent transaction (July 2026) on ACC00000210 was flagged with a 0.7 risk score.\n\n3. **Open Medium Alert**: An Amount Threshold alert (ALT000074) with 0.872 risk score from March 2026 is still open.\n\n4. **High-Risk Counterparties**: Miller Group has a \"D\" risk rating (lowest tier), and Rodriguez, Figueroa and Sanchez has a \"C\" rating.\n\n5. **Jev's Signals**: The model flagged elevated concerns about sanctioned party exposure (0.83 probability) and open fraud activity (0.86 probability).\n\n6. **Recent Rejection**: Katherine had a support-related rejection decision in November 2025, though this was in a different category.\n\n## My Assessment:\n\nThe **escalated high-severity Pattern Match alert** is the critical blocker here. While Katherine's overall profile is strong, we cannot approve a significant credit limit increase while a high-risk pattern alert remains unresolved and escalated. This alert has been open since January 2026 (8+ months) and suggests potential structural concerns that need resolution first.\n\nThe combination of:\n- An escalated high-severity alert\n- A flagged transaction \n- An open medium-severity alert\n- High-risk counterparties in the transaction network\n\n...creates too much unresolved risk to approve a $25,000 increase at this time.\n\n## What Would Change My Mind:\n\nIf the escalated Pattern Match alert (ALT000034) were resolved and found to be a false positive, and the flagged transaction were cleared, I would approve this request given Katherine's otherwise strong profile and the favorable precedents.\n\n**FINAL_RECOMMENDATION: reject (confidence 0.72)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.72,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.72,
+          "seconds": 28.2,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.43,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.36,
+            "needs_llm_decision": 0.62
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.655,
+            "violates_policy": 0.39,
+            "sanctioned_party_exposure": 0.83,
+            "open_fraud_activity": 0.86,
+            "elevated_customer_risk": 0.49,
+            "requires_manual_review": 0.63,
+            "evidence_sufficient": 0.18
+          },
+          "fast_answer_ms": 3809,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 3,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 3,
+            "decision_history": 1,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "Katherine Miller",
+      "customer_id": "b555ee5f-af88-4756-beb0-e0f4696a767c",
+      "amount": 25000.0,
+      "repeat": 2,
+      "message": "Should we approve a credit limit increase for Katherine Miller? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for Katherine Miller. Let me search for the customer and gather relevant information.Good! I found Katherine Miller. Now let me gather more information about her decision history and look for precedents related to credit limit increases.Now let me look at the details of one of her accounts to check for any additional risk signals:Based on my analysis of Katherine Miller's credit limit increase request for $25,000, here is my assessment:\n\n## Customer Profile Analysis\n\n**Katherine Miller** presents a **low-risk profile** with several positive indicators:\n\n### Positive Factors:\n1. **Low Risk Score**: 0.229 (well below concerning thresholds)\n2. **Strong Account Standing**: \n   - Two active trading accounts in good standing\n   - Account ACC00000181: $360,184.73 balance (opened Jan 2023)\n   - Account ACC00000210: $197,906.42 balance (opened Apr 2023)\n   - Both accounts classified as \"low\" risk tier\n3. **Clean Transaction History**: No flagged transactions directly associated with her accounts\n4. **Employment Verification**: Works as Contractor for Garcia, Yang & Gardner (A-rated, Manufacturing, clear sanctions status)\n5. **Established Banking Relationship**: Nearly 4 years of account history\n6. **No Fraud Patterns**: Fraud analysis shows 0% flagged transactions on her accounts\n\n### Risk Considerations:\n1. **Open Alert**: One medium-severity \"Amount Threshold\" alert (ALT000074) exists on account ACC00000181\n2. **One Past Rejection**: A support case rejection from November 2025 with risk factors including \"new_account,\" \"high_amount,\" and \"after_hours\"\n3. **Community Context**: Her account community shows ~5.6% flagged transaction rate (low but not zero)\n\n## Precedent Analysis\n\nI found **5 similar credit limit increase approvals** in our system, all with semantic similarity scores above 80%. These precedents show:\n- Approvals for customers with credit scores ranging from 649-775\n- Stable income verification required\n- Good payment history over 6-25 months\n- Confidence scores of 0.67-0.92\n\n## Policy Compliance\n\nThe **Credit Limit Policy** (threshold: $25,914) allows for this $25,000 increase request, as it falls within policy parameters based on standard credit limits tied to income and credit score.\n\n## Recommendation\n\nKatherine Miller demonstrates strong creditworthiness with substantial account balances ($558K total), low risk profile, clean transaction history, and verified employment with a highly-rated organization. The single past rejection appears to have been circumstantial (timing/amount related to a support case) rather than indicative of fundamental credit risk. The open alert should be verified as resolved or non-material before final approval.\n\n**I recommend APPROVAL** of the $25,000 credit limit increase, conditional on verification that alert ALT000074 has been satisfactorily resolved or determined to be immaterial.\n\nFINAL_RECOMMENDATION: approve (confidence 0.78)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns",
+            "find_accounts_with_high_shared_transaction_volume"
+          ],
+          "tool_call_count": 6,
+          "final": "approve",
+          "confidence": 0.78,
+          "seconds": 53.9
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Looking at the evidence collected by Jev, I need to make a final determination on this $25,000 credit limit increase request for Katherine Miller.\n\n## Analysis of the Evidence\n\n**Positive Factors:**\n- **Low customer risk score (0.229)**: Katherine Miller is a low-risk customer\n- **Strong precedent support**: All 4 similar precedents (semantic similarity 0.75-0.76) resulted in approvals for credit applications\n- **Active accounts in good standing**: Two trading accounts (ACC00000210 and ACC00000181) with healthy balances ($197,906 and $360,184) and low risk tiers\n- **Transaction history mostly clean**: 12 completed transactions totaling $36,363 with low average risk score (0.1)\n- **Organizational relationship**: Associated with Garcia, Yang and Gardner (risk rating A, sanctions clear)\n- **Historical category performance**: Credit category shows 44 approvals vs only 14 rejections\n\n**Concerning Factors:**\n- **Open high-severity alert (ALT000034)**: Pattern Match alert with 0.967 risk score, status escalated since January 2026 - this is significant and unresolved\n- **Additional open medium alert (ALT000080)**: Amount threshold alert (0.872 risk score) from March 2026\n- **Flagged transaction**: One transaction ($28.78) with 0.7 risk score on account ACC00000210\n- **One prior rejection in decision history**: Support-related rejection with high confidence (0.801)\n- **Risk counterparties**: Transactions with Miller Group (risk rating D) and Rodriguez, Figueroa and Sanchez (risk rating C)\n- **Policy threshold concern**: Credit Limit Policy has threshold of $25,914 - the requested $25,000 is just under this, suggesting we're at the policy boundary\n\n**Critical Gap:**\nThe most concerning issue is the **high-severity escalated Pattern Match alert (ALT000034)** that has been open since January 2026. This alert has a 0.967 risk score - nearly maximum risk - and remains unresolved. Without understanding what pattern was matched and why it's escalated, approving a credit limit increase carries unquantified risk.\n\n## My Determination\n\nI **cannot approve** this request in its current state. While the precedents favor approval and the customer's risk score is low, the presence of an unresolved high-severity escalated alert with near-maximum risk score (0.967) creates a material concern that must be addressed first.\n\n**What would change my mind:**\n1. Resolution or review of alert ALT000034 showing the pattern match was a false positive or has been adequately mitigated\n2. Understanding the nature of the pattern that triggered the high-risk alert\n3. Confirmation that the open medium-severity alert (ALT000074) does not relate to the credit limit increase request\n\nThe precedents strongly support approval (0.6475 probability), but those precedents likely did not involve customers with open high-severity escalated alerts. The $25,000 request is also at the policy threshold boundary, and with unresolved high-risk alerts, this requires manual review and alert resolution before proceeding.\n\n**Recommendation:** Reject pending resolution of ALT000034 and ALT000074, then resubmit for review.\n\nFINAL_RECOMMENDATION: reject (confidence 0.72)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.72,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.72,
+          "seconds": 31.6,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.44,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.36,
+            "needs_llm_decision": 0.62
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.6475,
+            "violates_policy": 0.4,
+            "sanctioned_party_exposure": 0.83,
+            "open_fraud_activity": 0.84,
+            "elevated_customer_risk": 0.5,
+            "requires_manual_review": 0.65,
+            "evidence_sufficient": 0.17
+          },
+          "fast_answer_ms": 5727,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 3,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 3,
+            "decision_history": 1,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "John Walsh",
+      "customer_id": "dd6d2b63-72d7-4ca4-8a2e-7af9846b5a72",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for John Walsh? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for John Walsh. Let me gather the necessary information.Now let me gather more detailed information about John Walsh's account and decision history:Now let me search for any credit limit policies and get more information about the account status:Based on my analysis of John Walsh's credit profile, I have significant concerns about approving this $25,000 credit limit increase request. Here's my assessment:\n\n## Customer Profile\n- **Name:** John Walsh\n- **Risk Score:** 0.26 (low-to-moderate risk)\n- **Date of Birth:** March 25, 2004 (22 years old)\n- **Account Status:** Primary account (ACC00000141) is **CLOSED**\n- **Employment:** Manager at Garcia, Yang and Gardner (since April 2018)\n\n## Key Risk Factors\n\n### 1. **Account Status: CLOSED**\nThe primary savings account associated with John Walsh is currently closed, despite showing a balance of $238,779. This is highly unusual and raises questions about:\n- Why the account was closed\n- Whether there are active accounts to support a credit limit increase\n- The customer's current relationship status with the institution\n\n### 2. **Previous Adverse Decisions**\nJohn Walsh has two prior decisions on record:\n- **Support Request Rejection (April 2025):** A support case was rejected with 85.2% confidence\n- **Account Management Override (January 2025):** Required an override approval due to risk factors including:\n  - Velocity triggers\n  - Multiple beneficiaries\n\n### 3. **Transaction Concerns**\n- One flagged transaction (TXN0000000027) with a high risk score of 0.7 and significant fraud influence (0.366)\n- One reversed transaction (TXN0000001117) for $2,459.85\n- One pending transaction with elevated risk (0.3)\n\n### 4. **No Precedents Found**\nNo similar credit limit increase precedents were found in the decision history for this amount or scenario, making it difficult to benchmark against past approvals.\n\n### 5. **No Credit Limit Policies Available**\nThe system shows no active credit limit policies to guide this decision, requiring additional scrutiny.\n\n### 6. **Fraud Pattern Analysis**\nWhile John Walsh's account shows no direct flagged transactions, the account is part of a community where 4.6% of transactions are flagged, indicating some elevated risk in the network.\n\n## Recommendation\n\nI recommend **REJECTING** this credit limit increase request for the following reasons:\n\n1. **Primary account is closed** - Cannot extend credit to a customer without an active primary account\n2. **Recent adverse decisions** including a support rejection and account management issues requiring override\n3. **Transaction anomalies** including flagged and reversed transactions\n4. **Lack of established precedents** for this type and amount of increase\n5. **Young customer age** (22 years old) with relatively short credit history\n6. **Missing policy framework** to evaluate the request against standard criteria\n\n## Suggested Next Steps\nBefore reconsidering this request, I recommend:\n- Clarifying why the primary account is closed\n- Reviewing whether the customer has other active accounts\n- Investigating the circumstances of the previous support rejection\n- Establishing the customer's current income and debt-to-income ratio\n- Waiting for the pending transaction to clear\n\nFINAL_RECOMMENDATION: reject (confidence 0.85)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_customer_decisions",
+            "find_precedents",
+            "detect_fraud_patterns",
+            "get_policy",
+            "execute_cypher"
+          ],
+          "tool_call_count": 7,
+          "final": "reject",
+          "confidence": 0.85,
+          "seconds": 52.9
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "Looking at the evidence provided, I need to make a final determination on this $25,000 credit limit increase request for John Walsh.\n\n## Analysis of Evidence\n\n**Customer Profile:**\n- Risk score: 0.26 (relatively low risk)\n- Associated with Garcia, Yang and Gardner (risk rating A, sanctions clear)\n- Account ACC00000141 is a **closed** savings account with medium risk tier\n\n**Key Concerns:**\n\n1. **Account Status**: The primary account (ACC00000141) is **closed** as of the data snapshot. This is highly unusual for a credit limit increase request - you cannot increase the credit limit on a closed account. This needs clarification.\n\n2. **Transaction Pattern**: The account shows some concerning activity:\n   - 2 pending transactions totaling $29,171\n   - 1 reversed transaction ($2,460) with 0.3 risk score\n   - Notable transaction of $25,420 pending with 0.3 risk score\n   - The reversed transaction suggests possible dispute or fraud concern\n\n3. **Account Relationships**: Multiple counterparties with C and D risk ratings (Edwards Rios & Foster, Lynch Hernandez & Farmer with D rating), and a co-owner (Burton Ltd) with C rating in higher-risk jurisdictions.\n\n4. **Decision History**: Customer has a rejection decision (April 2025) and an override approval requiring risk factors (velocity trigger, multiple beneficiaries) in January 2025, suggesting some pattern of elevated risk activity.\n\n5. **Policy Consideration**: Credit Limit Policy threshold is $25,914 - the requested $25,000 is just under this threshold, but context matters given the closed account status.\n\n**Favorable Signals:**\n- All sanctions statuses are clear\n- No open fraud alerts or support tickets\n- Precedents show 4 similar credit approvals (67.5% precedents favor approval per Jev)\n- Low policy violation probability (32%)\n- Customer risk score is low (0.26)\n\n## Missing Critical Information\n\nThe most critical gap: **What account is this credit limit increase for?** The only account on file is closed. This could mean:\n- Data synchronization issue\n- Request is for a new account/product\n- Request is erroneous\n\nLet me check if there's information about active credit accounts:\nThe query confirms there are **no active credit accounts** for John Walsh. This is a critical blocker.\n\n## Final Decision\n\n**I recommend REJECTION of this credit limit increase request.**\n\n### Reasoning:\n\n1. **Primary Blocker**: Customer has no active credit accounts on file. The only account (ACC00000141) is closed and was a savings account, not a credit product. You cannot increase a credit limit on a non-existent or closed account.\n\n2. **Recent Rejection**: Customer had a rejection decision in April 2025 (just 5 months ago), suggesting recent credit concerns.\n\n3. **Risk Signals**: While not overwhelming, the combination of:\n   - Elevated sanctioned party exposure signal (0.59 probability)\n   - Elevated customer risk signal (0.41 probability)\n   - Account relationships with C/D rated entities\n   - Reversed transaction history\n   - Previous velocity triggers and multiple beneficiaries requiring override\n   \n   ...creates moderate concern for a $25,000 increase without verification of current creditworthiness.\n\n4. **Insufficient Evidence**: Jev's low confidence (0.31) and \"evidence_sufficient\" signal of only 0.18 indicates we lack the data needed to approve this safely.\n\n### What Would Change My Mind:\n\n- Identification of an active credit account for this customer\n- Current income verification and credit score\n- Explanation of the April 2025 rejection and what has changed since\n- Clarification on the reversed transaction and pending high-value transactions\n- Updated financial statements or credit bureau data showing improved creditworthiness\n\n**FINAL_RECOMMENDATION: reject (confidence 0.75)**",
+          "tool_calls": [
+            "execute_cypher"
+          ],
+          "tool_call_count": 1,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 40.7,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.31,
+          "jev_probabilities": {
+            "yes": 0.35,
+            "no": 0.11,
+            "needs_llm_decision": 0.54
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.675,
+            "violates_policy": 0.32,
+            "sanctioned_party_exposure": 0.59,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.41,
+            "requires_manual_review": 0.57,
+            "evidence_sufficient": 0.18
+          },
+          "fast_answer_ms": 5985,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 3,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    },
+    {
+      "customer": "John Walsh",
+      "customer_id": "dd6d2b63-72d7-4ca4-8a2e-7af9846b5a72",
+      "amount": 25000.0,
+      "repeat": 2,
+      "message": "Should we approve a credit limit increase for John Walsh? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll help you evaluate this credit limit increase request for John Walsh. Let me search for the customer and gather relevant information.Now let me gather more information about John Walsh's account and decision history, as well as search for precedents related to credit limit increases.Now let me review the full details of the customer's past decisions to understand the context better.Based on my comprehensive analysis of John Walsh's profile and the precedent decisions, here is my evaluation of the $25,000 credit limit increase request:\n\n## Customer Profile Analysis\n\n**John Walsh** (DOB: 2004-03-25, Age: 22)\n- **Risk Score**: 0.26 (Low-Medium risk - relatively favorable)\n- **Employment**: Manager at Garcia, Yang and Gardner (A-rated corporation) since April 2018\n- **Account Status**: Owns savings account ACC00000141 (currently closed, balance was $238,779.30, medium risk tier)\n- **Sanctions Status**: Clear (employer has clear sanctions status)\n\n## Transaction & Behavior Analysis\n\n- **Transaction History**: 10 related transactions analyzed\n- **Flagged Transactions on Account**: 0 (excellent record)\n- **Community Fraud Pattern**: Only 4.6% of transactions in related account community are flagged (low fraud environment)\n- **Notable Transaction**: One flagged transfer of $97.53 (TXN0000000027) with high risk score (0.7) from January 2026\n\n## Decision History\n\nJohn Walsh has **2 previous decisions** on record:\n\n1. **Account Management Override (Jan 2025)** - APPROVED\n   - Decision by Senior Analyst Dominique Horton\n   - Confidence: 95.4%\n   - Risk factors: velocity_trigger, multiple_beneficiaries\n   - Trading Limit Policy applied\n   - Successfully granted despite risk factors\n\n2. **Support Case (Apr 2025)** - REJECTED\n   - Confidence: 85.2%\n   - No risk factors noted\n   - Standard rejection\n\n## Precedent Analysis\n\nI reviewed 5 similar credit limit increase precedents:\n\n1. **Credit score 760, income $146,125/year, DTI 27%, 109 months good standing** - APPROVED (66.2% confidence)\n2. **Credit score 649, income $227,888/year, DTI unknown** - APPROVED (80.8% confidence)\n3. **Credit score 655, income $78,497/year** - APPROVED (80.7% confidence)\n4. **Credit score 606, income $142,139/year** - APPROVED (80.5% confidence)\n5. **Credit score 763, income $183,668/year** - APPROVED (80.5% confidence)\n\nAll precedents show **consistent approvals** for credit limit increases when customers demonstrate stable income and reasonable credit scores.\n\n## Policy Review\n\n**Credit Limit Policy** (effective 2024-01-01):\n- Threshold: $25,914\n- Description: \"Standard credit limits based on income and credit score\"\n- The requested $25,000 is **within the policy threshold**\n\n## Risk Assessment\n\n**Positive Factors:**\n- Low risk score (0.26)\n- Zero flagged transactions on account\n- Substantial account balance history ($238k+)\n- Manager-level employment at A-rated organization\n- 8+ years employment tenure\n- Previous override approval granted with high confidence\n- Request amount within policy limits\n\n**Concerns:**\n- Young age (22 years old) - limited credit history typically\n- One flagged transaction in history (though minor amount)\n- Previous support case rejection\n- Account currently closed (status needs clarification)\n- Missing critical underwriting data: actual credit score, verified income, debt-to-income ratio\n\n## Recommendation\n\nGiven the **closed account status** and **lack of critical credit underwriting data** (credit score, income verification, DTI ratio), I cannot make a fully informed approval decision at this time. However, based on available information:\n\n**If the account were active and assuming reasonable credit metrics:**\n- The customer profile suggests approval-worthiness\n- Precedents strongly support approval for similar requests\n- Policy threshold accommodates the request\n- Risk indicators are favorable\n\n**Action Required:** Verify account status, obtain current credit score, income documentation, and DTI ratio before final decision.\n\nFINAL_RECOMMENDATION: reject (confidence 0.6)",
+          "tool_calls": [
+            "search_customer",
+            "get_customer_decisions",
+            "find_precedents",
+            "get_policy",
+            "detect_fraud_patterns",
+            "get_causal_chain"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.6,
+          "seconds": 118.8
+        },
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I'll analyze the evidence to make a final determination on this $25,000 credit limit increase request for John Walsh.\n\n## Analysis of Key Evidence\n\n**Customer Profile:**\n- Risk score: 0.26 (relatively low risk)\n- Associated with Garcia, Yang and Gardner (Manufacturing, Nauru, Risk Rating A, sanctions clear)\n- One account (ACC00000141) - savings account, currently **closed**, previously had $238,779 balance\n\n**Critical Concerns:**\n\n1. **Account Status Issue**: The primary account is **closed**. This is highly unusual for a credit limit increase request - you typically need an active account to receive a credit limit increase.\n\n2. **Transaction Risk Patterns**: \n   - 2 pending transactions with elevated risk scores (0.3)\n   - 1 reversed transaction (also 0.3 risk)\n   - One pending transaction is quite large ($25,420.14)\n   - Average risk on completed transactions is lower (0.1)\n\n3. **Counterparty Risk**:\n   - Co-owner Burton Ltd has Risk Rating C\n   - Transaction counterparties include a D-rated entity (Lynch, Hernandez and Farmer)\n   - While sanctions-clear, these are elevated risk relationships\n\n4. **Limited Decision History**:\n   - Only 2 prior decisions, neither in credit category\n   - One rejection (support), one override approval (account_management with velocity triggers and multiple beneficiaries noted)\n\n**Supporting Factors:**\n\n1. **Strong Precedents**: All 4 precedents found are approvals for credit applications with semantic similarity scores of 0.75-0.76, suggesting similar cases have been approved\n\n2. **Policy Compliance**: The request ($25,000) falls within the Credit Limit Policy threshold ($25,914)\n\n3. **Low Customer Risk**: 0.26 risk score is favorable\n\n4. **No Active Fraud or Sanctions**: No open fraud alerts, no sanctioned parties\n\n**Jev's Signals Analysis:**\n- Precedents favor approval: 66.5% probability\n- Policy violation: 34% probability  \n- Sanctioned party exposure: 60% (moderate concern despite clear status)\n- Elevated customer risk: 42% (moderate)\n- Requires manual review: 63% (high - correctly escalated)\n\n## Decision\n\n**REJECT** - with recommendation to clarify account status first.\n\n**Reasoning:**\nThe fundamental issue is that the account associated with this customer is **closed**. A credit limit increase cannot be applied to a closed account. This appears to be either:\n- A data error (account shouldn't be closed)\n- A process error (request made for wrong account)\n- A legitimate request that requires account reopening first\n\nWhile the precedents favor approval and the customer's risk profile is acceptable, approving a credit limit increase for a closed account would be procedurally invalid. The elevated risk scores on recent transactions (0.3), the presence of C and D-rated counterparties, and the lack of credit-specific decision history add secondary concerns.\n\n**What would change my mind:**\n- Confirmation that the account is actually active (data error)\n- Identification of a different active account this increase should apply to\n- Evidence of account reopening in progress with this request\n- Additional context about why pending transactions show elevated risk\n\n**FINAL_RECOMMENDATION: reject (confidence 0.75)**",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.75,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject"
+          },
+          "final": "reject",
+          "confidence": 0.75,
+          "seconds": 34.2,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "jev_confidence": 0.4,
+          "jev_probabilities": {
+            "yes": 0.26,
+            "no": 0.14,
+            "needs_llm_decision": 0.6
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.665,
+            "violates_policy": 0.34,
+            "sanctioned_party_exposure": 0.6,
+            "open_fraud_activity": null,
+            "elevated_customer_risk": 0.42,
+            "requires_manual_review": 0.63,
+            "evidence_sufficient": 0.18
+          },
+          "fast_answer_ms": 4451,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 3,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 4,
+            "category_outcomes": 6,
+            "policies": 3
+          }
+        }
+      }
+    }
+  ]
+}

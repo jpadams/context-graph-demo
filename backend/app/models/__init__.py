@@ -4,6 +4,8 @@ Pydantic models for the Context Graph application.
 
 from .api import (
     ChatRequest,
+    CreditLineIncreaseRequest,
+    FastAnswerRequest,
     ChatResponse,
     DecisionRequest,
     GraphData,
@@ -48,6 +50,8 @@ __all__ = [
     "SimilarDecision",
     # API
     "ChatRequest",
+    "CreditLineIncreaseRequest",
+    "FastAnswerRequest",
     "ChatResponse",
     "DecisionRequest",
     "GraphData",

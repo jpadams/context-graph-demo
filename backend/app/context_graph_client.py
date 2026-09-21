@@ -236,10 +236,13 @@ class ContextGraphClient:
                 MATCH (p:Person {id: $customer_id})
                 OPTIONAL MATCH (p)-[:OWNS]->(a:Account)
                 OPTIONAL MATCH (p)-[:WORKS_FOR]->(o:Organization)
+                WITH p,
+                     collect(DISTINCT a {.*}) AS accounts,
+                     collect(DISTINCT o {.*}) AS organizations
                 RETURN p {
                     .*,
-                    accounts: collect(DISTINCT a {.*}),
-                    organizations: collect(DISTINCT o {.*})
+                    accounts: accounts,
+                    organizations: organizations
                 } AS customer
                 """,
                 {"customer_id": customer_id},
@@ -296,14 +299,20 @@ class ContextGraphClient:
                 OPTIONAL MATCH (d)-[:GRANTED_EXCEPTION]->(exception:Exception)
                 OPTIONAL MATCH (d)-[:TRIGGERED]->(escalation:Escalation)
                 OPTIONAL MATCH (d)-[:HAD_CONTEXT]->(context:DecisionContext)
+                WITH d, maker,
+                     collect(DISTINCT {id: entity.id, labels: labels(entity), name: entity.name}) AS about_entities,
+                     collect(DISTINCT policy {.*}) AS policies,
+                     collect(DISTINCT exception {.*}) AS exceptions,
+                     collect(DISTINCT escalation {.*}) AS escalations,
+                     collect(DISTINCT context {.*}) AS contexts
                 RETURN d {
                     .*,
-                    about_entities: collect(DISTINCT {id: entity.id, labels: labels(entity), name: entity.name}),
+                    about_entities: about_entities,
                     made_by: maker {.*},
-                    policies: collect(DISTINCT policy {.*}),
-                    exceptions: collect(DISTINCT exception {.*}),
-                    escalations: collect(DISTINCT escalation {.*}),
-                    contexts: collect(DISTINCT context {.*})
+                    policies: policies,
+                    exceptions: exceptions,
+                    escalations: escalations,
+                    contexts: contexts
                 } AS decision
                 """,
                 {"decision_id": decision_id},

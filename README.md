@@ -104,6 +104,43 @@ Combine semantic similarity (text embeddings) with structural similarity (FastRP
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
+## Fast Answers with TypeSafe Jev
+
+Approve/deny questions get two answers: a **fast typed verdict** and a **regular-speed explanation**,
+both from the same evidence.
+
+```
+User: "Should we approve a credit limit increase for Jessica Norris? She's requesting a $25,000 limit increase."
+
+1. Jev reads the message       -> approval request? category=credit, type=credit_limit_increase   (~100 ms)
+2. Code resolves the customer  -> Person "Jessica Norris" matched in the graph
+3. Code runs a fixed set of Cypher retrievals (no tool-use LLM):
+   customer, account_parties (co-owners/counterparties + sanctions), notable_transactions,
+   transaction_summary, support_tickets, alerts, decision_history, precedents,
+   category_outcomes, policies
+4. Jev evaluates the evidence  -> yes | no | needs_llm_decision, with probabilities + confidence,
+   one judgment per precedent ("supports approval?") and per policy ("violated?"), and signals:
+   precedents_favor_approval, violates_policy, sanctioned_party_exposure, open_fraud_activity,
+   elevated_customer_risk, requires_manual_review, evidence_sufficient. Signals are only asked
+   about evidence that exists; an empty list yields null, never a hollow percentage.
+5. Claude receives the same evidence and the verdict. If Jev decided, Claude explains and confirms
+   (or flags disagreement). If Jev escalated, Claude makes the final approve/reject call. It may
+   still call tools; the UI reports exactly which additional tools it used (or that none were needed).
+6. Claude ends with `FINAL_RECOMMENDATION: approve|reject (confidence x)`, which the UI shows as the
+   final answer next to Jev's verdict.
+```
+
+[Jev](https://typesafe.ai) is TypeSafe AI's *System One* model: it returns typed decisions with calibrated
+probabilities in a single pass instead of generating text. A confidence floor (`JEV_CONFIDENCE_FLOOR`,
+default 0.6) escalates low-confidence verdicts to `needs_llm_decision`, i.e. Claude decides.
+
+- Design notes and the choices behind this: [docs/decision-sop-with-jev.md](docs/decision-sop-with-jev.md)
+- Fast path code: `backend/app/cases.py` (parameterized case), `backend/app/evidence.py` (retrievals, customer resolution), `backend/app/jev_client.py` (questions)
+- Any customer, any amount: `POST /api/cases/credit-line-increase` with `{"customer": "Katherine Miller", "amount": 40000, "explain": true}`
+- Compare against the original tool-loop path: `backend/scripts/eval_decision_paths.py` writes results to `backend/evals/results/`
+- Try it without the UI: `POST /api/chat/fast-answer` with `{"message": "..."}` returns the verdict and the full evidence
+- Requires `TYPESAFE_API_KEY` in `.env`; without it the app falls back to the agent-only flow
+
 ## Prerequisites
 
 - Python 3.11+ with [uv](https://docs.astral.sh/uv/) package manager
@@ -111,6 +148,7 @@ Combine semantic similarity (text embeddings) with structural similarity (FastRP
 - Neo4j AuraDS instance (or local Neo4j Enterprise with GDS plugin)
 - Anthropic API Key
 - OpenAI API Key (for embeddings)
+- TypeSafe AI API Key (optional, for Jev fast answers) from [console.typesafe.ai](https://console.typesafe.ai)
 
 ## Quick Start
 
@@ -131,6 +169,9 @@ ANTHROPIC_API_KEY=your_anthropic_key
 
 # OpenAI API Key (for text embeddings)
 OPENAI_API_KEY=your_openai_key
+
+# TypeSafe AI API Key (optional, for Jev fast yes/no/needs_llm_decision verdicts)
+TYPESAFE_API_KEY=your_typesafe_key
 EOF
 ```
 

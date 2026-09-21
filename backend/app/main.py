@@ -22,15 +22,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from sse_starlette.sse import EventSourceResponse
 
-from .agent import ContextGraphAgent
+from .agent import ContextGraphAgent, run_fast_answer_explanation
+from .cases import run_credit_line_increase
 from .config import config
 from .context_graph_client import context_graph_client
+from .evidence import prepare_fast_answer
 from .gds_client import gds_client
+from .jev_client import jev_client
 from .models import (
     ChatRequest,
     ChatResponse,
+    CreditLineIncreaseRequest,
     DecisionRequest,
-    GraphData
+    FastAnswerRequest,
+    GraphData,
 )
 from .vector_client import vector_client
 
@@ -100,6 +105,8 @@ async def health_check():
     return {
         "status": "healthy" if neo4j_connected else "degraded",
         "neo4j_connected": neo4j_connected,
+        "jev_configured": jev_client.is_configured,
+        "jev_model": jev_client.model if jev_client.is_configured else None,
     }
 
 
@@ -140,6 +147,65 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+def _public_fast_answer(fast_answer: dict) -> dict:
+    """Everything the UI needs from the fast path; the raw evidence stays server-side."""
+    return {
+        key: value
+        for key, value in fast_answer.items()
+        if key in {
+            "applicable", "reason", "intent", "customer", "request",
+            "retrievals", "verdict", "graph_data", "total_ms",
+        }
+    }
+
+
+@app.post("/api/chat/fast-answer")
+async def chat_fast_answer(request: FastAnswerRequest):
+    """
+    Run only the Jev fast path for a message: intent read, customer resolution,
+    fixed evidence retrievals, typed verdict. Returns the full evidence for inspection.
+    """
+    if not jev_client.is_configured:
+        raise HTTPException(status_code=503, detail="TYPESAFE_API_KEY is not configured")
+    try:
+        import asyncio
+
+        result = await asyncio.to_thread(prepare_fast_answer, request.message)
+        return result or {"applicable": False, "reason": "jev_not_configured"}
+    except Exception as e:
+        logger.error(f"Fast answer failed: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/cases/credit-line-increase")
+async def credit_line_increase_case(request: CreditLineIncreaseRequest):
+    """
+    The parameterized "Jessica Norris" case for any customer and amount:
+    fixed evidence plan -> Jev typed verdict, optionally followed by Claude's
+    explanation or final call (explain=true).
+    """
+    if not jev_client.is_configured:
+        raise HTTPException(status_code=503, detail="TYPESAFE_API_KEY is not configured")
+    import asyncio
+
+    try:
+        fast_answer = await asyncio.to_thread(
+            run_credit_line_increase, request.customer, request.amount
+        )
+    except Exception as e:
+        logger.error(f"Case failed: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=str(e))
+    if not fast_answer.get("applicable"):
+        raise HTTPException(status_code=404, detail=f"Customer not found: {request.customer}")
+
+    result = {"fast_answer": _public_fast_answer(fast_answer), "evidence": fast_answer["evidence"]}
+    if request.explain:
+        result["claude"] = await run_fast_answer_explanation(
+            fast_answer["request"]["summary"], fast_answer
+        )
+    return result
+
+
 @app.post("/api/chat/stream")
 async def chat_stream(request: ChatRequest):
     """
@@ -158,6 +224,27 @@ async def chat_stream(request: ChatRequest):
                 {"role": msg.role, "content": msg.content} for msg in request.conversation_history
             ]
 
+            # Fast path: fixed Cypher evidence set + typed Jev verdict, before Claude runs.
+            fast_answer = None
+            if jev_client.is_configured:
+                try:
+                    fast_answer = await asyncio.to_thread(prepare_fast_answer, request.message)
+                except Exception as e:
+                    logger.warning(f"Fast answer failed, falling back to agent only: {e}")
+                    fast_answer = {"applicable": False, "reason": f"error: {e}"}
+                if fast_answer:
+                    logger.info(
+                        f"Fast answer applicable={fast_answer.get('applicable')} "
+                        f"verdict={fast_answer.get('verdict', {}).get('routed_decision')}"
+                    )
+                    yield {
+                        "event": "fast_answer",
+                        "data": json.dumps(
+                            {"type": "fast_answer", **_public_fast_answer(fast_answer)},
+                            default=str,
+                        ),
+                    }
+
             logger.info("Creating ContextGraphAgent for streaming...")
             async with ContextGraphAgent() as agent:
                 logger.info("Agent connected, starting stream...")
@@ -170,7 +257,9 @@ async def chat_stream(request: ChatRequest):
                     """Process agent events and put them in the queue."""
                     try:
                         async for event in agent.query_stream(
-                            request.message, conversation_history=history
+                            request.message,
+                            conversation_history=history,
+                            fast_answer=fast_answer,
                         ):
                             await event_queue.put(event)
                         await event_queue.put(None)  # Signal completion
@@ -235,6 +324,15 @@ async def chat_stream(request: ChatRequest):
                                             "session_id": session_id,
                                             "tool_calls": event.get("tool_calls", []),
                                             "decisions_made": event.get("decisions_made", []),
+                                            "additional_tools_used": event.get(
+                                                "additional_tools_used", []
+                                            ),
+                                            "evidence_retrievals": event.get(
+                                                "evidence_retrievals", []
+                                            ),
+                                            "final_recommendation": event.get(
+                                                "final_recommendation"
+                                            ),
                                         }
                                     ),
                                 }
@@ -613,8 +711,9 @@ async def search_policies_semantic(query: str, limit: int = 5):
 async def batch_update_embeddings(limit: int = 100):
     """Generate embeddings for decisions that don't have them."""
     try:
-        count = vector_client.batch_update_decision_embeddings(limit)
-        return {"updated_count": count}
+        decisions = vector_client.batch_update_decision_embeddings(limit)
+        policies = vector_client.batch_update_policy_embeddings(limit)
+        return {"updated_count": decisions + policies, "decisions": decisions, "policies": policies}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

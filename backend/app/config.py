@@ -51,11 +51,35 @@ class AnthropicConfig:
     """Anthropic configuration for Claude Agent SDK."""
 
     api_key: str
+    # Model for the agent: a full id (claude-opus-4-1) or an alias (sonnet, opus, haiku).
+    # Empty means the Agent SDK's bundled default.
+    model: str = ""
 
     @classmethod
     def from_env(cls) -> "AnthropicConfig":
         return cls(
             api_key=os.getenv("ANTHROPIC_API_KEY", ""),
+            model=os.getenv("CLAUDE_MODEL", ""),
+        )
+
+
+@dataclass
+class TypeSafeConfig:
+    """TypeSafe AI configuration for Jev (System One) typed decisions."""
+
+    api_key: str
+    model: str = "jev-latest"
+    # Below this Choice confidence, a yes/no verdict is escalated to the LLM for the final call.
+    confidence_floor: float = 0.6
+    timeout_seconds: float = 30.0
+
+    @classmethod
+    def from_env(cls) -> "TypeSafeConfig":
+        return cls(
+            api_key=os.getenv("TYPESAFE_API_KEY", ""),
+            model=os.getenv("TYPESAFE_MODEL", "jev-latest"),
+            confidence_floor=float(os.getenv("JEV_CONFIDENCE_FLOOR", "0.6")),
+            timeout_seconds=float(os.getenv("TYPESAFE_TIMEOUT_SECONDS", "30")),
         )
 
 
@@ -66,6 +90,7 @@ class AppConfig:
     neo4j: Neo4jConfig
     openai: OpenAIConfig
     anthropic: AnthropicConfig
+    typesafe: TypeSafeConfig
 
     # FastRP embedding dimensions (structural)
     fastrp_dimensions: int = 128
@@ -81,6 +106,7 @@ class AppConfig:
             neo4j=Neo4jConfig.from_env(),
             openai=OpenAIConfig.from_env(),
             anthropic=AnthropicConfig.from_env(),
+            typesafe=TypeSafeConfig.from_env(),
             fastrp_dimensions=int(os.getenv("FASTRP_DIMENSIONS", "128")),
             host=os.getenv("HOST", "0.0.0.0"),
             port=int(os.getenv("PORT", "8000")),

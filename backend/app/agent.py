@@ -4,11 +4,14 @@ Provides MCP tools for querying and updating the context graph.
 """
 
 import json
+import re
 from typing import Any
 
 from claude_agent_sdk import ClaudeAgentOptions, ClaudeSDKClient, create_sdk_mcp_server, tool
 
+from .config import config
 from .context_graph_client import context_graph_client
+from .evidence import derive_credit_figures
 from .gds_client import gds_client
 from .vector_client import vector_client
 
@@ -104,6 +107,26 @@ When helping users:
 3. **Cite specific past decisions** when they inform your recommendation
 4. **Flag exceptions or escalations** that may be needed
 5. **Consider both structural and semantic similarity** when finding related cases
+
+## Fast answers from Jev
+
+For approve/deny questions the system may hand you a **fast answer** produced before you run:
+a fixed set of Cypher retrievals (customer, account parties with sanctions status, notable
+transactions, transaction summary, support tickets, alerts, decision history, precedents, category
+outcomes, policies) and a typed verdict from TypeSafe's Jev model - `yes`, `no` or
+`needs_llm_decision` - with calibrated probabilities, per-precedent and per-policy judgments, and
+supporting signals (a signal of null means that evidence was empty, so say "no precedents were
+found" rather than quoting a number). When present:
+- Treat the pre-collected evidence as already retrieved; do not re-run the same lookups.
+- Explain the verdict for the user: cite the specific precedents, policies and risk signals
+  in the evidence that support or complicate it, and state the probabilities plainly.
+- If Jev decided `yes` or `no`, confirm it unless the evidence clearly contradicts it; if you
+  disagree, say so and explain why.
+- If Jev escalated with `needs_llm_decision`, **you make the final call**: recommend approve or
+  reject, weighing the evidence and any policy exceptions. Call tools only if something specific
+  is missing (say what and why).
+- Always end your reply with exactly one line in this form, and nothing after it:
+  `FINAL_RECOMMENDATION: approve (confidence 0.8)` or `FINAL_RECOMMENDATION: reject (confidence 0.7)`
 
 You have access to tools that leverage both:
 - **Semantic similarity** (text embeddings) - for matching by meaning
@@ -207,15 +230,12 @@ async def get_customer_decisions(args: dict[str, Any]) -> dict[str, Any]:
     """Find structurally similar past decisions using FastRP graph embeddings. 
     Returns decisions with similar influences, causes, and precidents as well as decisions about related accounts .""",
     {
-        "decision_id": {
-            "type": str,
-            "description": "The internal decision ID (decision.id)"
-        },
+        "decision_id": {"type": str, "description": "The internal decision ID (decision.id)"},
         "limit": {
             "type": int,
             "description": "Number of similar decisions to return",
-            "default": 5
-        }
+            "default": 5,
+        },
     },
 )
 async def find_similar_decisions(args: dict[str, Any]) -> dict[str, Any]:
@@ -364,13 +384,13 @@ async def record_decision(args: dict[str, Any]) -> dict[str, Any]:
     {
         "account_id": {
             "type": str,
-            "description": "The internal account ID (account.id), not the customer-facing account number (account.account_number)"
+            "description": "The internal account ID (account.id), not the customer-facing account number (account.account_number)",
         },
         "neighbor_count": {
             "type": int,
             "description": "Number of example decisions to return from the community",
-            "default": 5
-        }
+            "default": 5,
+        },
     },
 )
 async def detect_fraud_patterns(args: dict[str, Any]) -> dict[str, Any]:
@@ -393,15 +413,12 @@ async def detect_fraud_patterns(args: dict[str, Any]) -> dict[str, Any]:
     "find_decision_community",
     "Find decisions in the same community using Leiden community detection. Returns decisions that are structurally related through causal chains and precedent relationships.",
     {
-        "decision_id": {
-            "type": str,
-            "description": "The internal decision ID (decision.id)"
-        },
+        "decision_id": {"type": str, "description": "The internal decision ID (decision.id)"},
         "example_count": {
             "type": int,
             "description": "Number of example decisions to return from the community",
-            "default": 5
-        }
+            "default": 5,
+        },
     },
 )
 async def find_decision_community(args: dict[str, Any]) -> dict[str, Any]:
@@ -412,7 +429,7 @@ async def find_decision_community(args: dict[str, Any]) -> dict[str, Any]:
         results = gds_client.get_decision_community(
             decision_id=args["decision_id"], example_count=example_count
         )
- 
+
         # Include graph data centered on the decision
         graph_data = get_graph_data_for_entity(decision_id, depth=2)
 
@@ -427,13 +444,14 @@ async def find_decision_community(args: dict[str, Any]) -> dict[str, Any]:
             "is_error": True,
         }
 
+
 @tool(
     "find_accounts_with_high_shared_transaction_volume",
     "Find accounts that share high transaction volumes with a given account.",
     {
         "account_id": {
             "type": str,
-            "description": "The internal account ID (account.id), not the customer-facing account number (account.account_number)"
+            "description": "The internal account ID (account.id), not the customer-facing account number (account.account_number)",
         },
     },
 )
@@ -447,10 +465,58 @@ async def find_accounts_with_high_shared_transaction_volume(args: dict[str, Any]
         return {"content": [{"type": "text", "text": json.dumps(results, indent=2, default=str)}]}
     except Exception as e:
         return {
-            "content": [{"type": "text", "text": f"Error finding accounts with high shared transaction volume: {str(e)}"}],
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Error finding accounts with high shared transaction volume: {str(e)}",
+                }
+            ],
             "is_error": True,
         }
-    
+
+
+@tool(
+    "compute_credit_figures",
+    """Compute the arithmetic the Credit Limit Policy is written in, for a proposed credit limit increase:
+    proposed total limit, its share of the customer's verified annual income, and the increase as a fraction
+    of the current limit. Also returns the customer's credit_score, annual_income, current_credit_limit and
+    credit_utilization. Use before judging a credit request against policy thresholds.""",
+    {
+        "customer_id": {"type": str, "description": "The internal customer ID (person.id)"},
+        "requested_amount": {"type": float, "description": "Requested increase in USD"},
+    },
+)
+async def compute_credit_figures(args: dict[str, Any]) -> dict[str, Any]:
+    """Deterministic policy arithmetic, so the model does not have to do division."""
+    try:
+        customer = context_graph_client.get_customer(args["customer_id"])
+        if not customer:
+            return {
+                "content": [{"type": "text", "text": "Customer not found"}],
+                "is_error": True,
+            }
+        request = {"requested_amount_usd": float(args["requested_amount"])}
+        result = {
+            "customer_credit_profile": {
+                k: customer.get(k)
+                for k in (
+                    "credit_score",
+                    "annual_income",
+                    "income_verified",
+                    "employment_status",
+                    "current_credit_limit",
+                    "credit_utilization",
+                )
+            },
+            "derived": derive_credit_figures(request, customer),
+        }
+        return {"content": [{"type": "text", "text": json.dumps(result, indent=2, default=str)}]}
+    except Exception as e:
+        return {
+            "content": [{"type": "text", "text": f"Error computing credit figures: {str(e)}"}],
+            "is_error": True,
+        }
+
 
 @tool(
     "get_policy",
@@ -573,6 +639,7 @@ def create_context_graph_server():
             detect_fraud_patterns,
             find_decision_community,
             find_accounts_with_high_shared_transaction_volume,
+            compute_credit_figures,
             get_policy,
             execute_cypher,
             get_schema,
@@ -580,13 +647,21 @@ def create_context_graph_server():
     )
 
 
-def get_agent_options() -> ClaudeAgentOptions:
-    """Get the agent options with context graph server configured."""
+def get_agent_options(exclude_tools: tuple[str, ...] = ()) -> ClaudeAgentOptions:
+    """
+    Get the agent options with context graph server configured.
+
+    ``exclude_tools`` removes tools by short name (e.g. "compute_credit_figures") so
+    the eval harness can reproduce the original tool set exactly.
+    """
     context_graph_server = create_context_graph_server()
+    excluded = {f"mcp__graph__{name}" for name in exclude_tools}
 
     return ClaudeAgentOptions(
         system_prompt=CONTEXT_GRAPH_SYSTEM_PROMPT,
+        model=config.anthropic.model or None,
         mcp_servers={"graph": context_graph_server},
+        disallowed_tools=sorted(excluded),
         allowed_tools=[
             "mcp__graph__search_customer",
             "mcp__graph__get_customer_decisions",
@@ -597,11 +672,16 @@ def get_agent_options() -> ClaudeAgentOptions:
             "mcp__graph__detect_fraud_patterns",
             "mcp__graph__find_decision_community",
             "mcp__graph__find_accounts_with_high_shared_transaction_volume",
+            "mcp__graph__compute_credit_figures",
             "mcp__graph__get_policy",
             "mcp__graph__execute_cypher",
             "mcp__graph__get_schema",
         ],
     )
+
+
+# Tools added after the original demo; excluded to reproduce the "original" eval arm.
+POST_ORIGINAL_TOOLS = ("compute_credit_figures",)
 
 
 # ============================================
@@ -618,6 +698,7 @@ AVAILABLE_TOOLS = [
     "detect_fraud_patterns",
     "find_decision_community",
     "find_accounts_with_high_shared_transaction_volume",
+    "compute_credit_figures",
     "get_policy",
     "execute_cypher",
     "get_schema",
@@ -628,7 +709,7 @@ def get_agent_context() -> dict[str, Any]:
     """Get agent context information for transparency/debugging."""
     return {
         "system_prompt": CONTEXT_GRAPH_SYSTEM_PROMPT,
-        "model": "claude-sonnet-4-20250514",
+        "model": config.anthropic.model or "Agent SDK default (claude-sonnet-4-5)",
         "available_tools": AVAILABLE_TOOLS,
         "mcp_server": "context-graph",
     }
@@ -639,11 +720,221 @@ def get_agent_context() -> dict[str, Any]:
 # ============================================
 
 
+FINAL_RECOMMENDATION_RE = re.compile(
+    r"FINAL_RECOMMENDATION:\s*\**\s*(approve|reject)\**"
+    r"(?:\s*\(?\s*confidence[:\s]*([01](?:\.\d+)?)\s*\)?)?",
+    re.IGNORECASE,
+)
+
+
+def extract_final_recommendation(text: str) -> tuple[str | None, float | None]:
+    """Last FINAL_RECOMMENDATION line in ``text`` -> (approve|reject|None, confidence|None)."""
+    match = None
+    for match in FINAL_RECOMMENDATION_RE.finditer(text or ""):
+        pass
+    if not match:
+        return None, None
+    return match.group(1).lower(), (float(match.group(2)) if match.group(2) else None)
+
+
+def parse_final_recommendation(text: str, fast_answer: dict[str, Any] | None) -> dict | None:
+    """
+    Pull Claude's FINAL_RECOMMENDATION line out of its reply and relate it to Jev's verdict.
+
+    Returns None when there was no fast answer to relate it to.
+    """
+    if not fast_answer or not fast_answer.get("applicable"):
+        return None
+    verdict = fast_answer.get("verdict", {})
+    jev_routed = verdict.get("routed_decision")
+    escalated = jev_routed == "needs_llm_decision"
+
+    match = None
+    for match in FINAL_RECOMMENDATION_RE.finditer(text or ""):
+        pass  # keep the last occurrence
+    if not match:
+        return {
+            "decision": None,
+            "confidence": None,
+            "source": "claude" if escalated else "jev",
+            "jev_decision": jev_routed,
+            "escalated": escalated,
+            "agrees_with_jev": None,
+            "final": None if escalated else {"yes": "approve", "no": "reject"}.get(jev_routed),
+        }
+
+    decision = match.group(1).lower()
+    confidence = float(match.group(2)) if match.group(2) else None
+    jev_as_recommendation = {"yes": "approve", "no": "reject"}.get(jev_routed)
+    return {
+        "decision": decision,
+        "confidence": confidence,
+        "source": "claude" if escalated else "jev",
+        "jev_decision": jev_routed,
+        "escalated": escalated,
+        "agrees_with_jev": None if escalated else decision == jev_as_recommendation,
+        "final": decision,
+    }
+
+
+def format_fast_answer_context(fast_answer: dict[str, Any]) -> str:
+    """Render the Jev fast answer and its evidence as context for Claude."""
+    verdict = fast_answer.get("verdict", {})
+    retrievals = ", ".join(r["name"] for r in fast_answer.get("retrievals", []))
+    routed = verdict.get("routed_decision")
+    if routed == "needs_llm_decision":
+        task = (
+            "Jev could not decide this case and escalated it to you. The user has been shown the "
+            "escalation. Make the final call: should this request be approved or rejected? Weigh "
+            "the evidence, name the precedents, policies and risk signals that drive your call, and "
+            "say what would change your mind. Call tools only if something specific is missing from "
+            "the evidence, and say what you needed. End with the FINAL_RECOMMENDATION line."
+        )
+    else:
+        task = (
+            f"The user has already been shown Jev's verdict ({routed}). Explain it: which precedents, "
+            "policies and risk signals in the evidence support or complicate it, and what happens "
+            "next. Confirm the verdict unless the evidence clearly contradicts it; if you disagree, "
+            "say so and why. Call tools only if something specific is missing from the evidence, and "
+            "say what you needed. End with the FINAL_RECOMMENDATION line."
+        )
+    return f"""<fast_answer>
+A fast typed verdict was produced by TypeSafe's Jev model ({verdict.get("model")}) in {verdict.get("latency_ms")} ms
+from evidence collected by a fixed set of Cypher retrievals ({retrievals}).
+
+Request understood as: {json.dumps(fast_answer.get("request"), default=str)}
+Resolved customer: {json.dumps(fast_answer.get("customer"), default=str)}
+
+Jev verdict: {verdict.get("decision")}  (routed decision after confidence floor: {routed})
+Probabilities: {json.dumps(verdict.get("probabilities"))}
+Confidence: {verdict.get("confidence")}  Routing: {json.dumps(verdict.get("routing"))}
+Supporting signals (probability each statement is true): {json.dumps(verdict.get("signals"))}
+
+Pre-collected evidence (JSON):
+{json.dumps(fast_answer.get("evidence"), indent=1, default=str)}
+</fast_answer>
+
+{task}"""
+
+
+FINAL_LINE_INSTRUCTION = (
+    "\n\nEnd your reply with exactly one line in this form, and nothing after it: "
+    "`FINAL_RECOMMENDATION: approve (confidence 0.8)` or "
+    "`FINAL_RECOMMENDATION: reject (confidence 0.7)`."
+)
+
+
+async def run_agent_only(
+    message: str, exclude_tools: tuple[str, ...] = POST_ORIGINAL_TOOLS
+) -> dict[str, Any]:
+    """
+    Tool-loop path: Claude picks tools and runs Cypher through them itself.
+    By default the tool set is the original demo's (post-original tools excluded);
+    pass ``exclude_tools=()`` to include the derived-figures tool (eval arm 2).
+    Returns the response, the tool calls it made, and its parsed final recommendation.
+    """
+    import time
+
+    started = time.perf_counter()
+    async with ContextGraphAgent(exclude_tools=exclude_tools) as agent:
+        result = await agent.query(message + FINAL_LINE_INSTRUCTION)
+    decision, confidence = extract_final_recommendation(result["response"])
+    tools = [c["name"].replace("mcp__graph__", "") for c in result["tool_calls"]]
+    return {
+        "path": "agent_only" if exclude_tools else "agent_with_derived_tool",
+        "response": result["response"],
+        "tool_calls": tools,
+        "tool_call_count": len(tools),
+        "final": decision,
+        "confidence": confidence,
+        "seconds": round(time.perf_counter() - started, 1),
+    }
+
+
+def format_evidence_only_context(case: dict[str, Any]) -> str:
+    """The fixed evidence plan handed to Claude with no Jev verdict (eval arm 3)."""
+    retrievals = ", ".join(r["name"] for r in case.get("retrievals", []))
+    return f"""<evidence>
+Evidence collected by a fixed set of Cypher retrievals ({retrievals}) run in code before you were
+called. Treat it as already retrieved; do not re-run the same lookups. `request.derived` holds the
+policy arithmetic (proposed total limit, its share of income, increase relative to the current
+limit) computed by code.
+
+Request: {json.dumps(case.get("request"), default=str)}
+Resolved customer: {json.dumps(case.get("customer"), default=str)}
+
+Evidence (JSON):
+{json.dumps(case.get("evidence"), indent=1, default=str)}
+</evidence>
+
+Decide whether this request should be approved. Name the precedents, policies and risk signals that
+drive your call. Call tools only if something specific is missing, and say what you needed.{FINAL_LINE_INSTRUCTION}"""
+
+
+async def run_claude_on_evidence(message: str, case: dict[str, Any]) -> dict[str, Any]:
+    """
+    Eval arm 3: same fixed evidence as the fast path, Claude decides, no Jev.
+    Isolates what code-owned evidence gathering is worth on its own.
+    """
+    import time
+
+    started = time.perf_counter()
+    text_parts: list[str] = []
+    done: dict[str, Any] = {}
+    full_message = format_evidence_only_context(case) + "\n\n" + message
+    async with ContextGraphAgent() as agent:
+        async for event in agent.query_stream(full_message):
+            if event["type"] == "text":
+                text_parts.append(event["content"])
+            elif event["type"] == "done":
+                done = event
+    response = "\n".join(text_parts)
+    decision, confidence = extract_final_recommendation(response)
+    return {
+        "path": "evidence_claude",
+        "response": response,
+        "tool_calls": done.get("additional_tools_used", []),
+        "tool_call_count": len(done.get("additional_tools_used", [])),
+        "final": decision,
+        "confidence": confidence,
+        "evidence_ms": case.get("evidence_ms"),
+        "seconds": round(time.perf_counter() - started, 1),
+    }
+
+
+async def run_fast_answer_explanation(message: str, fast_answer: dict[str, Any]) -> dict[str, Any]:
+    """
+    The new path's second half: Claude explains (or, when escalated, decides) from
+    the pre-collected evidence. Returns text, extra tools used and the final recommendation.
+    """
+    import time
+
+    started = time.perf_counter()
+    text_parts: list[str] = []
+    done: dict[str, Any] = {}
+    async with ContextGraphAgent() as agent:
+        async for event in agent.query_stream(message, fast_answer=fast_answer):
+            if event["type"] == "text":
+                text_parts.append(event["content"])
+            elif event["type"] == "done":
+                done = event
+    return {
+        "path": "fast_answer",
+        "response": "\n".join(text_parts),
+        "tool_calls": done.get("additional_tools_used", []),
+        "tool_call_count": len(done.get("additional_tools_used", [])),
+        "final_recommendation": done.get("final_recommendation"),
+        "final": (done.get("final_recommendation") or {}).get("final"),
+        "confidence": (done.get("final_recommendation") or {}).get("confidence"),
+        "seconds": round(time.perf_counter() - started, 1),
+    }
+
+
 class ContextGraphAgent:
     """Wrapper for managing Claude Agent SDK sessions."""
 
-    def __init__(self):
-        self.options = get_agent_options()
+    def __init__(self, exclude_tools: tuple[str, ...] = ()):
+        self.options = get_agent_options(exclude_tools)
         self.client: ClaudeSDKClient | None = None
 
     async def __aenter__(self):
@@ -712,9 +1003,18 @@ Please respond to the current message, taking the conversation history into acco
         }
 
     async def query_stream(
-        self, message: str, conversation_history: list[dict[str, str]] | None = None
+        self,
+        message: str,
+        conversation_history: list[dict[str, str]] | None = None,
+        fast_answer: dict[str, Any] | None = None,
     ):
-        """Send a query to the agent and stream the response."""
+        """
+        Send a query to the agent and stream the response.
+
+        ``fast_answer`` is the optional output of the Jev fast path: pre-collected
+        evidence and a typed verdict. It is prepended to the message so Claude
+        explains from the same context Jev decided on.
+        """
         if not self.client:
             raise RuntimeError("Agent not connected. Use 'async with' context manager.")
 
@@ -732,6 +1032,9 @@ Please respond to the current message, taking the conversation history into acco
         else:
             full_message = message
 
+        if fast_answer and fast_answer.get("applicable"):
+            full_message = format_fast_answer_context(fast_answer) + "\n\n" + full_message
+
         # Emit agent context first
         yield {"type": "agent_context", "context": get_agent_context()}
 
@@ -741,6 +1044,7 @@ Please respond to the current message, taking the conversation history into acco
         tool_calls = []
         tool_id_to_name = {}  # Map tool_use_id to tool name
         decisions_made = []
+        response_text = ""
 
         async for msg in self.client.receive_response():
             msg_type = type(msg).__name__
@@ -798,6 +1102,7 @@ Please respond to the current message, taking the conversation history into acco
                 for block in msg.content:
                     if hasattr(block, "text"):
                         # Stream text content
+                        response_text += block.text + "\n"
                         yield {"type": "text", "content": block.text}
                     elif hasattr(block, "name"):
                         # Tool use block
@@ -819,8 +1124,17 @@ Please respond to the current message, taking the conversation history into acco
                             pass
 
         # Final event with summary
+        additional_tools = []
+        for call in tool_calls:
+            name = call["name"].replace("mcp__graph__", "")
+            if name not in additional_tools:
+                additional_tools.append(name)
+
         yield {
             "type": "done",
             "tool_calls": tool_calls,
             "decisions_made": decisions_made,
+            "additional_tools_used": additional_tools,
+            "evidence_retrievals": [r["name"] for r in (fast_answer or {}).get("retrievals", [])],
+            "final_recommendation": parse_final_recommendation(response_text, fast_answer),
         }

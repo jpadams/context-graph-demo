@@ -54,6 +54,61 @@ DECISION_CATEGORIES = [
 ]
 
 ACCOUNT_TYPES = ["checking", "savings", "trading", "margin"]
+
+# Explicit, machine-readable rules for the credit policies so a decision model can apply them.
+CREDIT_LIMIT_RULES = {
+    "min_credit_score": 660,
+    "max_total_limit_pct_of_income": 0.35,
+    "max_increase_pct_of_current_limit": 1.0,
+    "senior_review_above_usd": 50000,
+}
+EXCEPTION_AUTHORITY_RULES = {
+    "manager_approval_above_usd": 25000,
+    "senior_approval_above_usd": 50000,
+    "committee_approval_above_usd": 100000,
+}
+CREDIT_LIMIT_DESCRIPTION = (
+    "Standard credit limits based on income and credit score. Minimum credit score 660. "
+    "Total credit limit after an increase may not exceed 35% of verified annual income. "
+    "A single increase may not exceed 100% of the current limit. Increases above $50,000 "
+    "require senior review."
+)
+EXCEPTION_AUTHORITY_DESCRIPTION = (
+    "Authority levels for policy exceptions: manager approval above $25,000, senior approval "
+    "above $50,000, credit committee above $100,000."
+)
+EMPLOYMENT_STATUSES = [
+    ("employed", 0.72),
+    ("self_employed", 0.15),
+    ("retired", 0.09),
+    ("unemployed", 0.04),
+]
+
+
+def credit_profile(risk_score: float) -> dict:
+    """Income, credit score and current limit, loosely anti-correlated with risk_score."""
+    credit_score = int(max(300, min(850, random.gauss(800 - risk_score * 320, 28))))
+    annual_income = int(round(random.lognormvariate(11.35, 0.45) / 500) * 500)  # median ~$85k
+    employment = random.choices(
+        [e for e, _ in EMPLOYMENT_STATUSES], [w for _, w in EMPLOYMENT_STATUSES]
+    )[0]
+    if employment == "unemployed":
+        annual_income = int(annual_income * 0.25)
+    elif employment == "retired":
+        annual_income = int(annual_income * 0.6)
+    limit_pct = random.uniform(0.08, 0.30)
+    current_limit = int(round(annual_income * limit_pct / 500) * 500)
+    utilization = round(max(0.0, min(0.98, random.gauss(0.32 + risk_score * 0.4, 0.15))), 2)
+    return {
+        "credit_score": credit_score,
+        "annual_income": annual_income,
+        "employment_status": employment,
+        "current_credit_limit": current_limit,
+        "credit_utilization": utilization,
+        "income_verified": random.random() > 0.15,
+    }
+
+
 TRANSACTION_TYPES = ["deposit", "withdrawal", "transfer", "trade"]
 CHANNELS = ["online", "branch", "atm", "wire", "mobile"]
 
@@ -322,6 +377,11 @@ class DataGenerator:
             for name, category, description in policies:
                 policy_id = str(uuid.uuid4())
                 self.policy_ids.append(policy_id)
+                rules = {"threshold": random.randint(1000, 100000)}
+                if name == "Credit Limit Policy":
+                    rules, description = CREDIT_LIMIT_RULES, CREDIT_LIMIT_DESCRIPTION
+                elif name == "Exception Approval Authority":
+                    rules, description = EXCEPTION_AUTHORITY_RULES, EXCEPTION_AUTHORITY_DESCRIPTION
 
                 session.run(
                     """
@@ -341,7 +401,7 @@ class DataGenerator:
                         "name": name,
                         "description": description,
                         "category": category,
-                        "rules": json.dumps({"threshold": random.randint(1000, 100000)}),
+                        "rules": json.dumps(rules),
                     },
                 )
         print(f"Created {NUM_POLICIES} policies.")
@@ -357,6 +417,7 @@ class DataGenerator:
 
                 # Assign risk score with realistic distribution
                 risk_score = max(0, min(1, random.gauss(0.25, 0.2)))
+                profile = credit_profile(risk_score)
 
                 session.run(
                     """
@@ -368,6 +429,12 @@ class DataGenerator:
                         phone: $phone,
                         date_of_birth: date($dob),
                         risk_score: $risk_score,
+                        credit_score: $credit_score,
+                        annual_income: $annual_income,
+                        income_verified: $income_verified,
+                        employment_status: $employment_status,
+                        current_credit_limit: $current_credit_limit,
+                        credit_utilization: $credit_utilization,
                         source_systems: $source_systems,
                         created_at: datetime()
                     })
@@ -379,6 +446,7 @@ class DataGenerator:
                         "phone": fake.phone_number(),
                         "dob": fake.date_of_birth(minimum_age=18, maximum_age=80).isoformat(),
                         "risk_score": round(risk_score, 3),
+                        **profile,
                         "source_systems": random.sample(
                             ["CRM", "Trading", "Support", "Core Banking"], k=random.randint(1, 3)
                         ),
@@ -928,6 +996,47 @@ class DataGenerator:
                     )
         print("Created causal chains.")
 
+    def enrich_credit_profiles(self):
+        """
+        Add credit fields to Person nodes that lack them, and set explicit rules on the
+        credit policies. Idempotent; safe on an existing database.
+        """
+        print("Enriching persons with credit profiles...")
+        with self.driver.session(database=self.database) as session:
+            rows = session.run(
+                "MATCH (p:Person) WHERE p.credit_score IS NULL RETURN p.id AS id, p.risk_score AS risk ORDER BY p.id"
+            ).data()
+            for row in rows:
+                random.seed(row["id"])  # deterministic per person
+                session.run(
+                    """
+                    MATCH (p:Person {id: $id})
+                    SET p.credit_score = $credit_score, p.annual_income = $annual_income,
+                        p.income_verified = $income_verified, p.employment_status = $employment_status,
+                        p.current_credit_limit = $current_credit_limit,
+                        p.credit_utilization = $credit_utilization
+                    """,
+                    {"id": row["id"], **credit_profile(row["risk"] or 0.25)},
+                )
+            session.run(
+                """
+                MATCH (p:Policy {name: 'Credit Limit Policy'})
+                SET p.threshold_rules = $rules, p.description = $description
+                """,
+                {"rules": json.dumps(CREDIT_LIMIT_RULES), "description": CREDIT_LIMIT_DESCRIPTION},
+            )
+            session.run(
+                """
+                MATCH (p:Policy {name: 'Exception Approval Authority'})
+                SET p.threshold_rules = $rules, p.description = $description
+                """,
+                {
+                    "rules": json.dumps(EXCEPTION_AUTHORITY_RULES),
+                    "description": EXCEPTION_AUTHORITY_DESCRIPTION,
+                },
+            )
+        print(f"Enriched {len(rows)} persons; credit policies updated with explicit rules.")
+
     def generate_all(self):
         """Generate all sample data."""
         print("\n" + "=" * 50)
@@ -967,8 +1076,13 @@ class DataGenerator:
 
 
 if __name__ == "__main__":
+    import sys
+
     generator = DataGenerator()
     try:
-        generator.generate_all()
+        if "--enrich-only" in sys.argv:
+            generator.enrich_credit_profiles()
+        else:
+            generator.generate_all()
     finally:
         generator.close()
