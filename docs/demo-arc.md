@@ -32,8 +32,9 @@ policies, fraud patterns...) and recommends.
 - **History:** in September this path took 60-100 s and seven tool calls, and flipped between
   deny and conditional approve on Jessica Norris (`docs/decision-sop-with-jev.md` §1, §5). It
   also missed evidence it never retrieved: a sanctioned co-owner, a frozen account.
-- **Today, on the labeled cases:** about 14 s with Claude Sonnet 5.5, about 5 tool calls per
-  case, and 11/14 final answers matched policy.
+- **Today, on the labeled cases** (`eval_20261112_130658.md`, stage-1 tool set): 14.5 s with
+  Claude Sonnet 5.5, 4.6 tool calls per case, and 10/14 final answers matched policy. It
+  approved both unmet-condition cases, Tanya included, though it read her decision history.
 
 ### Stage 2: watch which tools mattered, then run them every time
 
@@ -81,10 +82,12 @@ outcome. Expected answers follow the written escalation policy
 
 | | 1 · Claude + tools | 10 queries + Claude | 10 queries + Claude + **written policy** | 2 · one Jev choice | 3 · decomposed |
 |---|---|---|---|---|---|
-| correct finals | 11/14 | 10/14 | **14/14** | 9/14 | **14/14** |
+| correct finals | 11/14* | 10/14 | **14/14** | 9/14 | **14/14** |
 | mean seconds | 14.1 | 10.4 | 8.5 | 15.5 | 9.9 |
 | decided with no LLM call | 0 | 0 | 0 | 10/14 | **8/14** (~0.45 s) |
 | extra tool calls | 4.9 | 0.1 | 0 | 0.5 | 0 |
+
+\* This run could still call `compute_credit_figures` (denied). Rerun with the stage-1 tool set only: 10/14, 14.5 s, 4.6 calls (`eval_20261112_130658.md`).
 
 **Routing before Claude** (labeled cases): stage 3 escalates exactly the 6 cases that should
 escalate. Stage 2 waves through 2–3 of them, varying by run.

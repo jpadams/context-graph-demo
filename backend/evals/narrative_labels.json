@@ -21,8 +21,8 @@
   "ALT000004": {
    "status": "resolved",
    "type": "amount_threshold",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000005": {
    "status": "escalated",
@@ -75,8 +75,8 @@
   "ALT000013": {
    "status": "false_positive",
    "type": "device_change",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000014": {
    "status": "investigating",
@@ -129,8 +129,8 @@
   "ALT000022": {
    "status": "false_positive",
    "type": "pattern_match",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000023": {
    "status": "open",
@@ -165,14 +165,14 @@
   "ALT000028": {
    "status": "resolved",
    "type": "pattern_match",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000029": {
    "status": "resolved",
    "type": "device_change",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000030": {
    "status": "resolved",
@@ -219,26 +219,26 @@
   "ALT000037": {
    "status": "resolved",
    "type": "pattern_match",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000038": {
    "status": "false_positive",
    "type": "fraud_detection",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000039": {
    "status": "resolved",
    "type": "amount_threshold",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000040": {
    "status": "resolved",
    "type": "device_change",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000041": {
    "status": "resolved",
@@ -261,8 +261,8 @@
   "ALT000044": {
    "status": "resolved",
    "type": "velocity_check",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000045": {
    "status": "resolved",
@@ -279,14 +279,14 @@
   "ALT000047": {
    "status": "resolved",
    "type": "behavioral_anomaly",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000048": {
    "status": "resolved",
    "type": "behavioral_anomaly",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000049": {
    "status": "resolved",
@@ -315,8 +315,8 @@
   "ALT000053": {
    "status": "false_positive",
    "type": "pattern_match",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000054": {
    "status": "investigating",
@@ -339,8 +339,8 @@
   "ALT000057": {
    "status": "false_positive",
    "type": "sanctions_hit",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000058": {
    "status": "resolved",
@@ -357,14 +357,14 @@
   "ALT000060": {
    "status": "resolved",
    "type": "sanctions_hit",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000061": {
    "status": "resolved",
    "type": "pattern_match",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000062": {
    "status": "investigating",
@@ -387,8 +387,8 @@
   "ALT000065": {
    "status": "false_positive",
    "type": "geographic_anomaly",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000066": {
    "status": "investigating",
@@ -405,8 +405,8 @@
   "ALT000068": {
    "status": "false_positive",
    "type": "geographic_anomaly",
-   "unexplained_risk": true,
-   "variant": "closed_but_unexplained"
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
   },
   "ALT000069": {
    "status": "investigating",
@@ -441,8 +441,8 @@
   "ALT000074": {
    "status": "resolved",
    "type": "behavioral_anomaly",
-   "unexplained_risk": false,
-   "variant": "cleared_benign"
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
   },
   "ALT000075": {
    "status": "escalated",
@@ -482,67 +482,55 @@
   }
  },
  "decisions": {
-  "06e3a1a0-907b-4c51-8f06-4231a084ff4b": {
+  "00ca5e13-660e-4961-b4b4-c6260e2e1fd0": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "1af87342-842f-41d8-8af7-61a38461721d": {
+  "03d66d7c-4f02-496e-8223-a4a5606e2d1b": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "1e10fe60-208f-4996-92f5-624a0b2b7cf4": {
+  "052dd356-d988-4f3e-baf9-e1396e12b9a3": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "2b26939b-0d07-48e5-b17d-7490b8581605": {
+  "1c4619fd-b026-4811-8f9d-4c9d8bec2f90": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "3a2fbfb1-cb33-4bd2-8d7e-e1bef471c547": {
+  "1f97830c-2cbb-4839-8850-e01bdab73283": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "3ba3d45d-d6c1-4371-8667-548cf55895e8": {
+  "298c96f8-a8bb-4e5a-a320-1b65b40c44fe": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "40a3a411-0cdc-48cb-9ea5-2bac856037c5": {
+  "29d9669a-dace-4311-b7c0-8ca8f8391942": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "580c502d-1db6-4e1c-afe5-0c2b15692b87": {
+  "3fb39f33-ec4f-47a5-942f-dcc36ab0d164": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "66ae97ab-2af9-4dce-82d7-b6854b87ab73": {
+  "50ee3f54-a263-4d65-96e6-a73604bdee47": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "876b914a-768e-4000-8c1c-b3230e0654ab": {
+  "d5b2f0f2-e5f5-4c0e-afd4-a40e124802d9": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "a9c1cad4-87f0-4ce1-9a50-b6cb9dae06cb": {
+  "e2fbf9d0-83ea-45db-8842-5860ebde81cb": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "b6af4240-d242-4588-97da-0da38bf466ee": {
+  "f12b5224-8ec3-4f1d-a406-4b98b40ccd37": {
    "open_condition": true,
    "variant": "conditional_unmet"
   },
-  "c09905ba-0fb1-4a79-9d8c-3154e686c95f": {
-   "open_condition": true,
-   "variant": "conditional_unmet"
-  },
-  "cf6abe99-1e76-402e-8146-7df08cd92e2e": {
-   "open_condition": true,
-   "variant": "conditional_unmet"
-  },
-  "d670d836-64b8-4e30-991a-77c57ebd2bab": {
-   "open_condition": true,
-   "variant": "conditional_unmet"
-  },
-  "fb6efe6f-7891-4632-9562-308820f8f64b": {
+  "f3c25be3-7dee-409c-8b32-044a8447d0de": {
    "open_condition": true,
    "variant": "conditional_unmet"
   }
@@ -683,8 +671,8 @@
   "TKT000023": {
    "status": "resolved",
    "type": "fraud_report",
-   "unresolved_concern": true,
-   "variant": "closed_but_unresolved"
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
   },
   "TKT000024": {
    "status": "pending_customer",
@@ -707,8 +695,8 @@
   "TKT000027": {
    "status": "resolved",
    "type": "fraud_report",
-   "unresolved_concern": false,
-   "variant": "resolved_concern"
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
   },
   "TKT000028": {
    "status": "pending_customer",
@@ -785,8 +773,8 @@
   "TKT000040": {
    "status": "resolved",
    "type": "transaction_dispute",
-   "unresolved_concern": false,
-   "variant": "resolved_concern"
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
   },
   "TKT000041": {
    "status": "in_progress",
@@ -893,8 +881,8 @@
   "TKT000058": {
    "status": "closed",
    "type": "complaint",
-   "unresolved_concern": true,
-   "variant": "closed_but_unresolved"
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
   },
   "TKT000059": {
    "status": "resolved",
@@ -929,8 +917,8 @@
   "TKT000064": {
    "status": "resolved",
    "type": "complaint",
-   "unresolved_concern": false,
-   "variant": "resolved_concern"
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
   },
   "TKT000065": {
    "status": "closed",
@@ -983,8 +971,8 @@
   "TKT000073": {
    "status": "closed",
    "type": "transaction_dispute",
-   "unresolved_concern": false,
-   "variant": "resolved_concern"
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
   },
   "TKT000074": {
    "status": "resolved",
@@ -1007,8 +995,8 @@
   "TKT000077": {
    "status": "closed",
    "type": "transaction_dispute",
-   "unresolved_concern": false,
-   "variant": "resolved_concern"
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
   },
   "TKT000078": {
    "status": "resolved",

@@ -1,0 +1,423 @@
+{
+  "args": {
+    "customers": "",
+    "sample": 0,
+    "amounts": "25000",
+    "repeats": 1,
+    "arms": "original",
+    "merge": "",
+    "skip_original": false,
+    "labeled": true,
+    "no_claude": false
+  },
+  "summary": {
+    "original": {
+      "runs": 14,
+      "mean_seconds": 14.5,
+      "median_seconds": 14.1,
+      "mean_tool_calls": 4.64,
+      "finals": {
+        "approve": 12,
+        "reject": 2
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "pairwise_agreement": {},
+    "final_accuracy_original": {
+      "correct": 10,
+      "total": 14,
+      "by_scenario": {
+        "control_clean": "2/2",
+        "ticket_resolved_genuine": "2/2",
+        "ticket_closed_still_disputed": "0/2",
+        "condition_met": "2/2",
+        "condition_unmet": "0/2",
+        "alert_cleared_benign": "2/2",
+        "alert_closed_unexplained": "2/2"
+      },
+      "misses": [
+        "ticket_closed_still_disputed / Laurie Allen: expected reject, got approve",
+        "ticket_closed_still_disputed / Ashley Montoya: expected reject, got approve",
+        "condition_unmet / Tanya Trujillo: expected reject, got approve",
+        "condition_unmet / Jim Walter: expected reject, got approve"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "customer": "Jonathan Hunt",
+      "customer_id": "d67ff04e-3b91-53a7-93e5-164406a96e8c",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Hunt? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I recommend approving the $4,000 increase for Jonathan Hunt. He meets every written rule in the Credit Limit Policy, and I found no risk signals against him. No fast answer from Jev was provided, so I made this call from the graph evidence and the policy.\n\n**Customer profile**\n- Credit score is 739.\n- Verified annual income is $89,000, and he is employed.\n- His current limit is $19,000, with 21% utilization.\n- He has two low-risk, active accounts opened in 2022. The checking account holds about $10.1K and the savings account about $25.2K.\n- His customer risk score is 0.268, which is low.\n- His only support ticket is a routine, resolved statement request for a mortgage application.\n- He has no prior decisions on file.\n\n**Credit Limit Policy v1.0 checks**\n\n| Rule | Requirement | Jonathan Hunt | Result |\n|---|---|---|---|\n| Minimum credit score | 660 or higher | 739 | Pass |\n| Total limit vs. income | No more than 35% of income ($31,150) | $23,000 after the increase, which is 25.8% | Pass |\n| Size of single increase | No more than 100% of the current limit | $4,000, which is 21% of $19,000 | Pass |\n| Senior review | Required above $50,000 | $4,000 | Not needed |\n\n**Fraud and precedent checks**\n- The fraud pattern check on his checking account found no flagged transactions and nothing suspicious among related accounts.\n- The closest credit precedents were all approvals. They include `abfa015b` (score 687) and `a0e7d8a4` (score 795).\n- Those precedents were found by semantic match only. They back the outcome but aren't a close structural match.\n- One precedent, `50ee3f54`, was a conditional approval of an increase from $4,500 to $9,000. Its condition was proof of new employment, which doesn't apply to Jonathan Hunt.\n\nNothing needs escalating. Regular monitoring is enough.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "detect_fraud_patterns",
+            "find_precedents"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 16.2
+        }
+      },
+      "scenario": "control_clean",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Ashley Walker",
+      "customer_id": "d4350afe-3925-5d35-8a63-84c559f3ab9a",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Ashley Walker? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I recommend approving the $5,000 credit limit increase for Ashley Walker. She meets every written rule in the Credit Limit Policy, and I found no risk signals.\n\n**Customer profile**\n- Her credit score is 786, and her credit utilization is 23%.\n- She is employed, and her income of $105,500 a year is verified.\n- Her current credit limit is $19,500.\n- She has two active, low-risk accounts that have been open since 2021: checking with a $7,540 balance and savings with a $29,378 balance.\n- Her risk score is 0.127, which is low.\n- The only support ticket on file is a resolved statement request for a mortgage application, which is routine.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Ashley Walker | Result |\n|---|---|---|---|\n| Minimum credit score | 660 or higher | 786 | Pass |\n| Total limit vs. income | At most 35% of verified income (about $36,925) | $24,500 after the increase, about 23% | Pass |\n| Size of a single increase | At most 100% of the current limit | $5,000 is about 26% of $19,500 | Pass |\n| Senior review | Required above $50,000 | $5,000 | Not required |\n\n**Fraud and graph checks**\n- Fraud pattern detection on her checking account found no flagged transactions, no related flagged transactions, and no flagged-transaction concentration among related accounts.\n- I did not find a Jev fast answer in the request, so this recommendation rests on my own review.\n- She has no prior decisions in the graph.\n\n**Precedents**\n- The five closest credit precedents are all approvals of increases of roughly 40\u2013100%: f12b5224, 3fb39f33, 052dd356, 00ca5e13 and 29d9669a.\n- Each was approved conditionally, subject to proof of employment after a job change.\n- Ashley's request is smaller in proportion, her profile is stronger, and the graph shows no job change, so the condition does not appear to apply.\n- Her request is at least as favourable as these precedents.\n\n**Residual risk**\n- Her balances are healthy, so the increase carries little risk.\n- If your process requires current employment verification for any increase, confirm it before finalizing.\n\nFINAL_RECOMMENDATION: approve (confidence 0.93)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.93,
+          "seconds": 11.5
+        }
+      },
+      "scenario": "control_clean",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Kristie Logan",
+      "customer_id": "2244942c-16ee-50d4-ac6d-f0ce8e4e885e",
+      "amount": 6000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Kristie Logan? They are requesting a $6,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll start by looking up the customer and the credit policy.**Recommendation: approve the $6,000 increase, taking the limit from $19,500 to $25,500.**\n\nI ran the lookups myself because no fast answer was provided.\n\n**Customer profile (Kristie Logan)**\n- Credit score is 764, employment is employed, and annual income is $125,500 and verified.\n- Credit utilization is 22% and her risk score is low (0.221).\n- She has a checking account ($10.7k) and a savings account ($29.4k). Both are active, low risk and opened in 2023.\n- She has no prior decisions in the graph.\n\n**Credit Limit Policy v1.0 checks**\n\n| Rule | Requirement | Her case | Result |\n|---|---|---|---|\n| Minimum credit score | \u2265 660 | 764 | Pass |\n| Total limit vs. income | \u2264 35% of verified income ($43,925) | $25,500 (about 20.3%) | Pass |\n| Single increase size | \u2264 100% of current limit | $6,000 is about 31% of $19,500 | Pass |\n| Senior review | Only above $50,000 | $6,000 | Not required |\n\n**Risk signals**\n- A fraud-pattern check on her checking account found no flagged transactions, no related flagged activity and no community-level flagged activity.\n- She has two support tickets, and both are resolved and benign.\n  - TKT914372 was a request for statements for a mortgage application.\n  - TKT924434 was a $2,205 Harbor Electronics dispute. The merchant refunded it in full and she confirmed receipt.\n- I found no open alerts tied to her. The alerts that appeared in the graph results belonged to other customers' neighborhoods (the Isaac Turner precedent).\n- I did not check sanctions status separately. Nothing in her profile suggests an issue.\n\n**Precedents**\n- The closest credit precedents are all approvals. The nearest is `d3a608d3\u2026` (score 760, verified income $146k, approved). Others include `c9d309cf\u2026` (score 721) and `08c0c933\u2026` (score 670).\n- Those precedents are only semantically similar, and none involves a limit increase for a customer with no prior decisions. I treat them as weak support and rely mainly on the policy tests.\n- `f12b5224\u2026` approved a limit increase conditionally because the customer had changed jobs. Kristie has no such employment change on record, so no condition applies.\n\nShe passes every written policy rule with wide margins and has no adverse risk signals. She also has strong liquidity, with about $40k in deposits. The main caveat is the lack of an internal decision history, which is a data gap and not a risk indicator.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 14.5
+        }
+      },
+      "scenario": "ticket_resolved_genuine",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Monica Tate",
+      "customer_id": "c660be49-73d9-560b-a452-4524993e550d",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Monica Tate? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll start by looking up the customer and the credit policy.I recommend approving the $5,000 increase. Monica Tate meets every written credit policy rule, and nothing in her record points to risk.\n\n**Credit Limit Policy v1.0 checks**\n\n| Rule | Monica Tate | Result |\n|---|---|---|\n| Minimum credit score of 660 | 778 | Pass |\n| Total limit after increase at most 35% of verified income | $18,500 against a cap of about $38,675 (35% of $110,500, income verified) | Pass |\n| Single increase at most 100% of current limit | $5,000 is about 37% of the $13,500 limit | Pass |\n| Senior review for increases above $50,000 | $5,000 | Not triggered |\n\n**Risk signals**\n- **Profile:** She is employed, her credit utilization is low at 17%, and her risk score is 0.346.\n- **Accounts:** She has two active accounts, both rated low risk and open since December 2021. The checking account holds $8,825 and the savings account holds $32,644.\n- **Fraud patterns:** The graph analysis found no flagged transactions near her checking account and none in its community.\n- **Support history:** There are two tickets, both resolved.\n  - A statement request for a mortgage application.\n  - A card-not-present fraud report (StreamBox Media, $996). She was the victim, the charges were credited back, and a new card was issued. I don't read this as a credit risk. It shows she reports fraud promptly.\n- **Prior decisions:** She has none on file, so there is no earlier rejection or escalation to weigh.\n\n**Precedents**\nThe five closest credit precedents were all approvals. They include 4cfdc579 (score 775) and a0e7d8a4 (score 795), which have profiles similar to hers. The similarity scores are semantic only; no structural scores came back. I found no similar case that was rejected or escalated.\n\nI did not record this as a decision in the graph. Say so if you want it recorded.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "detect_fraud_patterns",
+            "find_precedents"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 13.6
+        }
+      },
+      "scenario": "ticket_resolved_genuine",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Laurie Allen",
+      "customer_id": "97af3a24-e286-56b0-a5c6-fa507fc04ff1",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laurie Allen? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll start by looking up the customer and the credit policy.The policy checks pass. One thing needs a closer look: the dispute ticket says the customer denies signing for the charge. I'll read the full ticket, check fraud patterns, and look for precedents.**Recommendation: approve the $4,000 increase.** The request meets every written credit rule. The one open concern is a dispute that was closed too early, and it is a service problem more than a credit risk.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Laurie Allen | Result |\n|---|---|---|\n| Minimum credit score 660 | 748 | Pass |\n| Total limit after increase at most 35% of verified income | $22,500, against a cap of $35,350 (35% of $101,000) | Pass |\n| Single increase at most 100% of current limit | $4,000, against a current limit of $18,500 (about 22%) | Pass |\n| Senior review above $50,000 | $4,000 | Not triggered |\n\n**Supporting signals**\n- Income is verified and she is employed.\n- Credit utilization is low at 21%.\n- Her risk score is low at 0.154.\n- She has a checking account with $6.7k and a savings account with $29.0k. Both have been open since 2022-09 and are active and low-risk.\n- Fraud pattern detection on her checking account found no flagged transactions and nothing suspicious in her account's neighborhood.\n- She has no prior decisions in the graph, no sanctions or alert flags, and no late-payment indicators.\n\n**Complicating factor**\n- Support ticket TKT994849 was closed on 2026-09-29 after the merchant (Brightway Furniture) submitted a delivery receipt for a $1,665 charge.\n- The next day she said the signature on the receipt is not hers, the charge is still on her statement, and she wants the dispute reopened.\n- The ticket is marked \"resolved\", but her reopen request looks unanswered.\n- She is the one reporting possible fraud. The pattern points to either merchant misconduct or a possible compromise of her card, not to credit-risk behavior such as missed payments or over-extension.\n- No written policy treats a customer's own fraud dispute as grounds to reject an increase.\n- A $4,000 increase is small next to her income and balances, so the added exposure is limited.\n\n**Precedents**\n- The credit precedents returned are all approvals: fc667c16 (score 615, $248k income), a0e7d8a4 (score 795), 0de3d2f4 (score 814), d3a608d3 (score 760) and 20653b10 (score 813).\n- Semantic similarity is about 0.81 for each, and there is no structural similarity data.\n- They are generic credit approvals that don't involve a dispute, so they only weakly support this case.\n- Laurie's profile is stronger than the 615-score approval, which was granted despite weaker credit.\n\n**Conditions and follow-ups**\n1. Reopen TKT994849 and investigate the signature forgery claim. This is a customer-service and fraud-handling gap whatever happens with the limit.\n2. Before applying the increase, confirm with her that the card is secure. If the investigation shows her card or identity was compromised, hold the increase until it is reissued or secured.\n3. If the review turns up evidence of identity theft or account takeover, I'd revisit this approval.\n\nI did not record a decision in the graph. I can do that if you want it logged.\n\nFINAL_RECOMMENDATION: approve (confidence 0.75)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "execute_cypher",
+            "detect_fraud_patterns",
+            "find_precedents"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.75,
+          "seconds": 20.9
+        }
+      },
+      "scenario": "ticket_closed_still_disputed",
+      "expected_route": "needs_llm_decision",
+      "expected_final": "reject"
+    },
+    {
+      "customer": "Ashley Montoya",
+      "customer_id": "8dbd8244-9750-55c9-96cd-0ccdcd99f481",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Ashley Montoya? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "**Recommendation: approve the $4,000 increase for Ashley Montoya.** There was no fast answer from Jev for this request, so I assessed it directly against the credit policy and the graph evidence.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Ashley Montoya | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 775 | Pass |\n| Total limit vs. verified income | At most 35% of income (35% of $101,000 = $35,350) | New total of $22,500 ($18,500 + $4,000) is about 22% of income | Pass |\n| Size of single increase | At most 100% of current limit | $4,000 is about 22% of $18,500 | Pass |\n| Senior review | Required above $50,000 | $4,000 | Not needed |\n\n**Customer profile**\n- Her income is verified at $101,000 and she is employed.\n- Credit utilization is low at 21%.\n- She holds two active, low-risk accounts opened in 2022. The checking balance is $12,430.94 and the savings balance is $18,658.77.\n- Her risk score is 0.228, which is low.\n- She has no prior decisions in the graph.\n\n**Risk signals**\n- **Support tickets:** She has two.\n  - The first is a resolved statement request for a mortgage application, which is benign.\n  - The second is a fraud report she filed as the victim of $4,419 in unrecognised StreamBox Media charges. It was auto-closed with no agent activity, and she says she was never refunded. This is a service failure by the bank, not a sign that she is a credit risk. It should be reopened and remediated separately, and I would not hold it against her.\n- **Fraud-pattern scan:** The check on her checking account found no flagged transactions and no related transaction activity. Neither the account nor its community shows exposure.\n\n**Precedents**\nThe closest precedents are all credit approvals with similar profiles:\n- 4cfdc579 (credit score 775)\n- a0e7d8a4 (795)\n- d3a608d3 (760)\n- a924a6ac (667)\n- 0de3d2f4 (814)\n\nHer profile is as strong as or stronger than the weakest of these, so approval is consistent with past practice.\n\n**Follow-ups**\n- Reopen the StreamBox fraud ticket (TKT910885) and refund her if the charges are confirmed fraudulent.\n- No senior review or exception is needed.\n\nFINAL_RECOMMENDATION: approve (confidence 0.88)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.88,
+          "seconds": 12.3
+        }
+      },
+      "scenario": "ticket_closed_still_disputed",
+      "expected_route": "needs_llm_decision",
+      "expected_final": "reject"
+    },
+    {
+      "customer": "Robert Jennings",
+      "customer_id": "a8d73bce-5ee0-56f6-b8a7-37ce07ace2f9",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Robert Jennings? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "**Recommendation: approve the $4,000 credit limit increase for Robert Jennings.**\n\nI did not search for precedents or run a fraud check. The customer profile and the credit policy gave a clear answer. Nothing in the profile suggested a need for either.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Robert Jennings | Result |\n|---|---|---|---|\n| Minimum credit score | 660 or higher | 768 | Pass |\n| Total limit as a share of verified income | Total after increase at most 35% of income | $21,500 against a cap of $37,450 (35% of $107,000) | Pass (about 20% of income) |\n| Size of a single increase | At most 100% of the current limit | $4,000 on $17,500, which is about 23% | Pass |\n| Senior review | Required for increases above $50,000 | $4,000 | Not required |\n\n**Customer profile**\n- He is employed, and his income of $107,000 is verified.\n- His credit utilization is 29% and his risk score is low at 0.149.\n- He holds two active, low-risk accounts opened in January 2020. They are a checking account with about $13.1K and a savings account with about $15.9K.\n\n**Decision history**\n- On 2026-03-06 his limit was raised from $12,000 to $17,500, on the condition that he re-verify his income within 60 days. That decision had a confidence of 0.9.\n- On 2026-04-25 he met that condition. Two recent pay stubs matched his stated income, so no conditions are outstanding.\n- His only support ticket was a routine statement request from September 2026, for a mortgage application. It is resolved and raises no concern.\n- The statement request suggests he may be applying for a mortgage. Hard inquiries and a higher limit could matter for that application, but this does not affect the policy decision.\n\n**Risks**\n- This would be his second increase in about eight months.\n- The cumulative effect is still modest, going from $12,000 to $21,500, and it stays well inside the income cap.\n- I found no sanctions, fraud or alert flags in the data I retrieved.\n\nFINAL_RECOMMENDATION: approve (confidence 0.88)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy"
+          ],
+          "tool_call_count": 2,
+          "final": "approve",
+          "confidence": 0.88,
+          "seconds": 8.9
+        }
+      },
+      "scenario": "condition_met",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Christine King",
+      "customer_id": "5e3e7854-da4b-50b0-ab80-3a369f576c17",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Christine King? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I recommend approving the $4,000 increase. Christine King meets every written credit policy rule, and nothing in her record raises a risk concern.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Christine King | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 739 | Pass |\n| Total limit vs. income | At most 35% of verified income, which is about $44,625 | New limit of $18,500 (14,500 + 4,000), about 14.5% of $127,500 | Pass |\n| Size of one increase | At most 100% of the current limit | $4,000 is about 27.6% of $14,500 | Pass |\n| Senior review | Required above $50,000 | $4,000 | Not needed |\n\n**Customer profile**\n- Her income is verified and she is employed.\n- Her credit utilization is 26%.\n- She has a checking account with $5,127 and a savings account with $27,685. Both are active and low risk.\n- Her risk score is low at 0.239.\n\n**Decision history**\n- In March 2026 she was approved for an increase from $7,500 to $14,500. The approval was conditional on proof of employment with her new employer, because she had changed jobs.\n- In April 2026 a review recorded that the condition was met. The employment letter was received and verified by phone.\n- Her only support ticket is a resolved request for statements for a mortgage application. It is routine and raises no concern.\n\n**Precedents**\n- The closest matches are conditional credit increases for customers who recently changed jobs. These include 0e1fed50 (her own earlier approval), 052dd356 ($10,000 to $14,000) and f12b5224 ($6,500 to $13,000).\n- Each was approved or approved with an exception, and the condition on her own approval has been satisfied.\n- Her requested increase is smaller than those past increases, both in dollars and as a share of her limit.\n\n**Fraud check**\n- The account has no related or flagged transactions.\n- The fraud scores are empty, which means there are no flagged neighbors.\n\n**Caveats**\n- No fast-answer verdict was supplied, so I assessed the policy facts and graph evidence directly.\n- I did not look at her recent transaction history or any open alerts beyond the fraud-pattern check.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 4,
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 13.3
+        }
+      },
+      "scenario": "condition_met",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Tanya Trujillo",
+      "customer_id": "1c8e2d24-116b-52a5-974a-2825a08198e6",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Tanya Trujillo? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "**Recommendation: approve the $4,000 increase, taking the limit from $17,500 to $21,500.**\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Tanya Trujillo | Result |\n|---|---|---|---|\n| Minimum credit score | \u2265 660 | 796 | Pass |\n| Total limit vs. verified income | \u2264 35% of income, which is $42,700 on $122,000 | $21,500 (17.6%) | Pass |\n| Single increase vs. current limit | \u2264 100% of current limit | $4,000 is 22.9% of $17,500 | Pass |\n| Senior review | Only for increases above $50,000 | Not applicable | Pass |\n\n**Risk profile**\n- Income is verified and she is employed.\n- Credit utilization is 26% and her risk score is low at 0.185.\n- Her checking balance is $13,127.20 and her savings balance is $28,647.31. Both accounts are active with a low risk tier.\n- Fraud pattern detection on her checking account found no flagged transactions and no flagged-transaction exposure in her community.\n- Her only support ticket is a resolved statement request for a mortgage application, which is routine.\n\n**Prior decision and the open condition**\n- Decision 88cb6990 (March 2026, confidence 0.9) raised her limit from $10,000 to $17,500. It was conditional on bringing an overdrawn checking account back to a positive balance within 30 days. If that failed, the limit would revert and no further increases would be granted.\n- The checking account now shows a positive balance of $13,127.20, and her limit is still $17,500, so it appears the condition was met and the limit did not revert.\n- The graph has no follow-up decision formally confirming that the condition was satisfied. I'd confirm that with a quick check before finalizing, but I don't see it as a blocker.\n\n**Precedents**\n- Similar credit-limit increases to $14,000\u2013$17,500 were approved, often conditionally, including 326e4e79 (Robert Jennings, $12,000 to $17,500, 768 score, $107k income) and 1f529734 ($9,000 to $15,000).\n- Those customers had similar or weaker profiles than Trujillo's, and Jennings' income re-verification condition was later satisfied.\n- Neither Trujillo's profile nor any precedent points toward rejection.\n\nIf you want a safeguard, approve with a note that the earlier overdraft condition has been verified as cleared.\n\nFINAL_RECOMMENDATION: approve (confidence 0.86)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns",
+            "get_customer_decisions"
+          ],
+          "tool_call_count": 6,
+          "final": "approve",
+          "confidence": 0.86,
+          "seconds": 14.7
+        }
+      },
+      "scenario": "condition_unmet",
+      "expected_route": "needs_llm_decision",
+      "expected_final": "reject"
+    },
+    {
+      "customer": "Jim Walter",
+      "customer_id": "514836c6-9a3d-5093-b4ed-7e3696e91863",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jim Walter? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I recommend approving the $4,000 increase, from $15,000 to $19,000. One caveat: nothing in the graph shows the income re-verification from the March 2026 approval was actually completed.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Jim Walter | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 796 | Pass |\n| Total limit vs. income | At most 35% of verified income | New limit $19,000 is 13.8% of $137,500 (cap is $48,125) | Pass |\n| Single increase size | At most 100% of current limit | $4,000 is 26.7% of $15,000 | Pass |\n| Senior review | Only for increases above $50,000 | $4,000 | Not needed |\n\n**Risk profile**\n- Income is verified at $137,500 and he is employed.\n- Credit utilization is 31% and his risk score is 0.301, which is low.\n- He has a checking account with $5.3K and a savings account with $39.8K. Both are active and low-risk, and he has held them since 2022.\n- Fraud pattern analysis on his checking account found no flagged transactions and no flagged-transaction exposure in its neighborhood.\n- His only support ticket was a resolved request for statements for a mortgage application, which is routine.\n- No sanctions or alert findings turned up in what I retrieved. I did not run a dedicated alert lookup.\n\n**Precedents**\n- The closest precedents are conditional credit-limit increases approved with the same 60-day income re-verification condition. They include:\n  - His own March 2026 approval (decision 1f529734, $9,000 to $15,000, confidence 0.90).\n  - 326e4e79 ($12,000 to $17,500).\n  - d5b2f0f2 ($9,500 to $14,000).\n  - 298c96f8 ($4,500 to $9,000).\n- Another credit approval, a0e7d8a4, involved a customer with a score of 795 and verified income.\n- I found no rejection among the credit precedents. This request is smaller in relative terms than the prior ones, at +27% against +67% for his March increase.\n\n**Open point**\n- His March 2026 approval said the limit would revert, and no further increases would be granted, if income was not re-verified within 60 days. The graph has no document or verification record showing that re-verification happened.\n- Three things point toward the condition having been met. His profile shows `income_verified: true`. His limit is still $15,000, so it did not revert. And no alert or ticket suggests a lapse.\n- That is not direct proof. Before the increase takes effect, confirm that the pay stubs or tax return are on file. If they are not, hold the increase until they are.\n\nI'm not recording this as a decision in the graph. That would need your go-ahead.\n\nFINAL_RECOMMENDATION: approve (confidence 0.78)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "execute_cypher",
+            "detect_fraud_patterns",
+            "find_precedents",
+            "execute_cypher",
+            "execute_cypher"
+          ],
+          "tool_call_count": 7,
+          "final": "approve",
+          "confidence": 0.78,
+          "seconds": 21.0
+        }
+      },
+      "scenario": "condition_unmet",
+      "expected_route": "needs_llm_decision",
+      "expected_final": "reject"
+    },
+    {
+      "customer": "Laura Johnson",
+      "customer_id": "aff03420-e03c-5f71-a621-4bcb1f753e35",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laura Johnson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "**Recommendation: approve the $5,000 increase for Laura Johnson.** She meets every rule in the credit limit policy, and nothing in her record raises a concern.\n\nNo fast answer was supplied for this request, so I pulled her profile, the credit policy and similar past decisions myself.\n\n**Customer profile**\n- Credit score is 746. She is employed, her income is verified at $107,000, and her utilization is low at 21%.\n- Her current limit is $13,500. It would rise to $18,500.\n- She has two accounts opened in 2021, both active and rated low risk: checking with about $8.6K and savings with about $20.9K.\n- Her overall risk score is 0.219, which is low.\n\n**Credit Limit Policy v1.0**\n\n| Rule | Her case | Result |\n|---|---|---|\n| Minimum credit score 660 | 746 | Pass |\n| Total limit after increase at most 35% of verified income | $18,500 against a cap of about $37,450 | Pass |\n| Single increase at most 100% of current limit | $5,000 is about 37% of $13,500 | Pass |\n| Senior review required above $50,000 | $5,000 | Not needed |\n\n**Risk signals**\n- One AML geographic-anomaly alert (ALT927118) came from card use in Dublin. She had filed a travel notice and confirmed the purchases by one-time passcode. It was cleared as a false positive.\n- Her only support ticket was a statement request for a mortgage application. It was routine and is resolved.\n- I found no sanctions flags, open cases or prior adverse decisions. She has no earlier decisions on record.\n\n**Precedents**\n- Five similar credit limit increases were all approved, at scores of 0.88 or higher: f12b5224, 0e1fed50, 00ca5e13, 052dd356 and 3fb39f33.\n- Those increases ranged from $4,000 to $7,500, and several were conditional on proof of current employment.\n- Her request is smaller in proportion than most of them, and her income is verified.\n- One rejected credit case (e48ea3c5) involved late payments and a high debt-to-income ratio. She shows neither.\n\n**Optional condition:** Following the precedents, we could confirm current employment before the increase takes effect. Her record doesn't require it.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents"
+          ],
+          "tool_call_count": 3,
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 12.4
+        }
+      },
+      "scenario": "alert_cleared_benign",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Heidi Henderson",
+      "customer_id": "9c37f077-9fd9-585c-bef7-986d8e0136a0",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Heidi Henderson? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I'll start by looking up the customer and the relevant policy.**Recommendation: approve the $4,000 credit limit increase for Heidi Henderson.** No fast answer was supplied, so I pulled the customer record and policy myself.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Requirement | Heidi Henderson | Result |\n|---|---|---|---|\n| Minimum credit score | 660 or higher | 758 | Pass |\n| Total limit vs. income | New total at most 35% of verified income | $17,500 is 19.6% of $89,500 (cap $31,325) | Pass |\n| Size of single increase | At most 100% of current limit | $4,000 is 29.6% of $13,500 | Pass |\n| Senior review | Required above $50,000 | $4,000 | Not triggered |\n\n**Customer profile**\n- She is employed, her $89,500 income is verified, and her credit utilization is low at 17%.\n- Her internal risk score is 0.178.\n- She holds a checking account with a $14.0k balance and a savings account with a $29.3k balance. Both are active, low risk, and have been open since December 2022.\n\n**Risk signals**\n- **AML alert ALT983502 (medium severity):** a $39,432 deposit was flagged by the amount-threshold rule. It was documented as vehicle sale proceeds with a bill of sale on file, and an analyst closed it as a false positive. It was cleared and is not a concern.\n- **Support ticket TKT931207:** she asked for 7 months of statements for a mortgage application. This is routine and resolved, and it suggests she is seeking credit elsewhere. That is not adverse, but it is worth noting.\n- **Fraud-pattern analysis:** the checking account has no flagged transactions and no suspicious neighbors in its community.\n- **Prior decisions and precedents:** she has no prior decisions in the graph, and the precedent search returned nothing. This decision rests on the written policy rather than on precedent.\n\nThe main weakness is the lack of precedent, which I'm weighing lightly because every written rule is met by a wide margin. No rule, sanction, open case or unresolved alert argues against approval.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns"
+          ],
+          "tool_call_count": 5,
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 12.0
+        }
+      },
+      "scenario": "alert_cleared_benign",
+      "expected_route": "yes",
+      "expected_final": "approve"
+    },
+    {
+      "customer": "Kevin Jimenez",
+      "customer_id": "cf7402be-e09b-561f-a221-0c8bc4583e82",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Kevin Jimenez? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "I recommend against approving the $4,000 increase for now. The financial profile is strong, but an unresolved AML structuring concern outweighs it. The graph has no credit-limit policy and no precedents to cite.\n\n**Strong profile**\n- Credit score is 793, income is verified, and Kevin is employed with $92,500 in annual income.\n- Utilization is 35% on a $12,500 limit. A $4,000 increase would bring the limit to $16,500, about 18% of annual income.\n- He holds two active, low-risk accounts opened in 2020, with about $6.8K in checking and $12K in savings.\n- His risk score is low at 0.121. The fraud-pattern check on the checking account found no flagged transactions and no flagged neighbours.\n- The only support ticket is a routine statement request for a mortgage application, which is resolved and benign.\n\n**Concern**\n- Alert ALT989226 (AML, August 2026, risk score 0.6, medium severity) was marked a false positive. Its description says it was closed by a bulk closure rule during a backlog clean-up. The original finding was six cash deposits of $9,200\u2013$9,900 at three branches over nine days, each just under the $10,000 reporting threshold.\n- The source of funds is not documented and there are no analyst notes.\n- That is a classic structuring pattern, and it was never actually investigated. It was dismissed by an automated rule, so the \"false positive\" status carries little weight.\n- The alert is recent, about three months old. It also sits oddly with the stated profile of a salaried customer with verified income.\n\n**What I could not check**\n- No credit-limit policy exists in the graph, so I can't cite any written threshold or requirement.\n- No similar prior decisions exist, and Kevin has no decision history.\n- No transactions are linked to his accounts in the graph, so I couldn't confirm the deposit pattern directly.\n\n**Recommendation:** Hold the increase and send the alert for manual AML re-review, with source-of-funds documentation requested. If a analyst clears it properly, I'd approve the increase, since credit quality is strong and the amount is modest. This is a deferral rather than a permanent denial.\n\nFINAL_RECOMMENDATION: reject (confidence 0.62)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns",
+            "execute_cypher",
+            "execute_cypher",
+            "execute_cypher"
+          ],
+          "tool_call_count": 7,
+          "final": "reject",
+          "confidence": 0.62,
+          "seconds": 16.5
+        }
+      },
+      "scenario": "alert_closed_unexplained",
+      "expected_route": "needs_llm_decision",
+      "expected_final": "reject"
+    },
+    {
+      "customer": "Jonathan Christensen",
+      "customer_id": "23f6dc0e-52f0-56e0-b679-cb7f74130f06",
+      "amount": 6000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Christensen? They are requesting a $6,000 limit increase.",
+      "runs": {
+        "original": {
+          "path": "agent_only",
+          "response": "**Recommendation: do not approve yet. Hold the increase until the AML alert is genuinely re-reviewed.** The customer passes every written credit rule. The problem is one AML alert that was closed without a real review.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Customer | Result |\n|---|---|---|\n| Minimum credit score 660 | 733 | Pass |\n| Total limit after increase \u2264 35% of verified income | $23,000 against a cap of $41,125 (35% of $117,500) | Pass |\n| Single increase \u2264 100% of current limit | $6,000 against $17,000 | Pass |\n| Senior review above $50,000 | $6,000 | Not triggered |\n\n**Other evidence**\n- **Credit profile:** Income is verified and the customer is employed. Credit utilization is 32% and the risk score is 0.288 (low).\n- **Accounts:** Checking (about $11.1K) and savings (about $31.9K), both active, low risk tier, open since 2023.\n- **Support ticket:** One resolved ticket, a statement request for a mortgage application. It is benign.\n- **Graph fraud check:** No flagged transactions or neighbouring flagged accounts.\n- **Precedents:** None found for this scenario, and the customer has no prior decisions.\n\n**The concern**\n- **Alert ALT914015 (AML, amount threshold, medium severity, risk score 0.6):** The original finding was 9 cash deposits of $9,200\u2013$9,900 at 4 different branches over 12 days, each just under the $10,000 reporting threshold. That is a classic structuring pattern.\n- **How it was closed:** It was marked \"false positive\" by a bulk closure rule during a backlog clean-up. The record says the source of funds was not documented and there were no analyst notes.\n- **What that means:** The false-positive status does not reflect any actual review. The structuring finding is effectively unresolved.\n- **Why it matters here:** The deposits are inconsistent with the customer's profile of $117.5K verified income and $43K in deposit balances. Extending more credit while this is unresolved is not prudent.\n\n**Decision logic:** This is not a written-policy rejection, since the customer meets every threshold. It is an escalation. The right path is to send alert ALT914015 for a proper AML re-review covering source of funds and the deposit pattern. If that review clears the customer, the increase can be approved on its merits. The sound credit profile makes that a likely outcome.\n\nFINAL_RECOMMENDATION: reject (confidence 0.6)",
+          "tool_calls": [
+            "search_customer",
+            "get_policy",
+            "find_precedents",
+            "detect_fraud_patterns",
+            "execute_cypher",
+            "get_policy"
+          ],
+          "tool_call_count": 6,
+          "final": "reject",
+          "confidence": 0.6,
+          "seconds": 15.0
+        }
+      },
+      "scenario": "alert_closed_unexplained",
+      "expected_route": "needs_llm_decision",
+      "expected_final": "reject"
+    }
+  ]
+}
