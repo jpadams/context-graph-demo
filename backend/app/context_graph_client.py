@@ -610,7 +610,14 @@ class ContextGraphClient:
             relationships = []
             seen_rel_ids = set()
             for rel in record["relationships"] or []:
-                if rel is not None and rel.element_id not in seen_rel_ids:
+                # The node list is truncated to `limit`; drop relationships whose ends were cut,
+                # or the graph view rejects the whole payload.
+                if rel is None or (
+                    rel.start_node.element_id not in seen_node_ids
+                    or rel.end_node.element_id not in seen_node_ids
+                ):
+                    continue
+                if rel.element_id not in seen_rel_ids:
                     seen_rel_ids.add(rel.element_id)
                     relationships.append(
                         GraphRelationship(
@@ -663,7 +670,14 @@ class ContextGraphClient:
             relationships = []
             seen_rel_ids = set()
             for rel in record["relationships"] or []:
-                if rel is not None and rel.element_id not in seen_rel_ids:
+                # The node list is truncated to `limit`; drop relationships whose ends were cut,
+                # or the graph view rejects the whole payload.
+                if rel is None or (
+                    rel.start_node.element_id not in seen_node_ids
+                    or rel.end_node.element_id not in seen_node_ids
+                ):
+                    continue
+                if rel.element_id not in seen_rel_ids:
                     seen_rel_ids.add(rel.element_id)
                     relationships.append(
                         GraphRelationship(

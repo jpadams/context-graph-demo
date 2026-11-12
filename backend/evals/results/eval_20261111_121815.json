@@ -1,0 +1,2264 @@
+{
+  "args": {
+    "customers": "",
+    "sample": 0,
+    "amounts": "25000",
+    "repeats": 1,
+    "arms": "fast_answer,decomposed",
+    "merge": "",
+    "skip_original": false,
+    "labeled": true,
+    "no_claude": false
+  },
+  "summary": {
+    "fast_answer": {
+      "runs": 14,
+      "mean_seconds": 14.5,
+      "median_seconds": 13.7,
+      "mean_tool_calls": 0.43,
+      "finals": {
+        "approve": 14
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "decomposed": {
+      "runs": 14,
+      "mean_seconds": 12.7,
+      "median_seconds": 12.0,
+      "mean_tool_calls": 0.14,
+      "finals": {
+        "approve": 11,
+        "reject": 3
+      },
+      "missing_final": 0,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "pairwise_agreement": {
+      "fast_answer vs decomposed": {
+        "agree": 11,
+        "compared": 14
+      }
+    },
+    "jev_fast_answer": {
+      "decided_without_claude": 11,
+      "escalated": 3,
+      "mean_confidence": 0.73,
+      "mean_fast_answer_ms": 607
+    },
+    "route_accuracy_fast_answer": {
+      "correct": 11,
+      "total": 14,
+      "by_scenario": {
+        "control_clean": "2/2",
+        "ticket_resolved_genuine": "2/2",
+        "ticket_closed_still_disputed": "1/2",
+        "condition_met": "2/2",
+        "condition_unmet": "0/2",
+        "alert_cleared_benign": "2/2",
+        "alert_closed_unexplained": "2/2"
+      },
+      "misses": [
+        "ticket_closed_still_disputed / Laurie Allen: expected needs_llm_decision, got yes",
+        "condition_unmet / Tanya Trujillo: expected needs_llm_decision, got yes",
+        "condition_unmet / Jim Walter: expected needs_llm_decision, got yes"
+      ]
+    },
+    "jev_decomposed": {
+      "decided_without_claude": 8,
+      "escalated": 6,
+      "mean_confidence": null,
+      "mean_fast_answer_ms": 557
+    },
+    "route_accuracy_decomposed": {
+      "correct": 14,
+      "total": 14,
+      "by_scenario": {
+        "control_clean": "2/2",
+        "ticket_resolved_genuine": "2/2",
+        "ticket_closed_still_disputed": "2/2",
+        "condition_met": "2/2",
+        "condition_unmet": "2/2",
+        "alert_cleared_benign": "2/2",
+        "alert_closed_unexplained": "2/2"
+      },
+      "misses": []
+    },
+    "judgment_accuracy": {
+      "ticket_unresolved_concern": {
+        "items": 18,
+        "correct": 18,
+        "unsure": 0,
+        "wrong": []
+      },
+      "decision_open_condition": {
+        "items": 6,
+        "correct": 6,
+        "unsure": 0,
+        "wrong": []
+      },
+      "alert_unexplained_risk": {
+        "items": 4,
+        "correct": 4,
+        "unsure": 0,
+        "wrong": []
+      }
+    }
+  },
+  "rows": [
+    {
+      "customer": "Jonathan Hunt",
+      "customer_id": "d67ff04e-3b91-53a7-93e5-164406a96e8c",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Hunt? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I confirm Jev's `yes` (0.94, confidence 0.91, above the 0.60 floor). I made no extra tool calls because the pre-collected evidence covers the policy test, and I checked the arithmetic myself.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Threshold | Jonathan Hunt | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 739 | Pass |\n| Total limit after increase as a share of verified income | \u2264 35% | $23,000 / $89,000 = 25.8% | Pass |\n| Single increase as a share of current limit | \u2264 100% | $4,000 / $19,000 = 21.1% | Pass |\n| Senior review | Above $50,000 | $23,000 total, $4,000 increase | Not triggered |\n\n- Income is verified and he is employed.\n- The Exception Approval Authority thresholds start at $25,000, so no exception or manager sign-off is needed.\n- The New Account Risk Assessment policy isn't relevant here. His accounts have been open since 2022.\n\n**Risk signals**\n- Credit utilization is 0.21, which is moderate and healthy.\n- His risk score is 0.268, and Jev puts the chance of elevated customer risk at 0.08.\n- There are no alerts, no flagged or notable transactions, no prior adverse decisions and no sanctions-related parties. Sanctioned-party exposure is null because there was no evidence to score.\n- Jev puts the chance of open fraud activity at 0.02 and of a policy violation at 0.07.\n- His only support ticket is a resolved statement request for a mortgage application. That is routine and not a concern. It could mean he is taking on other credit, but that is a minor point.\n- His balances are $10.1k in checking and $25.2k in savings, both low-risk tier. This supports his ability to repay.\n\n**Precedents**\n- All five nearest precedents were approved: three approvals and two exceptions, all credit-limit increases.\n- Semantic similarity is about 0.79 for each, and Jev puts the chance that precedents favor approval at 0.758.\n- Each one was approved conditionally, subject to proof of current employment or income. Examples are $4k\u2192$11k (1794e10e), $6k\u2192$13k (10116cff) and $7.5k\u2192$14.5k (0e1fed50).\n- Several of those increases were proportionally much larger than Hunt's 21%, so his request is more conservative than the precedents.\n- Across the credit category, approvals (45), exceptions (18) and overrides (6) outnumber rejections (17).\n\n**Complications**\n- The precedents are matched on semantic similarity only, with no structural score, so they carry less weight.\n- There is no transaction history in the evidence (`transaction_summary` is empty). Jev rates evidence sufficiency at 0.87, not 1.0, and requires manual review at 0.12. Neither is high enough to escalate.\n- The precedents carried an employment or income verification condition. Here income is already marked verified, so that condition should be quick to satisfy.\n\n**Next steps**\n1. Approve the $4,000 increase, taking the limit from $19,000 to $23,000.\n2. Confirm that income and employment verification is current, in line with the precedent conditions.\n3. Record the decision in the context graph, citing the Credit Limit Policy and the precedents above.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 11.3,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 1372,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.94,
+            "no": 0.01,
+            "needs_llm_decision": 0.05
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.758,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.08,
+            "requires_manual_review": 0.12,
+            "evidence_sufficient": 0.87
+          },
+          "jev_ms": 239,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve. I confirm the fast answer.**\n\n**What decided it:** No guard fired. All 15 guards passed, so the default outcome of approval stands. Written rules are the only things that can reject, and none of them triggered. Jev's judgments can only escalate, and none did.\n\n**Policy facts (Credit Limit Policy v1.0), computed by code:**\n- **Credit score:** 739 against a minimum of 660. Passed.\n- **Income cap:** The proposed total limit is $23,000 (the current $19,000 plus $4,000). That is 25.8% of the verified $89,000 income, under the 35% cap. Passed.\n- **Increase cap:** The $4,000 increase is 21.1% of the current limit, under the 100% cap. Passed.\n- **Income verification:** Income is verified, so there is no escalation on that ground.\n- **Approval authority:** $4,000 is far below the $50,000 senior-review threshold, so standard authority applies.\n- **Customer risk:** The risk score is 0.268 against an escalation threshold of 0.7. Credit utilization is a moderate 0.21.\n- **Sanctions, freezes and fraud:** There are no sanctioned or watch-listed parties, no frozen accounts (both accounts are active) and no open fraud tickets or alerts.\n- **Counterparties:** There are no counterparties, so none are poor-rated or watch-listed.\n\n**Jev judgments:**\n- **Support tickets:** The one ticket, TKT904202, is a resolved statement request for a mortgage application. Jev put the probability of an unresolved concern at 0.02. It is benign.\n- **Precedents:** All 5 retrieved precedents were judged comparable, at probabilities of 0.87\u20130.90, against the 0.7 \"yes\" threshold. All five were approved. Three were approvals (1794e10e, 10116cff, 0e1fed50). Two were approved exceptions (5787e22b, 213a637f). None were rejected, so the \"precedents against\" guard did not fire.\n\n**Caveats:**\n- The precedents were conditionally approved, \"subject to proof of current employment\". Customer records show him as employed with verified income. It is reasonable to apply the same condition here.\n- Those precedents involved larger relative increases, for example $3,000 to $15,000. This request is smaller in relative terms.\n- There are no prior decisions, alerts or notable transactions on this customer, so nothing in the evidence contradicts the verdict. The transaction summary is empty, which is a gap, but the written rules don't depend on it.\n- Category history shows 45 approvals and 17 rejections, so approval is the common outcome for requests like this.\n\n**What happens next:** The request goes through standard approval. The limit rises from $19,000 to $23,000, and the decision is recorded in the context graph with the precedents cited above. No escalation, senior review or manager sign-off is needed. I did not call any tools because nothing was missing from the evidence.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.92,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 8.5,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 354,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT904202",
+              "ref": "TKT904202 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "213a637f-1345-4fc0-8975-19ea91be9ba3",
+              "ref": "precedent 213a637f (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 97,
+          "question_count": 6
+        }
+      },
+      "scenario": "control_clean",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Ashley Walker",
+      "customer_id": "d4350afe-3925-5d35-8a63-84c559f3ab9a",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Ashley Walker? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "I agree with Jev's verdict to approve. The evidence supports it and nothing in it contradicts it.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Threshold | Ashley Walker | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 786 | Pass |\n| Total limit after increase, as share of verified income | \u2264 35% | $24,500 / $105,500 = 23.2% | Pass |\n| Single increase, as share of current limit | \u2264 100% | $5,000 / $19,500 = 25.6% | Pass |\n| Senior review | Above $50,000 | $5,000 request, $24,500 total | Not triggered |\n\n- Income is verified and she is employed.\n- The $5,000 increase is not a policy exception. The Exception Approval Authority tiers (manager above $25,000) don't apply, and even the new total of $24,500 sits below the first tier.\n- This matches Jev's `violates_policy` probability of 0.08.\n\n**Risk signals**\n- Her risk score is 0.127 (Jev's `elevated_customer_risk` is 0.04).\n- Credit utilization is 0.23, which is low.\n- She has two active, low-risk accounts opened in 2021. Together they hold about $36.9k, which gives a liquidity cushion.\n- There are no alerts and no open fraud activity (Jev: 0.02). There is also no sanctions exposure, because no account parties are listed.\n- Her only support ticket is a resolved statement request for a mortgage application. It is routine, but she may be about to take on a large new obligation. That is the one mild point worth noting.\n\n**Precedents (probability that precedents favor approval: 0.774)**\n- All five retrieved precedents are credit-limit-increase approvals. Three are plain approvals: `f787923e` ($5k to $15k), `0e1fed50` ($7.5k to $14.5k) and `1f529734` ($9k to $15k). Two are approved exceptions: `1b5c57e4` and `5787e22b`.\n- Their increases were larger than hers, both in dollars and in percentage terms. Hers is a smaller, lower-risk request.\n- The category as a whole leans toward approval: 45 approvals and 18 approved exceptions, against 17 rejections and 20 escalations.\n- The precedent scores are semantic only (about 0.77\u20130.78). They are moderately similar, not close matches.\n- Several precedents were approved conditionally, subject to proof of employment or income re-verification. Her income is already verified.\n\n**Gaps in the evidence**\n- Transaction summary, notable transactions and decision history are all empty. For this customer that means no adverse activity was found, not that anything was flagged. Jev rates evidence sufficiency at 0.90, and I agree it is adequate for a modest increase.\n- I did not call any further tools. Nothing specific was missing.\n\n**What happens next**\n1. Approve the $5,000 increase, taking the limit from $19,500 to $24,500.\n2. Optionally attach the same condition the precedents used, a routine check that income and employment are still current. Her income is already verified.\n3. Record the decision in the context graph with the policy figures above and precedents `f787923e`, `0e1fed50` and `1f529734` as references. No escalation is needed.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 12.3,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 510,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.94,
+          "jev_probabilities": {
+            "yes": 0.96,
+            "no": 0.0,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.774,
+            "violates_policy": 0.08,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.13,
+            "evidence_sufficient": 0.9
+          },
+          "jev_ms": 110,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I confirm the fast answer. No guard fired, so the default outcome (approve) stands. Every written rule and every Jev judgment passed.\n\n**Policy arithmetic (Credit Limit Policy v1.0)**\n- Credit score is 786 against a minimum of 660, so the score rule passes.\n- The proposed total limit is $24,500 (current $19,500 plus $5,000). That is 23.2% of verified annual income of $105,500, under the 35% cap.\n- The $5,000 increase is 25.6% of the current limit, under the 100% single-increase cap.\n- Income is verified, so there is no escalation on that ground.\n- $5,000 is far below the $50,000 senior-review threshold. Under Exception Approval Authority it needs only standard approval.\n\n**Risk and compliance**\n- The risk score is 0.127 against an escalation threshold of 0.7.\n- Credit utilization is 23%.\n- Both accounts (checking and savings, about $36.9k combined) are active and not frozen.\n- There are no sanctioned or watch-listed parties and no poor-rated counterparties.\n- There are no open fraud tickets or alerts, and no notable transactions or prior decisions against the customer.\n\n**Jev judgments**\n- The one support ticket is TKT988071, a resolved statement request for a mortgage application. The probability that it is an unresolved concern is 0.02, which is far below the 0.7 escalation level.\n- All 5 precedents were judged comparable, with probabilities of 0.87 to 0.91:\n  - f787923e: approved, $5k to $15k.\n  - 0e1fed50: approved, $7.5k to $14.5k.\n  - 1b5c57e4: exception, approved, $5k to $9k.\n  - 5787e22b: exception, approved, $3k to $15k.\n  - 1f529734: approved, $9k to $15k.\n- None of the 5 precedents was a rejection, so the \"precedents against\" guard did not fire. No judgment landed in the unsure band (0.3 to 0.7).\n\n**Caveats**\n- The precedents' increases are larger relative to the current limit than this request, and several were approved conditionally on proof of current employment or re-verification of income. Here income is already verified and employment status is \"employed\", so those conditions look satisfied. Still, standard practice is to confirm the employment and income verification is current when the increase is booked.\n- The transaction summary and account-party evidence were empty. That means there is no adverse signal, not that anything positive was found. The code guards treated this as complete evidence.\n- I didn't need any additional tool calls, since the pre-collected evidence was sufficient.\n\n**What happens next**\nStandard-authority approval proceeds. The limit moves from $19,500 to $24,500, and the decision trace is recorded with the precedents above and the policy facts. No senior or manager sign-off is needed.\n\nFINAL_RECOMMENDATION: approve (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.93,
+          "seconds": 8.9,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 1008,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT988071",
+              "ref": "TKT988071 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 97,
+          "question_count": 6
+        }
+      },
+      "scenario": "control_clean",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Kristie Logan",
+      "customer_id": "2244942c-16ee-50d4-ac6d-f0ce8e4e885e",
+      "amount": 6000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Kristie Logan? They are requesting a $6,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I agree with Jev's `yes` (0.91, confidence 0.86). The evidence supports it and nothing in it contradicts it.\n\n**Policy check (Credit Limit Policy v1.0)**\n\nI re-ran the arithmetic from the evidence.\n\n| Rule | Threshold | Kristie Logan | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 764 | Pass |\n| Total limit after increase, as % of verified income | \u2264 35% | $25,500 / $125,500 = 20.3% | Pass |\n| Single increase, as % of current limit | \u2264 100% | $6,000 / $19,500 = 30.8% | Pass |\n| Senior review | Above $50,000 | $6,000 request, $25,500 total | Not triggered |\n\n- Income is verified, and she is employed.\n- Utilization is 22%, which is healthy.\n- Exception Approval Authority is not engaged. The request is a standard increase, not a policy exception.\n\n**Risk signals**\n\n- **Fraud and sanctions:** There are no alerts, no flagged or notable transactions, and no sanctioned-party exposure. Jev puts open fraud activity at 0.02 and elevated customer risk at 0.05. Her risk score of 0.221 is low, and both accounts are active and low-tier.\n- **Support tickets:** The $2,205 Harbor Electronics dispute (TKT924434) was resolved. The merchant issued a full refund, and she confirmed receipt. The other ticket was a routine statement request.\n- **Decision history:** She has no prior adverse decisions.\n\n**Precedents**\n\nThe five closest credit precedents are all conditional approvals of increases:\n- 81803cd0 ($3k to $13k, exception)\n- 6a7c3e93 ($3k to $10k)\n- 10116cff ($6k to $13k)\n- f6838fb7 ($5k to $11k)\n- 1b5c57e4 ($5k to $9k, exception)\n\nTheir semantic similarity is about 0.78\u20130.79. Jev puts \"precedents favor approval\" at 0.706.\n\nMost of these precedents were approved with conditions, such as re-verifying income or proving current employment. They also involved much smaller bases and relatively larger jumps, such as $3k to $13k. Hers is a more modest 31% increase on a larger limit, with a stronger profile. Across the credit category, approvals and exceptions (63 and 18 approved) far outnumber rejections (17).\n\n**What complicates it**\n\n- **Elevated signals:** `violates_policy` and `requires_manual_review` are each 0.26. That is higher than the other signals, but no written rule is breached. Only written rules can reject, and Jev's judgments can only escalate. The `yes` verdict cleared the 0.60 confidence floor, so no escalation fired.\n- **Mortgage application:** In May 2026 she requested 11 months of statements \"for a mortgage application.\" A pending mortgage could add debt obligations that aren't visible in this evidence. This is a reason to attach a condition, not to decline.\n- **Empty fields:** `transaction_summary` and `account_parties` are empty. This is consistent with a clean profile, and Jev rates evidence sufficiency at 0.86. It does mean the decision rests mainly on bureau and income data, not on observed transaction behavior.\n\n**What happens next**\n\n1. The limit moves from $19,500 to $25,500, with no senior review needed.\n2. Follow the pattern of the precedents and make the approval conditional on re-verifying current income and employment.\n3. Confirm no new debt from the mortgage application has materially changed her profile.\n4. Record the decision trace in the graph, citing the policy and precedents above. I haven't written it yet.\n\nFINAL_RECOMMENDATION: approve (confidence 0.87)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.87,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.87,
+          "seconds": 13.5,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 648,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.86,
+          "jev_probabilities": {
+            "yes": 0.91,
+            "no": 0.01,
+            "needs_llm_decision": 0.08
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.706,
+            "violates_policy": 0.26,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.26,
+            "evidence_sufficient": 0.86
+          },
+          "jev_ms": 183,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I confirm the fast answer. No guard fired, so every rule and judgment passed and the default outcome (approve) stands.\n\n**Policy facts (Credit Limit Policy v1.0, computed by code)**\n- **Credit score:** 764 against a minimum of 660.\n- **Income cap:** The proposed total limit is $25,500, which is 20.3% of the $125,500 verified income. The cap is 35%.\n- **Increase cap:** $6,000 on a $19,500 limit is a 31% increase. The cap is 100%.\n- **Income verification:** Income is verified (`income_verified = True`), so the escalation guard did not apply.\n- **Authority:** $6,000 is well below the $50,000 senior-review threshold. Standard approval authority applies.\n- **Customer risk:** The risk score is 0.221 against an escalation threshold of 0.7. Credit utilization is a modest 22%.\n- **Evidence:** All required fields are present.\n\n**Sanctions, freezes and fraud**\n- There is no sanctioned or watch-listed party and no D-rated counterparty. The account-parties list is empty.\n- Both accounts (checking and savings) are active, with none frozen.\n- There are no open fraud tickets or alerts.\n- There are no prior decisions, notable transactions or alerts on file.\n\n**Jev judgments (yes \u2265 0.7, no \u2264 0.3)**\n- **Support tickets:** Both are resolved. TKT924434 was a $2,205 Harbor Electronics dispute that ended in a full merchant refund, confirmed by the customer. TKT914372 was a statement request for a mortgage application. The probability of an unresolved concern is 0.02 for each, well below the 0.7 escalation line.\n- **Precedents:** All five were judged comparable (p = 0.86\u20130.89): 81803cd0, 6a7c3e93, 10116cff, f6838fb7 and 1b5c57e4. All were credit increases approved, three as approvals and two as exceptions. None was rejected, so the \"precedents against\" guard did not fire. Some of these were conditional approvals, for example subject to re-verification of income or proof of employment. Those conditions are worth considering here, although this customer's income is already verified.\n- **Unsure band:** No judgment fell between 0.3 and 0.7, so nothing was ambiguous.\n\n**What happens next**\nThe increase goes through at standard authority, taking the limit from $19,500 to $25,500. Record the decision in the context graph, citing the five precedents above. Keep it within the policy caps, and apply standard monitoring afterwards.\n\nI called no extra tools because nothing was missing from the evidence. I found nothing that contradicts the verdict. The one soft point is that the approving precedents were all conditional, and this customer's verified income already satisfies that kind of condition.\n\nFINAL_RECOMMENDATION: approve (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.93,
+          "seconds": 7.8,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 343,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT924434",
+              "ref": "TKT924434 (transaction_dispute, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT914372",
+              "ref": "TKT914372 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 97,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_resolved_genuine",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Monica Tate",
+      "customer_id": "c660be49-73d9-560b-a452-4524993e550d",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Monica Tate? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "## Verdict: approve, and I agree with Jev's `yes`\n\nJev gave `yes` at 0.94 (`no` 0.01, `needs_llm_decision` 0.05), with confidence 0.91 against a 0.60 floor. Nothing in the evidence contradicts it. I didn't run any extra tool calls because the pre-collected evidence covers what's needed.\n\n### Policy check (Credit Limit Policy v1.0)\nThe written rules are the only thing that can reject, and Monica passes all of them.\n\n| Rule | Threshold | Monica Tate | Result |\n|---|---|---|---|\n| Minimum credit score | \u2265 660 | 778 | Pass |\n| Total limit as share of verified income | \u2264 35% | $18,500 / $110,500 = 16.7% | Pass |\n| Single increase vs. current limit | \u2264 100% | $5,000 / $13,500 = 37% | Pass |\n| Senior review | Only above $50,000 | $5,000 | Not triggered |\n\n- **Income:** It is verified (`income_verified: true`), and she is employed.\n- **Exception authority:** The increase is within standard policy, so the Exception Approval Authority thresholds ($25k and up) don't apply.\n- **Jev's policy signal:** `violates_policy` is 0.06, which matches the manual check.\n\n### Risk signals\n- **Credit profile:** Utilization is low at 17%. Her risk score is 0.346, and Jev puts `elevated_customer_risk` at 0.11.\n- **Accounts:** She has a checking account ($8.8k) and a savings account ($32.6k). Both are active and low-tier, and she has held them since 2021, so she has liquidity and a track record.\n- **Sanctions and alerts:** There are no account parties or sanctions exposure (the signal is null because that evidence was empty). There are no alerts, no notable transactions and no prior adverse decisions.\n- **Fraud ticket:** TKT930317 (StreamBox Media, $996) is the only item that might give pause.\n  - It was card-not-present fraud against her. The charges were fully credited back, a new card was issued, and the ticket is resolved and closed with her confirmation.\n  - That makes her a victim, not a risk. Jev's `open_fraud_activity` is 0.02.\n- **Statement request:** TKT996245 was a request for past statements for a mortgage application. This is a mild note, because a mortgage could add future debt. It isn't a policy factor, and her income-to-limit ratio leaves a lot of room.\n\n### Precedents\nAll five of the closest credit precedents were approved. Three were approvals and two were exception-type decisions that were also approved:\n- `1b5c57e4\u2026`: $5k to $9k\n- `6a7c3e93\u2026`: $3k to $10k\n- `1f529734\u2026`: $9k to $15k\n- `81803cd0\u2026`: $3k to $13k\n- `f6838fb7\u2026`: $5k to $11k\n\nTheir similarity scores are all about 0.78. Several of them are proportionally larger increases than Monica's 37%, so hers is on the conservative side. Jev puts `precedents_favor_approval` at 0.764. Across the credit category, 69 decisions were approvals, exceptions or overrides, against 17 rejections and 20 escalations.\n\n### Caveats\n- The precedent matches are semantic only, with no structural similarity score. Because they agree with the policy math, this doesn't change my view.\n- The precedents were approved \"conditionally, subject to re-verification of income\". Monica's income is already verified, so that condition looks satisfied. Confirm the verification is current when processing.\n- The residual `requires_manual_review` signal is low at 0.09, and `evidence_sufficient` is 0.87.\n\n### What happens next\n1. Approve the $5,000 increase, taking her limit from $13,500 to $18,500.\n2. Confirm the income verification is current before the change takes effect, as in the precedents.\n3. No escalation or senior sign-off is needed, since the amount is far below $50,000 and no exception is involved.\n4. Record the decision in the context graph. I can do this with the precedent IDs above and the policy checks as the reasoning.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.92,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 15.0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 352,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.94,
+            "no": 0.01,
+            "needs_llm_decision": 0.05
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.764,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.11,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.87
+          },
+          "jev_ms": 93,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I confirm the fast answer. No guard fired, so every written rule and every Jev judgment passed. I didn't call any tools because the pre-collected evidence covers what the decision needs.\n\n**Rules that could have rejected (all passed)**\n- **Credit score:** 778 against a minimum of 660.\n- **Total limit vs. income:** The proposed total is $18,500 on verified income of $110,500. That is about 17% of income, under the 35% cap.\n- **Size of the increase:** $5,000 is 37% of the current $13,500 limit, under the 100% cap.\n- **Sanctions, frozen accounts, open fraud cases:** None apply. She has two active accounts, no account parties, no alerts, and no open fraud tickets or alerts.\n\n**Rules that could have escalated (all passed)**\n- **Evidence:** All required fields are present, and her income is verified.\n- **Authority:** $5,000 is well below the $50,000 senior-review threshold, so standard approval authority applies.\n- **Customer risk:** Her risk score is 0.346 against the 0.7 trigger.\n- **Counterparties:** None are watch-listed or rated D.\n\n**Jev judgments (all passed)**\n- **Support tickets:** Neither ticket was judged to leave an unresolved concern (p=0.02 each).\n  - TKT930317 was a September 2026 card-not-present fraud report with $996 in charges. The charges were fully credited back, a new card was issued, and the customer confirmed she was satisfied. It is relevant but closed and was not her fault.\n  - TKT996245 was a routine statement request for a mortgage application.\n- **Precedents:** All five credit precedents were judged comparable (p=0.86\u20130.88). None were rejections.\n  - 1b5c57e4 and 81803cd0 were exceptions.\n  - 6a7c3e93, 1f529734 and f6838fb7 were approvals.\n  - All five were conditional approvals of increases of similar or larger size, such as $3,000\u2192$13,000 and $9,000\u2192$15,000.\n  - Hers is a smaller, cleaner request than several of these.\n- **Category outcomes:** Credit decisions have mostly been approvals or approved exceptions (69 of 115). Rejections were 17 of 115.\n\n**Other points**\n- Her utilization is low at 17%.\n- She has about $41k in deposits with the bank.\n- She has no decision history and no notable transactions to weigh.\n\n**What happens next**\n- This goes through standard approval authority, so no senior review or escalation is needed.\n- The approval should carry the same conditions the precedents used, namely re-verification of income.\n- The decision should be recorded in the context graph with these precedents cited.\n\nFINAL_RECOMMENDATION: approve (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.93,
+          "seconds": 9.0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 823,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT930317",
+              "ref": "TKT930317 (fraud_report, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT996245",
+              "ref": "TKT996245 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 95,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_resolved_genuine",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Laurie Allen",
+      "customer_id": "97af3a24-e286-56b0-a5c6-fa507fc04ff1",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laurie Allen? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I agree with Jev's `yes` (0.75). The one real complication is the open dispute on the customer's statement, which I'd handle as a condition and not as a reason to decline.\n\n**Written policy (Credit Limit Policy v1.0) \u2013 all pass**\n- **Credit score:** 748 against a minimum of 660.\n- **Total limit vs. income:** the proposed limit is $22,500 on verified income of $101,000, which is 22.3%. The cap is 35%.\n- **Size of the increase:** $4,000 is 21.6% of the current $18,500 limit. The cap is 100%.\n- **Senior review:** not triggered, since the total is well under $50,000. The Exception Approval Authority thresholds (manager approval above $25,000) are not triggered either.\n- This matches Jev's `violates_policy` probability of 0.06. Only written rules can reject, and none apply.\n\n**Risk profile**\n- **Customer risk:** the risk score is 0.154 and utilization is 21%. Employment and income are verified. Jev puts `elevated_customer_risk` at 0.04.\n- **Accounts:** both accounts are active and low risk. They hold $6.7k in checking and $29k in savings, and have been open since 2022.\n- **Sanctions, alerts, history:** there are no sanctioned parties, alerts, notable transactions or prior adverse decisions.\n- **Evidence quality:** `evidence_sufficient` is 0.83.\n\n**Precedents**\n- The five closest credit precedents are all approvals or approved exceptions, which fits `precedents_favor_approval` at 0.736.\n- Each was approved conditionally, typically subject to re-verification of income or proof of employment.\n  - Examples: 81803cd0 ($3k\u2192$13k), 1f529734 ($9k\u2192$15k), 1794e10e ($4k\u2192$11k), 6a7c3e93 ($3k\u2192$10k) and 5787e22b ($3k\u2192$15k).\n- Laurie's request is much smaller in relative terms than any of them, so it sits comfortably inside what was previously approved.\n- The similarity scores are only about 0.79 and are semantic, so they are supportive but not decisive.\n- Across the credit category, 69 decisions were approved, approved as exceptions or overridden. 17 were rejected and 20 were escalated.\n\n**What complicates it**\n- **Ticket TKT994849:** this is a $1,665 Brightway Furniture dispute that was closed after the merchant sent a delivery receipt. The next day the customer said the signature isn't theirs, the charge is still on the statement, and they want the dispute reopened. That points to possible third-party card misuse or a mishandled dispute, which is probably why Jev gave `open_fraud_activity` 0.36.\n- **How I read it:** the customer is the likely victim, not the risk. It doesn't breach any policy rule, and no alerts, notable transactions or fraud-pattern signals back it up. The transaction evidence is empty, so I couldn't corroborate it either way.\n- **Why I didn't pull more data:** a graph fraud query wouldn't change the outcome, because nothing in the retrieved evidence points to a rule breach.\n\n**What happens next**\n1. Approve the $4,000 increase, taking the limit from $18,500 to $22,500, and record the decision with the policy and precedent references above.\n2. Have disputes operations reopen TKT994849 and review the forged-signature claim. Consider a card reissue or monitoring if the card looks compromised.\n3. Apply the usual conditional-approval step seen in the precedents, a re-verification of income or employment. Income is already marked verified.\n4. If the reopened dispute turns up evidence of account compromise, route the case back for manual review before the new limit is used.\n\nFINAL_RECOMMENDATION: approve (confidence 0.74)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.74,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.74,
+          "seconds": 15.4,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 457,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.62,
+          "jev_probabilities": {
+            "yes": 0.75,
+            "no": 0.04,
+            "needs_llm_decision": 0.21
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.736,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.36,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.12,
+            "evidence_sufficient": 0.83
+          },
+          "jev_ms": 134,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Recommendation: approve the $4,000 increase, on the condition that dispute TKT994849 is reopened and handled in parallel.**\n\n**Guard fired: g_unresolved_concern (TKT994849)**\n- **Agreement with Jev:** I agree with the p=0.96 judgment. The ticket is marked \"resolved\", but the description says the customer wrote back the next day. They said the receipt signature is not theirs, the $1,665 Brightway Furniture charge is still on their statement, and they want the dispute reopened. The closure was premature, so this is an open complaint with a possible forged-signature claim. TKT933893 (statement request, p=0.04) is a routine closed item and does not matter.\n- **Should it block approval?** No. The dispute matters operationally, but I don't think it is a reason to deny credit:\n  - The customer is the alleged victim of a merchant or fraud problem. They are not showing signs of credit stress or misconduct.\n  - The limit increase does not change the dispute outcome or the bank's liability on that charge. The disputed amount is also small next to the $18,500 limit.\n  - Every written credit rule passes, and only written rules can reject. Jev's judgments can only escalate.\n  - The fraud-related code guards are clear. There is no open fraud ticket or alert by status, no frozen account, no sanctions hit and no watch-listed party. The \"open fraud case\" check missed this ticket only because it was wrongly closed.\n\n**Policy facts (Credit Limit Policy v1.0)**\n- **Credit score:** 748, against a minimum of 660.\n- **Income cap:** the proposed total limit of $22,500 is 22% of verified income of $101,000, against a 35% cap.\n- **Increase size:** the increase is 21.6% of the current $18,500 limit, against a 100% cap.\n- **Review and authority:** income is verified. The amount is far below the $50,000 senior-review threshold, so standard approval authority applies. No Exception Approval Authority is needed.\n\n**Other risk signals**\n- Risk score is 0.154, against an elevation threshold of 0.7.\n- Credit utilization is 21%.\n- Both accounts are active and low-tier, with about $35.7k in combined balances.\n- There are no alerts, no notable transactions and no prior adverse decisions.\n\n**Precedents**\n- All five comparable credit precedents were approved, and Jev rated each as comparable (p=0.84\u20130.91). That leaves zero rejected comparables, so g_precedents_against passed.\n  - 1f529734 ($9k to $15k), 1794e10e ($4k to $11k) and 6a7c3e93 ($3k to $10k) were conditional approvals.\n  - 81803cd0 and 5787e22b were exceptions approved conditionally.\n- Those precedents involved much larger relative increases than this one (about 22%), so this request is more conservative than they were.\n- Category history is 45 approvals, 18 exceptions, 6 overrides, 17 rejections and 20 escalations.\n\n**Conditions**\n1. Reopen TKT994849 and route it to the disputes team for a signature and delivery-receipt review. Correct the status from \"resolved\".\n2. Keep the disputed $1,665 out of the customer's utilization and delinquency treatment while the dispute is pending.\n\n**What would change my mind**\n- Evidence that the dispute is part of a wider fraud pattern, such as account takeover, other disputed charges, or a link to a compromised card.\n- Signs that the customer is the source of the problem, for example the dispute being found in bad faith.\n- A new alert or fraud case on either account.\n- A change in verified income or credit score before the increase is booked.\n\nI called no extra tools, since nothing material was missing from the pre-collected evidence.\n\nFINAL_RECOMMENDATION: approve (confidence 0.76)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.76,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.76,
+          "seconds": 14.5,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 397,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": "g_unresolved_concern",
+          "fired": [
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT994849",
+              "ref": "TKT994849 (transaction_dispute, resolved)",
+              "p": 0.96,
+              "band": "yes"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT933893",
+              "ref": "TKT933893 (statement_request, resolved)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.84,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 95,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_closed_still_disputed",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Ashley Montoya",
+      "customer_id": "8dbd8244-9750-55c9-96cd-0ccdcd99f481",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Ashley Montoya? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Recommendation: approve, with conditions.** I'm confirming Jev's `yes` (0.65). The case only escalated because confidence was 0.48, below the 0.60 floor. The one real complication is an unresolved fraud ticket, which I treat as a service failure to fix rather than a reason to reject.\n\n**Policy (Credit Limit Policy v1.0), all computed from the evidence:**\n- **Credit score:** 775 against a minimum of 660. Pass.\n- **Total limit vs. income:** the proposed total is $22,500, or 22.3% of verified income ($101,000), against a 35% cap. Pass.\n- **Size of increase:** $4,000 is 21.6% of the current $18,500 limit, against a 100% cap. Pass.\n- **Senior review:** $4,000 is far below the $50,000 threshold, and the Exception Approval Authority tiers ($25,000 and up) aren't triggered. Pass.\n- **Jev's `violates_policy`:** 0.07, consistent with the above.\n\n**Risk signals:**\n- **Income and employment:** income is verified and the customer is employed.\n- **Utilization:** 21%, which is low.\n- **Accounts:** two active, low-risk accounts opened in 2022. They hold about $31k in combined balances.\n- **Customer risk score:** 0.228, which is low. Jev's `elevated_customer_risk` is 0.20.\n- **Other evidence:** there are no alerts, no sanctions exposure, no notable transactions and no prior adverse decisions.\n- **Statement request (TKT980309):** the customer asked for statements for a mortgage application. That is routine and consistent with financial stability.\n\n**The complication: fraud ticket TKT910885.**\n- The customer reported $4,419 in fraudulent StreamBox Media charges.\n- The ticket was auto-closed after 12 days with no agent activity.\n- The customer says it is their third contact and they have not been refunded. This is probably what drives Jev's `open_fraud_activity` at 0.29.\n- The customer is the victim here, and the bank failed to follow up. This is not evidence of customer-side credit risk or misconduct.\n- It does create some exposure. If the card or account is still compromised, a higher limit increases potential fraud loss. A disputed $4,419 could also be distorting the 21% utilization figure.\n\n**Precedents:**\n- Five credit precedents, all semantically similar (scores 0.774 to 0.780), were approved, either as approvals or as exceptions:\n  - 1794e10e: $4,000 to $11,000.\n  - 81803cd0: $3,000 to $13,000.\n  - 1f529734: $9,000 to $15,000.\n  - 326e4e79: $12,000 to $17,500.\n  - 1b5c57e4: $5,000 to $9,000.\n- Those cases involved larger relative increases than this one, and were approved conditionally with re-verification of income or employment.\n- This request is smaller in relative terms (21.6%) and its income is already verified, which supports Jev's `precedents_favor_approval` at 0.74.\n- Across the credit category, outcomes lean strongly toward approval: 45 approvals, 18 exceptions and 6 overrides, against 17 rejections.\n\n**Conditions:**\n1. Reopen TKT910885 and assign it to an agent, so the customer gets a call-back and the refund decision.\n2. Confirm the card tied to the fraudulent charges has been blocked or reissued before the new limit takes effect.\n3. Confirm the disputed charge is excluded from the utilization used for this decision.\n\n**What would change my mind:**\n- If the card is still compromised, or the fraud turns out to involve the customer or their credentials in a way that implies account takeover, I would defer the increase until it is resolved.\n- Any new alert, sanctions hit or failed income re-verification would also change my call.\n- A request well above $4,000 that pushed the total near the 35% income cap would need a fresh look.\n\nFINAL_RECOMMENDATION: approve (confidence 0.74)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.74,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.74,
+          "seconds": 14.3,
+          "jev_decision": "yes",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 456,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.48,
+          "jev_probabilities": {
+            "yes": 0.65,
+            "no": 0.11,
+            "needs_llm_decision": 0.24
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.74,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.29,
+            "elevated_customer_risk": 0.2,
+            "requires_manual_review": 0.13,
+            "evidence_sufficient": 0.83
+          },
+          "jev_ms": 100,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Recommendation: hold the increase. Reject for now, and reconsider once the fraud dispute is genuinely closed.** This is a close call. The credit metrics support approval, and the only reason to hold is the unresolved fraud dispute.\n\n**Policy facts (all pass)**\n- Credit score is 775 against a minimum of 660.\n- The proposed total limit is $22,500, which is 22% of verified income ($101,000), under the 35% cap.\n- The increase is 21.6% of the current limit, under the 100% cap.\n- Income is verified, and the $4,000 amount needs only standard approval, well under the $50,000 senior-review line.\n- Risk score is 0.228 against 0.7.\n- There are no sanctions, frozen accounts, watch-listed parties, alerts or prior adverse decisions.\n\n**Guard g_unresolved_concern (fired): I agree with Jev, and I think it should block approval for now.**\n- The cited item is TKT910885, a fraud report about unrecognised StreamBox Media charges.\n- Its status is \"resolved\", but the description says it was auto-closed after 12 days with no agent activity.\n- After closure, the customer wrote that the $4,419 in fraudulent charges has not been refunded. They said this is the third contact and that nobody has called back.\n- Jev's p=0.98 is correct. The closure was administrative, and the substance is still open.\n- The code guard `g_open_fraud_case` passed only because it checks ticket status. It therefore missed this case, which is a gap in the rule rather than evidence that the file is clean.\n- TKT980309 (a statement request for a mortgage application) is genuinely resolved. Jev's p=0.04 is right, and it is irrelevant to this decision.\n\n**Why this should block approval, even though Ashley is the apparent fraud victim:**\n1. The card or account may still be compromised, and a higher limit raises the bank's exposure to further fraud.\n2. Ashley's utilization is about $3,885 (0.21 \u00d7 $18,500). A $4,000 increase is close to the disputed $4,419. The request may be a way to absorb the disputed amount, and a limit increase would effectively finance charges the bank may owe back.\n3. Approving a product upsell while the bank ignores a third complaint is a conduct and complaint-handling risk. The ticket should be reopened regardless of this decision.\n\n**Precedents**\n- All five comparable precedents were approved or granted as exceptions, and none were rejected (the \"0 of 5 rejected\" check passed):\n  - 1794e10e: $4,000 to $11,000, approved conditionally.\n  - 81803cd0: $3,000 to $13,000, exception.\n  - 1f529734: $9,000 to $15,000, approved conditionally.\n  - 326e4e79: $12,000 to $17,500, approved conditionally.\n  - 1b5c57e4: $5,000 to $9,000, exception.\n- Their increases were proportionally larger than Ashley's 21.6%, and the pattern is conditional approval.\n- Jev rated them comparable at p=0.86\u20130.89. The evidence shown contains nothing about unresolved fraud disputes in them, so they support the credit merits but do not answer the fraud question.\n- Across the credit category, outcomes lean toward approval: 45 approvals, 18 exceptions, 17 rejections and 20 escalations.\n\n**What would change my mind (to approve):**\n- TKT910885 is reopened, investigated and closed with a refund or a documented, customer-acknowledged outcome.\n- The card or account is confirmed secure or reissued.\n- Ashley confirms the request is unrelated to covering the disputed charges.\n\nWith those in place, this is a straightforward approval under the Credit Limit Policy, consistent with the precedents. If management prefers not to defer a request that meets every written rule, a conditional approval would be defensible, but I would not make it before the dispute is reopened.\n\nFINAL_RECOMMENDATION: reject (confidence 0.6)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.6,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject",
+            "mode": "decomposed"
+          },
+          "final": "reject",
+          "confidence": 0.6,
+          "seconds": 18.9,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 448,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": "g_unresolved_concern",
+          "fired": [
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT910885",
+              "ref": "TKT910885 (fraud_report, resolved)",
+              "p": 0.98,
+              "band": "yes"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT980309",
+              "ref": "TKT980309 (statement_request, resolved)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "precedent 326e4e79 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 97,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_closed_still_disputed",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Robert Jennings",
+      "customer_id": "a8d73bce-5ee0-56f6-b8a7-37ce07ace2f9",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Robert Jennings? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I agree with Jev's `yes` (0.95, confidence 0.92). Nothing in the evidence contradicts it.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Threshold | Robert Jennings | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 768 | Pass |\n| Total limit after increase, as share of verified income | \u2264 35% | $21,500 / $107,000 = 20.1% | Pass |\n| Single increase, as share of current limit | \u2264 100% | $4,000 / $17,500 = 22.9% | Pass |\n| Senior review | Only above $50,000 | $21,500 | Not triggered |\n\n- Income is verified.\n- The Exception Approval Authority tiers start at $25,000, so no exception sign-off is needed.\n- Jev's `violates_policy` signal is 0.06, which matches my reading.\n\n**Prior decision history**\n- On 2026-03-06 his limit went from $12,000 to $17,500. That approval was conditional on re-verifying income within 60 days. It also said no further increases should be granted until the condition was met.\n- On 2026-04-25, 50 days later, a review recorded that two recent pay stubs matched the stated income. That satisfies the condition and removes the block on further increases. This was the main thing that could have complicated the request.\n\n**Risk signals**\n- Customer risk score is 0.149 (`elevated_customer_risk` 0.04).\n- Utilization is 0.29, and both accounts are active and low-tier, with combined balances of about $29k.\n- There are no alerts and no fraud signals (`open_fraud_activity` 0.02). There are no sanctions findings, because there are no linked parties.\n- His only support ticket is a resolved statement request for a mortgage application. That is benign, but a pending mortgage could mean new debt later.\n\n**Precedents**\n- All five retrieved precedents are credit limit increases approved conditionally, either as `approval` or `exception`. Examples are 1794e10e ($4k to $11k), be3f131d ($8k to $11k) and 6a7c3e93 ($3k to $10k). Jev puts `precedents_favor_approval` at 0.762.\n- They match on meaning only. None has a structural similarity score.\n- Most of them are much larger relative increases than this one, so this request is more conservative than the precedents.\n\n**Caveats**\n- The transaction summary and notable transactions came back empty, so there is no direct view of spending or repayment behavior. This is why `evidence_sufficient` is 0.84 rather than higher. I judge it not material, given the clean alerts, the credit score and the verified income.\n- This is his second increase in about eight months. The evidence doesn't show a policy rule on how often increases can be granted.\n\n**Next steps**\n- Raise the limit from $17,500 to $21,500.\n- Record the decision with the policy and precedent references above. I haven't recorded it yet.\n- I'd suggest a routine income re-verification at the next review. Staff can also decide whether to add a condition about the mortgage application.\n- No escalation is needed.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 12.9,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 454,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.92,
+          "jev_probabilities": {
+            "yes": 0.95,
+            "no": 0.01,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.762,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.84
+          },
+          "jev_ms": 105,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I confirm the fast answer. Nothing in the evidence contradicts it.\n\n**What decided it**\nNo guard fired. The outcome is \"approve\" because all 16 guards passed, and no written rule rejected the request or escalated it. The six reject guards are code-based policy rules. Jev's judgments can only escalate, never reject, and none of them did.\n\n**Policy facts that passed (Credit Limit Policy v1.0)**\n- **Credit score:** 768 against a minimum of 660.\n- **Total limit vs. income:** The proposed total is $21,500 (17,500 + 4,000). That is 20.1% of the $107,000 verified income, under the 35% cap.\n- **Size of the increase:** $4,000 is 22.9% of the current $17,500 limit, under the 100% cap.\n- **Income:** `income_verified = true`.\n- **Approval authority:** $4,000 is far below the $50,000 senior-review threshold, so standard authority applies.\n- **Customer risk:** The risk score is 0.149 against an escalation level of 0.7. Credit utilization is a moderate 0.29.\n- **Account and compliance checks:**\n  - Both accounts are active and neither is frozen.\n  - There are no sanctioned or watch-listed parties, no poorly rated counterparties, and no fraud alerts or tickets.\n  - There are no notable transactions.\n\n**Jev judgments**\n- **Support ticket:** TKT920542 is a resolved statement request, with p=0.02 that it holds an unresolved concern. It is not a worry.\n- **Prior conditions:** The question was whether either earlier decision carries an open condition.\n  - The 2026-03-06 approval (limit raised from $12,000 to $17,500) was conditional on income re-verification within 60 days. It scores p=0.04.\n  - The 2026-04-25 review (decision 49ae89f9) records that two pay stubs were received and match the stated income, so the condition is satisfied. It scores p=0.24, which is below the 0.7 escalation line and also below the 0.3 \"no\" line.\n  - The review came about 50 days after the approval, inside the 60-day window. I checked this myself because the earlier decision said no further increases should be granted until the condition was met. It was met, so that block does not apply.\n- **Precedents:** All five were judged comparable, with p between 0.87 and 0.89. Three were approvals and two were exceptions that were approved, and none was rejected:\n  - 1794e10e\n  - 81803cd0\n  - be3f131d\n  - 213a637f\n  - 6a7c3e93\n\n  Across the credit category, approvals and approved exceptions outnumber rejections (45 + 18 approved versus 17 rejected).\n\n**Things to note, not blockers**\n- This is the second increase in about eight months, from $12,000 to $17,500 and now to $21,500. The policy sets no cooling-off period, and the figures stay well inside every cap.\n- The five precedents were all conditional approvals with larger relative increases. This request is smaller than most of them, so it is at least as safe.\n\n**What happens next**\n- Standard approval authority applies, so no senior or manager sign-off is needed.\n- The limit can go from $17,500 to $21,500.\n- The decision should be recorded in the context graph. The record should cite the Credit Limit Policy, the satisfied income re-verification (decision 49ae89f9), and the five precedents.\n- No tools were needed, because the pre-collected evidence was complete.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.92,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 12.5,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 542,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT920542",
+              "ref": "TKT920542 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "49ae89f9-0405-55ed-bff7-a684b7e3a003",
+              "ref": "decision 49ae89f9 (credit review)",
+              "p": 0.24,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "decision 326e4e79 (credit approval)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "be3f131d-c03b-4a6b-ac66-07ad73e9ff43",
+              "ref": "precedent be3f131d (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "213a637f-1345-4fc0-8975-19ea91be9ba3",
+              "ref": "precedent 213a637f (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 112,
+          "question_count": 8
+        }
+      },
+      "scenario": "condition_met",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Christine King",
+      "customer_id": "5e3e7854-da4b-50b0-ab80-3a369f576c17",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Christine King? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "# Credit limit increase for Christine King: the fast \"yes\" holds\n\nI agree with Jev's verdict. Jev gave yes at 0.94 with confidence 0.91, which clears the 0.60 routing floor. I made no extra tool calls because the evidence covered everything I needed.\n\n## Policy check (Credit Limit Policy v1.0)\n| Rule | Threshold | Christine King | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 739 | Pass |\n| Total limit as share of verified income | at most 35% | $18,500 / $127,500 = 14.5% | Pass |\n| Increase as share of current limit | at most 100% | $4,000 / $14,500 = 27.6% | Pass |\n| Senior review | above $50,000 | $4,000 request | Not triggered |\n\nHer income is verified and she is employed. Utilization is 0.26, which is moderate, and her risk score is 0.239, which is low. Both her accounts are active and low-tier, with about $32.8k held across checking and savings. This matches Jev's low signals: `violates_policy` 0.06 and `elevated_customer_risk` 0.04.\n\n## Prior conditional approval\nThe earlier approval (2026-03-06) raised her limit from $7,500 to $14,500 on a condition. She had changed jobs, so it required proof of employment from the new employer. It also said no further increases should be granted until that was met.\n\nThe review on 2026-04-25 closed this out. The new employer's letter was received and verified by phone, and the condition was recorded as satisfied. The block on further increases no longer applies. This was the one point that could have undermined the yes, and it checks out.\n\n## Precedents\nAll five retrieved precedents are credit-limit increases approved conditionally, with similarity scores of about 0.79\u20130.80:\n- `81803cd0\u2026` ($3k to $13k, exception)\n- `1794e10e\u2026` ($4k to $11k)\n- `6a7c3e93\u2026` ($3k to $10k)\n- `10116cff\u2026` ($6k to $13k)\n- `1f529734\u2026` ($9k to $15k)\n\nThose precedents involved much larger relative increases than this one, and several were conditional on employment or income re-verification. Her request is smaller (27.6%) and her verification is already done. Across the category, approvals, exceptions and overrides total 69 against 17 rejections. That is consistent with `precedents_favor_approval` at 0.798.\n\n## Points to watch\n- **Recent increase:** this is a second increase within about 8 months, taking the limit from $7,500 to $14,500 to $18,500. The size and her profile keep it well within policy, but it is the main thing to note.\n- **Mortgage application:** her June 2026 support ticket was a statement request for a mortgage application. It is benign and resolved, but it suggests upcoming debt. That is a reason to monitor her, not to decline.\n- **No transaction data:** the transaction summary, notable transactions, account-party and alert lists are all empty. That means no sanctions exposure and no fraud flags. The empty transaction summary is a mild evidence gap, which fits `evidence_sufficient` at 0.86 and `requires_manual_review` at 0.09. `open_fraud_activity` is 0.02.\n\n## What happens next\nApprove the $4,000 increase, which takes the limit from $14,500 to $18,500. No senior or manager escalation is needed, since the amount is well below the $25k and $50k authority thresholds. The decision should then be recorded in the graph. It should cite the satisfied employment condition (`b85855fb\u2026`), the prior approval (`0e1fed50\u2026`) and the precedents above. Her mortgage activity is worth watching at the next review.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 13.8,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 487,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.94,
+            "no": 0.01,
+            "needs_llm_decision": 0.05
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.798,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.86
+          },
+          "jev_ms": 130,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve. I agree with the fast answer.**\n\n**What decided it:** No guard fired. All 16 guards passed, so the default outcome is approval at standard authority. Six code-based reject guards and six code-based escalation guards passed. Four Jev-based escalation guards passed too.\n\n**Policy facts (Credit Limit Policy v1.0)**\n- **Credit score:** 739 against a minimum of 660.\n- **Income cap:** The proposed total limit is $18,500 (current $14,500 plus $4,000). That is 14.5% of the $127,500 verified income, against a 35% cap.\n- **Increase cap:** The increase is 27.6% of the current limit, against a 100% cap.\n- **Income verification:** Income is verified.\n- **Approval authority:** $4,000 is far below the $50,000 senior-review line, so standard authority applies.\n- **Risk score:** 0.239, against an elevation threshold of 0.7.\n- **Sanctions, accounts and cases:** There are no sanctions or watch-list hits and no frozen accounts (both accounts are active and low-risk). There are no open fraud tickets or alerts.\n- **Credit utilization:** 26%.\n\n**Jev judgments**\n- **Support ticket:** TKT985298 was a resolved statement request for a mortgage application. The probability of an unresolved concern is 0.02.\n- **Conditional approval:** The 6 March 2026 approval raised the limit from $7,500 to $14,500. It was conditional on proof of employment, and said no further increases should be granted until that was met.\n  - The 25 April 2026 review records that the new employer's letter was received and verified by phone, and that the condition was satisfied.\n  - Jev puts the chance that the condition is still open at 0.16 for the review and 0.06 for the approval. Both are well under the 0.7 escalation threshold.\n  - This was the main risk in the file. The evidence shows it was cleared.\n- **Precedents:** All five were judged comparable, with probabilities of 0.90 to 0.92. One is an exception that was approved, and four are conditional approvals (81803cd0, 1794e10e, 6a7c3e93, 10116cff, 1f529734). None was rejected, so the precedents give no reason to hold back.\n- **Unsure band:** None of the judgments fell between 0.3 and 0.7.\n\n**Caveats**\n- Some of the evidence is empty: transaction summary, notable transactions, account parties and alerts. Empty fields mean there are no adverse signals. They do not give positive confirmation of the customer's activity.\n- This is the second increase in about eight months, from $7,500 to $14,500 and now to $18,500. Policy sets no cooldown, and the earlier condition is documented as satisfied.\n\n**What happens next:** The increase goes through at standard approval authority, taking the limit from $14,500 to $18,500. No senior or manager escalation is needed. I haven't recorded the decision in the graph. If you want a decision trace saved, I can record it with the precedent IDs above.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 11.5,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 503,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT985298",
+              "ref": "TKT985298 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "b85855fb-acb9-5280-b5ac-5b610b9eefe3",
+              "ref": "decision b85855fb (credit review)",
+              "p": 0.16,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "decision 0e1fed50 (credit approval)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 95,
+          "question_count": 8
+        }
+      },
+      "scenario": "condition_met",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Tanya Trujillo",
+      "customer_id": "1c8e2d24-116b-52a5-974a-2825a08198e6",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Tanya Trujillo? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve. I confirm Jev's `yes` (p=0.90, confidence 0.85, above the 0.60 floor).**\n\n**Policy check (Credit Limit Policy v1.0)**\nThese are written rules, and they are the only thing that can reject. None of them is triggered.\n- **Credit score:** 796 against a minimum of 660.\n- **Total limit vs. income:** the proposed total of $21,500 is 17.6% of verified income ($122,000, `income_verified: true`). The cap is 35%.\n- **Size of increase:** $4,000 is 22.9% of the current $17,500 limit. The cap is 100%.\n- **Senior review:** the $50,000 threshold is not reached. The Exception Approval Authority tiers ($25k and up) don't apply either, since this is a standard-policy approval.\n- Jev puts the chance of a policy violation at 0.08. The figures above show none.\n\n**Risk signals**\n- **Utilization:** 26%, which is moderate.\n- **Customer risk score:** 0.185. Jev puts elevated risk at 0.04.\n- **Fraud and alerts:** there are no alerts, and open fraud activity is 0.02.\n- **Accounts:** a checking account ($13,127) and a savings account ($28,647), both active and low-risk tier.\n- **Support history:** the only ticket is a resolved statement request for a mortgage application. It is routine and not a risk flag.\n\n**Prior decision and precedents**\n- **Prior decision (88cb6990, 2026-03-06):** the limit went from $10,000 to $17,500 on the condition that the overdrawn checking account be brought positive within 30 days. If it wasn't, the limit would revert and no further increases would be granted.\n  - The checking balance is now +$13,127.\n  - The limit is still $17,500, so it did not revert.\n  - The condition therefore appears to be met. This was the main thing that could have complicated the request.\n- **Precedents:** the five closest credit precedents are all conditional approvals or approved exceptions.\n  - They include 1f529734 ($9k to $15k), 6a7c3e93 ($3k to $10k) and 1794e10e ($4k to $11k).\n  - Their increases are proportionally much larger than this one (about 23%), and their conditions were re-verification of income or employment.\n  - Jev puts \"precedents favor approval\" at 0.74.\n- **Category base rate:** 45 approvals, 18 approved exceptions and 6 overrides, against 17 rejections.\n\n**What complicates it (minor)**\n- `account_parties`, `notable_transactions` and `transaction_summary` came back empty. That is why the sanctions signal is null and evidence sufficiency is 0.84 rather than higher.\n- The balances, the lack of alerts and the clean history make this a data gap and not a red flag.\n- Jev put manual review at 0.10, which is below any escalation level.\n- I made no extra tool calls, because the derived figures already cover the policy arithmetic.\n\n**Next steps**\n1. Approve the $4,000 increase, taking the limit from $17,500 to $21,500.\n2. Record the decision in the context graph. It should cite the policy figures, the March 2026 precedent (88cb6990) and the satisfied checking-account condition.\n3. Optionally confirm with ops that the March condition was formally closed out.\n4. Keep the standard monitoring of utilization after the increase.\n\nFINAL_RECOMMENDATION: approve (confidence 0.86)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.86,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.86,
+          "seconds": 13.0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 496,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.85,
+          "jev_probabilities": {
+            "yes": 0.9,
+            "no": 0.01,
+            "needs_llm_decision": 0.09
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.74,
+            "violates_policy": 0.08,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.84
+          },
+          "jev_ms": 140,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Recommendation: approve the $4,000 increase, from $17,500 to $21,500, with one confirmation step. I'm doing this from the evidence supplied and ran no extra lookups.**\n\n**The guard that fired: g_open_condition (decision 88cb6990, p=0.94)**\n- **What the decision said:** On 2026-03-06 the limit was raised from $10,000 to $17,500 on one condition. The overdrawn checking account had to be back to a positive balance within 30 days. If not, the limit would revert and no further increases would be granted until it was.\n- **Where I agree with Jev:** The condition is real and applies to this request. A 0.94 probability that a prior decision carries a condition is correct. The condition also specifically bars further increases while it is unmet.\n- **Where I disagree:** The guard's rationale is \"no sign it was met,\" and the evidence shows some signs that it was.\n  - Checking account ACC90365501 is active with a balance of $13,127.20, so it is no longer overdrawn.\n  - The current limit is still $17,500. That is the increased figure, so the reversion penalty doesn't appear to have been applied.\n  - There are no open alerts, no fraud cases and no frozen accounts. The only ticket is a resolved statement request.\n- **The remaining gap:** The evidence has no transaction history. I can't see when the account went positive, so I can't prove it happened within the 30-day window that ended around 2026-04-05. The current balance and the unreverted limit are strong indirect evidence, but not proof of timing. This gap shouldn't block approval, but it should be closed before the increase takes effect.\n\n**Other guards and policy facts**\n- **Credit Limit Policy v1.0:** Every rule is met with room to spare.\n  - Credit score is 796 against a minimum of 660.\n  - The proposed total of $21,500 is 17.6% of the $122,000 verified income, against a 35% cap.\n  - The increase is 22.9% of the current limit, against a 100% cap.\n  - Income is verified.\n  - Utilization is 26%.\n  - Customer risk score is 0.185, against an escalation level of 0.7.\n- **Approval authority:** $4,000 is standard authority. It is far below the $50,000 senior-review line and the $25,000 manager level in Exception Approval Authority.\n- **Support ticket TKT928876 (p=0.02):** A resolved statement request for a mortgage application. I agree it is not a concern.\n- **Precedents:** All five are comparable (p=0.86\u20130.90) and none was rejected. They are 81803cd0, 6a7c3e93, 1794e10e, 1b5c57e4 and 1f529734. Each was a conditional approval or exception of a credit increase.\n  - Category outcomes support approval: 45 approvals, 18 exceptions and 6 overrides, against 17 rejections.\n  - The precedents show conditions on increases are normal. They don't show that unmet conditions get waived, so they don't resolve the open-condition question.\n\n**Conditions I would attach**\n1. Before booking the increase, confirm that the checking account returned to a positive balance by roughly 2026-04-05. A single account-history check does this.\n2. Record the outcome of that check in the decision trace, so the condition in 88cb6990 is closed explicitly.\n\n**What would change my mind**\n- If the history shows the account stayed overdrawn past the 30-day window, or went positive only later, the earlier decision's terms say no further increases should be granted. I would then reject, or at least escalate for a documented exception.\n- Any new overdraft, fraud alert or frozen account would also change my view.\n\nFINAL_RECOMMENDATION: approve (confidence 0.74)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.74,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.74,
+          "seconds": 15.5,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 842,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": "g_open_condition",
+          "fired": [
+            "g_open_condition"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT928876",
+              "ref": "TKT928876 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "88cb6990-6e4e-5024-ab35-aa644be99fc5",
+              "ref": "decision 88cb6990 (credit approval)",
+              "p": 0.94,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 230,
+          "question_count": 7
+        }
+      },
+      "scenario": "condition_unmet",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Jim Walter",
+      "customer_id": "514836c6-9a3d-5093-b4ed-7e3696e91863",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jim Walter? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "The March 2026 approval was conditional on income re-verification within 60 days, and any further increase was barred until that was met. The evidence doesn't show whether it was met, so I'll check the customer record.\n**Recommendation: approve the $4,000 increase, with a check that the March income re-verification is on file.** I agree with Jev's `yes` verdict.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Test | Policy limit | Jim Walter | Result |\n|---|---|---|---|\n| Credit score | at least 660 | 796 | Pass |\n| Total limit as share of verified income | at most 35% | $19,000 / $137,500 = 13.8% | Pass |\n| Size of increase | at most 100% of current limit | $4,000 / $15,000 = 26.7% | Pass |\n| Senior review | required above $50,000 | $4,000 | Not triggered |\n\n- The Exception Approval Authority tiers start at $25,000, so no exception approval is needed.\n- Income is verified, the customer is employed, and credit utilization is 0.31.\n- Jev puts the chance of a policy violation at 0.06.\n\n**Risk signals**\n- There are no alerts, no notable transactions and no sanctioned parties. Jev puts open fraud activity at 0.02 and elevated customer risk at 0.06, against a risk score of 0.301.\n- The only support ticket is a resolved statement request from June 2026, made for a mortgage application. It is routine and shows no sign of distress.\n- Both accounts are low risk and active, with about $45,000 held across checking and savings.\n- The transaction summary is empty, so there is no activity evidence either way. Jev still rates the evidence sufficient at 0.83.\n\n**Precedents**\n- All five nearest precedents are credit-limit increases that were approved. Three are plain approvals and two are exceptions, and all were conditional on re-verifying income or employment.\n- They include 81803cd0 ($3k to $13k), 1794e10e ($4k to $11k), 6a7c3e93 ($3k to $10k) and 1b5c57e4 ($5k to $9k).\n- Jev puts \"precedents favor approval\" at 0.776.\n- Across the credit category, approvals and exceptions total 63 decisions against 17 rejections.\n- Those precedents involved larger relative jumps than this request, so a 26.7% increase is comparatively modest.\n\n**The one complication**\n- Decision 1f529734 (March 2026, $9k to $15k) was conditional on income re-verification within 60 days. It said the limit would revert, and no further increases would be granted, if the condition went unmet.\n- I checked the customer record and the causal chain for a re-verification record and found none. The chain has no linked effects.\n- The current evidence points the right way. The limit is still $15,000, so it did not revert, and `income_verified` is true.\n- I treat the condition as met. That is an inference, not a documented fact.\n\n**Next steps**\n1. Confirm that the pay stubs or tax return from the March condition are on file. If they are not, hold the increase until Jim Walter provides them.\n2. Approve the increase from $15,000 to $19,000. I suggest attaching the same kind of income re-verification condition used in the precedents.\n3. Record the decision in the graph, linked to 1f529734 and the precedents above.\n\nFINAL_RECOMMENDATION: approve (confidence 0.8)",
+          "tool_calls": [
+            "execute_cypher",
+            "get_causal_chain"
+          ],
+          "tool_call_count": 2,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.8,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.8,
+          "seconds": 15.3,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 722,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.72,
+          "jev_probabilities": {
+            "yes": 0.81,
+            "no": 0.03,
+            "needs_llm_decision": 0.16
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.776,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.06,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.83
+          },
+          "jev_ms": 185,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "The open condition is the deciding issue, and the evidence doesn't show whether the income re-verification was completed. I'll check the decision's causal chain and the graph for follow-up records.\n**Recommendation: do not approve the $4,000 increase yet.** Jim Walter's prior approval carried an income re-verification condition, and nothing in the graph shows it was met. The request can be revisited once that is documented.\n\n**Guard g_open_condition (fired): I agree, and it should block approval.**\n- Decision 1f529734 (2026-03-06) raised the limit from $9,000 to $15,000 \"conditionally, subject to re-verification of income within 60 days (two recent pay stubs or the latest tax return).\"\n- It also said: \"If the condition is not met, the limit reverts and no further increases should be granted until it is.\"\n- The 60-day window closed around 2026-05-05, about six months before today (2026-11-11).\n- Jev put the chance that the condition is still open at 0.95.\n- I checked the decision's causal chain and every node linked to Jim. There is no follow-up decision, no re-verification record, and no document or note showing the pay stubs or tax return were received.\n- The `income_verified = true` flag on his profile doesn't settle this. It is undated and could simply predate the March decision. The code guard `g_income_unverified` only reads that flag.\n- The one ticket near the window, TKT918048, was a request for bank statements for a mortgage application. It was submitted on 2026-06-26, after the window closed, and the statements went to the customer. It is not income documentation.\n- The $15,000 limit is still in place, so the revert the prior decision called for either didn't happen or wasn't recorded.\n\n**Other guards and facts: no concerns.**\n- The ticket judgment (g_unresolved_concern, p=0.02) is correct. TKT918048 is resolved and benign.\n- All five precedents were judged comparable (p=0.89\u20130.92) and none were rejected. They are 81803cd0, 1794e10e, 6a7c3e93, 1b5c57e4 and 1f529734 itself. Each was approved conditionally with an income or employment re-verification requirement, so they support conditional approval, not approval with the condition unmet.\n- Credit Limit Policy v1.0:\n  - Credit score is 796 against a 660 minimum.\n  - The proposed $19,000 total is 13.8% of the $137,500 income, against a 35% cap.\n  - The increase is 26.7% of the current limit, against a 100% cap.\n  - $4,000 is well under the $50,000 senior-review threshold, so standard authority applies.\n- Risk score is 0.301 against a 0.7 threshold. Utilization is 31%.\n- There are no sanctions, frozen accounts, fraud alerts or watch-listed counterparties.\n\n**Why I'm rejecting and not escalating.** The customer looks strong on every written policy test, so this is about process, not credit quality. The previous approval's own terms bar further increases until the condition is met, and granting this one would ignore that, and set a precedent for doing so. That outweighs the strong profile.\n\n**What would change my mind:** evidence that the pay stubs or tax return were received and reviewed (a dated record, an underwriter note, or a decision closing out 1f529734). With that on file, I would approve the $4,000 at standard authority, with high confidence, because every policy test passes. A fresh income verification submitted now would also work. In the meantime, ask Jim for the documents and keep the request open.\n\nFINAL_RECOMMENDATION: reject (confidence 0.72)",
+          "tool_calls": [
+            "get_causal_chain",
+            "execute_cypher"
+          ],
+          "tool_call_count": 2,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.72,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject",
+            "mode": "decomposed"
+          },
+          "final": "reject",
+          "confidence": 0.72,
+          "seconds": 17.7,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 529,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": "g_open_condition",
+          "fired": [
+            "g_open_condition"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT918048",
+              "ref": "TKT918048 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "decision 1f529734 (credit approval)",
+              "p": 0.95,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 201,
+          "question_count": 7
+        }
+      },
+      "scenario": "condition_unmet",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Laura Johnson",
+      "customer_id": "aff03420-e03c-5f71-a621-4bcb1f753e35",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laura Johnson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve.** I agree with Jev's `yes` (0.95, confidence 0.92). Nothing in the evidence contradicts it.\n\n**Policy check (Credit Limit Policy v1.0)**\n\n| Rule | Threshold | Laura Johnson | Result |\n|---|---|---|---|\n| Minimum credit score | 660 | 746 | Pass |\n| Total limit as share of verified income | \u2264 35% | $18,500 / $107,000 = 17.3% | Pass |\n| Single increase as share of current limit | \u2264 100% | $5,000 / $13,500 = 37% | Pass |\n| Senior review | Above $50,000 | $5,000 | Not triggered |\n\n- Income is verified and she is employed.\n- No Exception Approval Authority tier applies, because the request is well under $25,000 and needs no exception.\n- Jev put the probability of a policy violation at 0.06. The arithmetic shows none, so that 0.06 is residual model uncertainty.\n\n**Risk signals**\n- **Customer risk:** The risk score is 0.219 and credit utilization is a low 0.21. Both accounts are active, low-tier and well funded (about $8.6k checking and $20.9k savings). Jev put elevated risk at 0.05.\n- **Alert:** ALT927118 was a geographic anomaly (Dublin card use) that was cleared as a false positive. The customer had filed a travel notice and confirmed the purchases by one-time passcode. Jev put open fraud activity at 0.03.\n- **Support ticket:** TKT972986 was a resolved request for six months of statements for a mortgage application. It is benign. It does hint at possible new mortgage debt, which is worth a note but not a blocker.\n- **Sanctions and parties:** There are no account parties, so sanctions exposure is null. No organizations are linked and there is no notable transaction activity.\n\n**Precedents**\n- All five retrieved credit precedents are approvals or approved exceptions:\n  - f787923e: $5k to $15k\n  - 1b5c57e4: $5k to $9k\n  - 1f529734: $9k to $15k\n  - f6838fb7: $5k to $11k\n  - 5787e22b: $3k to $15k\n- Their semantic similarity is about 0.79 each, and Jev put \"precedents favor approval\" at 0.748.\n- Every one of those precedents was larger in relative terms than Laura's 37% increase, and all were approved, mostly with a condition to re-verify income or employment.\n- Category history points the same way. Of 115 credit decisions, 69 were approvals, exceptions or overrides, against 17 rejections and 20 escalations.\n\n**What complicates the verdict**\n- The transaction summary, notable transactions and decision history are all empty. Jev rated evidence sufficiency at 0.88, not higher. Her behaviour on the accounts is unobserved, but nothing adverse is on record either.\n- Two precedents were exceptions, and the others were conditional approvals for different customers. Laura needs no exception, so they only show that the bank approves comparable requests.\n- Jev put manual review at 0.10, which is low and below any escalation trigger.\n\n**Next steps**\n1. Approve the increase from $13,500 to $18,500.\n2. Record the decision in the context graph, citing the Credit Limit Policy checks and the precedents above.\n3. Consider the same lightweight condition the precedents used: confirm current income and employment at the next periodic review. Her income is already verified, so this is optional.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 13.6,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 660,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.92,
+          "jev_probabilities": {
+            "yes": 0.95,
+            "no": 0.01,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.748,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.88
+          },
+          "jev_ms": 371,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve (confirming Jev's `yes`).** No guard fired. Every reject and escalate guard passed, so the default outcome is approval.\n\n**Written policy checks (Credit Limit Policy v1.0), all passed**\n- Credit score is 746 against a minimum of 660.\n- The proposed total limit is $18,500 (current $13,500 plus $5,000). That is 17.3% of her verified annual income of $107,000, under the 35% cap.\n- The increase is 37% of her current limit, under the 100% cap.\n- Income is verified, so the unverified-income escalation did not apply.\n- $5,000 is far below the $50,000 senior-review threshold, so standard approval authority applies. The Exception Approval Authority tiers start at $25,000, so they don't apply either.\n\n**Risk and compliance facts, all clear**\n- Her risk score is 0.219 against the 0.7 escalation level, and her credit utilization is a healthy 21%.\n- There are no sanctioned or watch-listed parties, no D-rated counterparties, and no frozen accounts. Both accounts, a checking and a savings account, are active and low risk.\n- There are no open fraud tickets or alerts.\n\n**Jev judgments (probability the statement is true)**\n- **Ticket TKT972986:** a statement request for a mortgage application, already resolved. Probability of an unresolved concern is 0.02.\n- **Alert ALT927118:** a geographic anomaly (card used in Dublin). It was cleared as a false positive after a travel notice and SMS confirmation. Probability of unexplained risk is 0.03.\n- **Precedents:** all 5 comparable credit decisions were judged comparable, with probabilities of 0.88 to 0.91. Three were approvals (f787923e, 1f529734, f6838fb7) and two were conditional exceptions (1b5c57e4, 5787e22b). None were rejected, and several involved larger relative increases than this one, such as $3,000 to $15,000.\n- No judgment fell in the unsure band between 0.3 and 0.7.\n\n**Points to note**\n- The evidence has no transactions and no decision history. This did not trigger escalation because all required fields were present. It also means there is no negative behavior on record.\n- Several precedents were approved conditionally, subject to re-verification of income or employment. Her income is already verified and her employment status is \"employed\", so I don't see a need for a special condition. Standard confirmation of current employment would be reasonable.\n\n**What happens next**\nApproval goes through standard authority, with no senior or committee review. The limit would rise from $13,500 to $18,500. I recommend recording the decision in the context graph, citing the precedents above and the policy facts. I did not call any tools because nothing was missing from the evidence.\n\nFINAL_RECOMMENDATION: approve (confidence 0.92)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.92,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.92,
+          "seconds": 8.1,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 414,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT972986",
+              "ref": "TKT972986 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT927118",
+              "ref": "ALT927118 (geographic_anomaly, false_positive)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 113,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_cleared_benign",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Heidi Henderson",
+      "customer_id": "9c37f077-9fd9-585c-bef7-986d8e0136a0",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Heidi Henderson? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve. I confirm Jev's `yes` (probability 0.92, confidence 0.88, above the 0.60 floor).**\n\n**Policy check (Credit Limit Policy v1.0)**\n\nAll the written rules are met, and only written rules can reject. I re-checked the arithmetic against the evidence.\n\n| Rule | Limit | Heidi Henderson |\n|---|---|---|\n| Minimum credit score | 660 | 758 |\n| Total limit after increase, as share of verified income | \u2264 35% | $17,500 / $89,500 = 19.6% |\n| Single increase, as share of current limit | \u2264 100% | $4,000 / $13,500 = 29.6% |\n| Senior review threshold | above $50,000 | Not triggered ($4,000) |\n\n- Her income is verified and she is employed.\n- Her credit utilization is 0.17, which is low.\n- The Exception Approval Authority policy isn't needed, because no exception is required.\n- Jev puts the probability of a policy violation at 0.06.\n\n**Risk signals**\n- Her customer risk score is 0.178, and the probability of elevated risk is 0.05.\n- There is no sanctions exposure. No account parties were returned, so that signal is null.\n- Probability of open fraud activity is 0.03.\n- One alert (ALT983502) flagged a $39,432 deposit under the amount-threshold rule. It was documented as vehicle-sale proceeds with a bill of sale on file, and an analyst cleared it as a false positive. This is the only notable item, and it is resolved.\n- The one support ticket (TKT931207) was a resolved statement request for a mortgage application. It is routine. A mortgage application may mean future debt, but nothing in policy makes that a barrier to this increase.\n- Both accounts (checking and savings) are active and low-risk, with about $43k in combined balances.\n\n**Precedents (probability that precedents favor approval: 0.788)**\n- The five closest credit precedents are semantically similar, with scores of about 0.80. Four are approvals, and one (81803cd0\u2026) is an exception that was also approved.\n- They are 1794e10e ($4k\u2192$11k), f6838fb7 ($5k\u2192$11k), 6a7c3e93 ($3k\u2192$10k), 1f529734 ($9k\u2192$15k) and 81803cd0 ($3k\u2192$13k).\n- Most of these were larger relative increases than Heidi's 29.6%, and they were still approved.\n- In the wider credit category, approvals (45), exceptions (18) and overrides (6) outnumber rejections (17).\n\n**What complicates it**\n- The precedents were approved conditionally, mostly subject to re-verification of income or employment. Heidi's file should carry the same condition.\n- The transaction summary, notable transactions and decision history came back empty, so there is no spending-pattern evidence and no prior decisions on her. Jev rates the evidence as sufficient at 0.86. This is a thin spot, but nothing in it points toward a problem.\n- The manual-review probability is 0.10, which is low.\n\n**What happens next**\n- Approve the increase from $13,500 to $17,500, conditional on re-verifying income and employment as in the precedents.\n- The decision and its reasoning get recorded in the context graph, citing the precedents above, so future credit decisions can reference it.\n- No senior review or exception approval is needed.\n\nFINAL_RECOMMENDATION: approve (confidence 0.9)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.9,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.9,
+          "seconds": 12.9,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 410,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.88,
+          "jev_probabilities": {
+            "yes": 0.92,
+            "no": 0.01,
+            "needs_llm_decision": 0.07
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.788,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.86
+          },
+          "jev_ms": 103,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Verdict: approve, and I confirm it.** No guard fired. Every written rule and every Jev judgment passed, so the default outcome of approve stands. I did not call any tools because the pre-collected evidence covers everything needed.\n\n**Policy facts (Credit Limit Policy v1.0)**\n- **Credit score:** 758 against a minimum of 660. Passed.\n- **Income cap:** The proposed total limit is $17,500 (current $13,500 plus $4,000), which is about 19.6% of the $89,500 verified income. The cap is 35%. Passed.\n- **Increase size:** $4,000 is about 29.6% of the current limit. The cap is 100%. Passed.\n- **Income verification:** `income_verified` is true. The escalation guard did not fire.\n- **Approval authority:** $4,000 is far below the $50,000 senior-review threshold, so standard approval applies.\n- **Customer risk:** The risk score is 0.178 against an escalation level of 0.7. Credit utilization is low at 17%.\n- **Account and sanctions checks:** The customer has 2 accounts, both active. There are no frozen accounts, no sanctioned or watch-listed parties and no poor-rated counterparties. There are no open fraud tickets or alerts.\n\n**Jev judgments (an escalation needs p > 0.7)**\n- **Support ticket TKT931207:** This was a resolved statement request for a mortgage application. p=0.02 that it is an unresolved concern.\n- **Alert ALT983502:** This was a $39,432 deposit flagged by the amount rule. It was documented as vehicle-sale proceeds with a bill of sale on file, and an analyst cleared it as a false positive. p=0.02 that it is an unexplained risk. The deposit is large, but it is explained and consistent with the customer's balances.\n- **Precedents:** All 5 similar credit precedents were judged comparable, with p between 0.90 and 0.91. They are 81803cd0 (exception), 1794e10e, f6838fb7, 6a7c3e93 and 1f529734 (approvals). None was rejected, so the \"precedents against\" guard did not fire. Those past increases were larger in dollar terms ($6,000\u2013$10,000) and were approved conditionally, usually subject to re-verification of income or employment.\n- **Unsure band:** No judgment fell between 0.3 and 0.7.\n\n**Caveats**\n- The customer has no prior decision history, and the evidence shows no transaction summary or account parties. These gaps don't contradict the verdict. Rejections require a written rule, and none is triggered.\n- Overall, the category approves most credit requests. Of the decided outcomes, 45 were approvals, 18 exceptions and 6 overrides, against 17 rejections and 20 escalations.\n\n**What happens next**\n- The increase goes through standard approval authority. The limit would move from $13,500 to $17,500.\n- Consistent with the precedents, I'd suggest keeping the usual condition of re-verifying income or employment, since the approvals above were conditional.\n- The decision can be recorded in the context graph, citing the five precedents, so it becomes a precedent for future cases.\n\nFINAL_RECOMMENDATION: approve (confidence 0.93)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.93,
+            "source": "jev",
+            "jev_decision": "yes",
+            "escalated": false,
+            "agrees_with_jev": true,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.93,
+          "seconds": 9.3,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 515,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT931207",
+              "ref": "TKT931207 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT983502",
+              "ref": "ALT983502 (amount_threshold, false_positive)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 142,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_cleared_benign",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Kevin Jimenez",
+      "customer_id": "cf7402be-e09b-561f-a221-0c8bc4583e82",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Kevin Jimenez? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "The policy arithmetic passes. The open question is the structuring alert that was closed in a bulk clean-up. I'll check whether the graph's transaction data supports or contradicts that finding.\n**Recommendation: approve, but only after the structuring alert gets a proper analyst review. If that review can't happen first, escalate instead of approving.**\n\n**Written policy (Credit Limit Policy v1.0): all tests pass**\n- Credit score is 793, against a minimum of 660.\n- The proposed total limit is $16,500, which is 17.8% of verified income ($92,500). The cap is 35%.\n- The increase is 32% of the current $12,500 limit. The cap is 100%.\n- $4,000 is far below the $50,000 senior-review threshold, and no exception approval is needed.\n- Income is verified and the customer is employed. Utilization is 0.35 and the risk score is 0.121.\n- Both accounts are low-risk and have been open since 2020. The fraud-graph check on the checking account shows no flagged transactions and no flagged neighbours.\n\n**Precedents**\nAll five retrieved credit-limit-increase precedents were approved, with semantic similarity around 0.79:\n- 1794e10e: $4k to $11k, approved conditionally.\n- 81803cd0: $3k to $13k, approved conditionally.\n- 1b5c57e4: $5k to $9k, approved conditionally.\n- 6a7c3e93: $3k to $10k, approved conditionally.\n- 1f529734: $9k to $15k, approved conditionally.\n\nThose increases were larger in relative terms than this one, and each was conditional on re-verification of income or employment. Jev puts the probability that precedents favour approval at 0.746. This customer's income is already verified.\n\n**The complication: alert ALT989226**\n- The alert is dated 2026-08-03. It describes six cash deposits of $9,200\u2013$9,900 at three branches over nine days, each just under the $10,000 reporting threshold, with no documented source of funds.\n- That is a classic structuring pattern.\n- It was marked false_positive by a bulk closure rule during a backlog clean-up. No analyst reviewed it and there are no notes, so the closure is not a real clearance.\n- The graph holds no transactions for this customer, so I can't confirm or rule out the deposits. The empty transaction summary and notable transactions reflect missing data, not a clean record. Jev gives 0.25 for open fraud activity, which is notable against a customer risk score of 0.05.\n- Unreviewed structuring activity is mainly an AML and SAR question, not a credit-policy one. The written policy has no rule that rejects on it, and only written rules can reject. This is therefore grounds for a condition or escalation, not a denial.\n- The statement-request ticket (TKT965259, for a mortgage application) is benign and resolved.\n\n**Why approve**\n- Every written policy test passes with wide margins.\n- The precedents are consistently favourable.\n- The credit profile is strong.\n- The increase is modest, and exposure on a $4,000 increase is small.\n- Nothing in the data confirms wrongdoing. The alert is an unresolved question, not a finding.\n\n**Conditions**\n1. Send ALT989226 back to AML or compliance for a real review. That means re-opening it, pulling the underlying deposit records, and documenting the source of funds.\n2. Follow the precedents' conditional-approval pattern and re-verify income and employment.\n\n**What would change my mind**\n- If the review confirms structuring, or the source of funds can't be explained, I would reject or escalate to compliance. A SAR decision would then take priority over the credit decision.\n- Evidence of other flagged transactions, or links to flagged accounts, would also change it.\n- If the deposits turn out to be documented and legitimate, I would approve with no further conditions.\n\nFINAL_RECOMMENDATION: approve (confidence 0.68)",
+          "tool_calls": [
+            "detect_fraud_patterns",
+            "execute_cypher"
+          ],
+          "tool_call_count": 2,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.68,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.68,
+          "seconds": 16.7,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 398,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.14,
+          "jev_probabilities": {
+            "yes": 0.37,
+            "no": 0.2,
+            "needs_llm_decision": 0.43
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.746,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.25,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.69
+          },
+          "jev_ms": 100,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Recommendation: approve conditionally.** Approve the $4,000 increase, but have AML re-open alert ALT989226 and review it before the new limit goes live.\n\n**Policy facts (Credit Limit Policy v1.0)**\n- Credit score is 793 against a minimum of 660.\n- The proposed total limit of $16,500 is 18% of verified income ($92,500), against a 35% cap.\n- The increase is 32% of the current $12,500 limit, against a 100% cap.\n- Income is verified, and the $4,000 amount is within standard approval authority, well below the $50,000 senior review line.\n- Customer risk score is 0.121 against a 0.7 threshold, and utilization is 35%.\n- There are no sanctions, frozen accounts, watch-listed parties or open fraud cases.\n- All the code guards that can reject passed.\n\n**Fired guard: g_unexplained_alert (ALT989226, p=0.87)**\n- **What the alert says:** The status \"false_positive\" is misleading. The description says it was closed by a bulk closure rule during backlog clean-up, with no analyst notes. The original finding was 6 cash deposits of $9,200\u2013$9,900 at 3 branches over 9 days, each just under the $10,000 reporting threshold, with no documented source of funds. That is a textbook structuring pattern.\n- **Do I agree with the judgment?** Yes. The alert was never actually investigated, so the risk it describes is unexplained, and the \"false positive\" label shouldn't be relied on.\n- **Should it block approval?** I don't think so, for four reasons:\n  - It is an AML/BSA question about deposit behavior, not evidence of credit weakness. Deposits and balances aren't part of the credit policy tests, and income is independently verified.\n  - The evidence is thin. The transaction summary and notable transactions are empty, so nothing in the graph corroborates or refutes the deposits. Only one alert is attached, with no prior decisions, no counterparties and no sanctions issues.\n  - Under the rules I was given, only written rules can reject, and none is breached.\n  - The exposure is small, at $4,000 on a customer with a 793 score and 18% income-to-limit.\n- **Why I still don't want to ignore it:** Closing it by backlog rule is a process failure that compliance should fix regardless of this decision.\n\n**Precedents**\n- All 5 comparable precedents were approved, mostly with conditions. They are 1794e10e (approval, $4k\u2192$11k), 81803cd0 (exception, $3k\u2192$13k), 1b5c57e4 (exception, $5k\u2192$9k), 6a7c3e93 (approval, $3k\u2192$10k) and 1f529734 (approval, $9k\u2192$15k).\n- Jev rated each as comparable at p=0.88\u20130.90, and none was rejected.\n- Several of those approvals were conditional on re-verification, which is the model I'm following here.\n- The support ticket (TKT965259, a resolved statement request for a mortgage application) is benign, at p=0.02 for an unresolved concern.\n\n**Conditions**\n1. Route ALT989226 to an AML analyst to document the source of funds for the cash deposits.\n2. Activate the increase only if that review finds no structuring or SAR-worthy activity.\n\n**What would change my mind**\n- If the review confirms structuring or unexplained cash, or the deposits turn up in the transaction data with no legitimate source, I would reject. I would also reject if a SAR is filed.\n- If the customer won't explain the deposits, I would also reject.\n- If new alerts or a risk score rise appear before activation, I would reconsider.\n- A documented, legitimate explanation, such as business receipts or a property sale, would make this a clean approval.\n\nMy confidence is moderate because the key fact is unverified.\n\nFINAL_RECOMMENDATION: approve (confidence 0.6)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.6,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve",
+            "mode": "decomposed"
+          },
+          "final": "approve",
+          "confidence": 0.6,
+          "seconds": 19.8,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 490,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": "g_unexplained_alert",
+          "fired": [
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT965259",
+              "ref": "TKT965259 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT989226",
+              "ref": "ALT989226 (pattern_match, false_positive)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 185,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_closed_unexplained",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Jonathan Christensen",
+      "customer_id": "23f6dc0e-52f0-56e0-b679-cb7f74130f06",
+      "amount": 6000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Christensen? They are requesting a $6,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "response": "The policy numbers pass. The open question is whether the alert that was bulk-closed as a false positive was really cleared. The transaction evidence came back empty, so I'll check the graph for fraud patterns on both accounts.\n**Recommendation: approve, but only on the condition that the AML structuring alert is properly re-reviewed first.** Confidence is moderate because that alert was never genuinely cleared.\n\n**Policy (Credit Limit Policy v1.0): every written test passes**\n- **Credit score:** 733, against a minimum of 660.\n- **Total limit vs. income:** $23,000 is 19.6% of the $117,500 verified income, against a cap of 35%.\n- **Size of increase:** +$6,000 is 35.3% of the current $17,000 limit, against a cap of 100%.\n- **Senior review:** the amount is far below the $50,000 threshold, and no exception authority is needed.\n- **Other signals:** utilization is 32%, the customer is employed with verified income, and both accounts are active and low risk. The customer risk score of 0.288 is modest.\n\n**Precedents: they favor approval**\n- Five similar credit precedents all ended in approval.\n- Four were conditional approvals tied to proof of employment: `10116cff` ($6k\u2192$13k), `1794e10e` ($4k\u2192$11k), `d3f17b17` ($7k\u2192$10k) and `0e1fed50` ($7.5k\u2192$14.5k).\n- The fifth, `81803cd0`, was an exception approval ($3k\u2192$13k) conditional on re-verification.\n- Jonathan's request is smaller in relative terms than most of these. Across the category, approvals, exceptions and overrides (69) clearly outnumber rejections (17).\n- Jev put `precedents_favor_approval` at 0.73.\n\n**The complication is alert ALT914015**\n- **What it found:** nine cash deposits of $9,200\u2013$9,900 at four branches over 12 days, each just under the $10,000 reporting threshold. That is a textbook structuring pattern, and the source of funds is undocumented.\n- **How it was closed:** it was marked \"false positive\" by a bulk closure rule during a backlog clean-up, with no analyst notes. That is an administrative closure, not an investigative clearance.\n- **Corroboration:** I checked the graph. Both accounts show no flagged transactions and no fraud-community exposure. But the graph holds no transaction records for these accounts either, so the alert's finding can be neither confirmed nor refuted.\n- **Jev's read:** it puts open fraud activity at only 0.19 and policy violation at 0.07. I think 0.19 understates the risk given how the alert was closed.\n\n**Why I still lean approve**\n- No written rule is violated, and only written rules can reject.\n- Credit risk is low: strong score, verified income, moderate utilization, and about $43k in deposits.\n- The structuring concern is a compliance matter. It is not evidence that Jonathan can't repay, and the account history has no other adverse signals.\n- The one open support ticket was a routine, resolved statement request for a mortgage application.\n\n**Conditions for approval**\n1. Have AML re-open ALT914015 and complete a real review, including source of funds for the cash deposits, before the increase takes effect.\n2. Re-verify employment and income, as in the precedent approvals.\n3. If the review supports structuring or a SAR filing, withhold the increase and escalate.\n\n**What would change my mind**\n- Reject if the re-review confirms structuring without a legitimate documented source of funds.\n- Reject if income or employment re-verification fails, or if the deposits turn out to be inconsistent with the verified income.\n- Be more confident in approving if an analyst documents a benign explanation, for example business cash receipts or a property sale.\n\nFINAL_RECOMMENDATION: approve (confidence 0.6)",
+          "tool_calls": [
+            "detect_fraud_patterns",
+            "execute_cypher"
+          ],
+          "tool_call_count": 2,
+          "final_recommendation": {
+            "decision": "approve",
+            "confidence": 0.6,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "approve",
+            "mode": "monolithic"
+          },
+          "final": "approve",
+          "confidence": 0.6,
+          "seconds": 22.5,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 1077,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": 0.16,
+          "jev_probabilities": {
+            "yes": 0.36,
+            "no": 0.2,
+            "needs_llm_decision": 0.44
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.732,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.19,
+            "elevated_customer_risk": 0.07,
+            "requires_manual_review": 0.12,
+            "evidence_sufficient": 0.69
+          },
+          "jev_ms": 256,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "fast_answer",
+          "response": "**Recommendation: do not approve now. Reject, or hold, until the structuring alert is properly reviewed.** The request meets every written credit rule, but one unresolved AML signal outweighs that.\n\n**Guard that fired: g_unexplained_alert (ALT914015, p=0.90). I agree with it, and it should block approval for now.**\n- The alert's original finding was 9 cash deposits of $9,200\u2013$9,900 at 4 branches over 12 days, each just under the $10,000 reporting threshold. That is a textbook structuring pattern.\n- The source of funds is not documented.\n- The alert was closed as a \"false positive\" by a bulk closure rule during backlog clean-up, with no analyst notes. The status label records a clean-up decision, not a finding that the activity was benign. That is why `g_open_fraud_case` passed: it only reads the status field.\n- The alert is recent (triggered 2026-08-03) and rated medium severity, with a risk score of 0.6.\n- Notable transactions and the transaction summary are empty in the evidence. I therefore can't see the deposits to confirm or rule them out. That gap makes the case less verifiable, not safer.\n\n**Other guards and facts**\n- The credit-policy guards all pass:\n  - Credit score is 733 against a minimum of 660.\n  - The proposed $23,000 total is 19.6% of verified income, against a 35% cap.\n  - The increase is 35% of the current limit, against a 100% cap.\n  - Income is verified.\n  - $6,000 is within standard approval authority.\n- Utilization is 0.32 and the customer risk score is 0.288 against an elevation threshold of 0.7.\n- There are no sanctions, watchlist or frozen-account issues.\n- The support ticket (TKT923908) is a resolved statement request for a mortgage application. I agree with the p=0.02 judgment that it is no concern.\n  - I note one oddity: the customer asked for 10 months of statements in May, and the structuring pattern appeared in August. That is not significant by itself.\n- All five precedents were judged comparable (p of 0.84\u20130.89) and none was rejected:\n  - 10116cff, 1794e10e, d3f17b17 and 0e1fed50 are approvals.\n  - 81803cd0 is an exception.\n  - These are credit-limit approvals made conditional on proof of employment or income. None involved an unresolved structuring alert, so they support the credit merits but not this AML question.\n\n**Why I reject despite the clean credit profile**\n- Credit capacity is not the issue. The question is whether we should extend more unsecured credit to a customer with undocumented, apparently structured cash deposits whose alert was never investigated.\n- Approving would effectively ratify the bulk closure, which is the weakest part of the record.\n- The cost of waiting is low. A short delay costs little, while an unreviewed structuring signal carries regulatory risk (SAR/BSA).\n\n**What would change my mind (to approve)**\n- An analyst reopens ALT914015, reviews the deposits and documents a legitimate source of funds, or concludes there is no structuring.\n- Alternatively, a documented AML clearance is attached to the file.\n- The customer then still meets the written criteria above, in which case I would approve, consistent with the conditional approvals in the precedents.\n- Conversely, if the review confirms structuring, this becomes a firm rejection with an escalation to AML/compliance.\n\n**Suggested action:** route the closed alert to AML for re-review, and re-run this request once that is complete.\n\nFINAL_RECOMMENDATION: reject (confidence 0.66)",
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "final_recommendation": {
+            "decision": "reject",
+            "confidence": 0.66,
+            "source": "claude",
+            "jev_decision": "needs_llm_decision",
+            "escalated": true,
+            "agrees_with_jev": null,
+            "final": "reject",
+            "mode": "decomposed"
+          },
+          "final": "reject",
+          "confidence": 0.66,
+          "seconds": 15.4,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 589,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "jev_confidence": null,
+          "decided_by": "g_unexplained_alert",
+          "fired": [
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT923908",
+              "ref": "TKT923908 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT914015",
+              "ref": "ALT914015 (amount_threshold, false_positive)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "d3f17b17-e8cf-43bf-ab03-0edea8bf4c2d",
+              "ref": "precedent d3f17b17 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.84,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 105,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_closed_unexplained",
+      "expected_route": "needs_llm_decision"
+    }
+  ]
+}

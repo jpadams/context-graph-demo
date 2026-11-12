@@ -11,9 +11,13 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Optional
 
+from pathlib import Path
+
 from dotenv import load_dotenv
 from faker import Faker
 from neo4j import GraphDatabase
+
+import narratives
 
 load_dotenv()
 
@@ -1037,6 +1041,81 @@ class DataGenerator:
             )
         print(f"Enriched {len(rows)} persons; credit policies updated with explicit rules.")
 
+    def enrich_narratives(self, labels_path: Optional[Path] = None):
+        """
+        Replace lorem-ipsum text with case-note narratives (see ``narratives.py``) and write
+        per-item ground truth to ``evals/narrative_labels.json``. Some credit approvals become
+        conditional approvals. Deterministic per node id; safe to re-run.
+        """
+        print("Rewriting tickets, alerts, transactions and credit decisions with narratives...")
+        labels: dict = {"tickets": {}, "alerts": {}, "decisions": {}}
+        with self.driver.session(database=self.database) as session:
+            tickets = session.run(
+                "MATCH (t:SupportTicket) RETURN t.id AS id, t.ticket_number AS number, "
+                "t.ticket_type AS type, t.status AS status"
+            ).data()
+            rows = []
+            for t in tickets:
+                subject, text, label = narratives.ticket_narrative(t["id"], t["type"], t["status"])
+                rows.append({"id": t["id"], "subject": subject, "description": text})
+                labels["tickets"][t["number"]] = {**label, "status": t["status"], "type": t["type"]}
+            session.run(
+                "UNWIND $rows AS r MATCH (t:SupportTicket {id: r.id}) "
+                "SET t.subject = r.subject, t.description = r.description",
+                {"rows": rows},
+            )
+
+            alerts = session.run(
+                "MATCH (a:Alert) RETURN a.id AS id, a.alert_number AS number, "
+                "a.alert_type AS type, a.status AS status"
+            ).data()
+            rows = []
+            for a in alerts:
+                text, label = narratives.alert_narrative(a["id"], a["type"], a["status"])
+                rows.append({"id": a["id"], "description": text})
+                labels["alerts"][a["number"]] = {**label, "status": a["status"], "type": a["type"]}
+            session.run(
+                "UNWIND $rows AS r MATCH (a:Alert {id: r.id}) SET a.description = r.description",
+                {"rows": rows},
+            )
+
+            txns = session.run("MATCH (t:Transaction) RETURN t.id AS id, t.type AS type").data()
+            session.run(
+                "UNWIND $rows AS r MATCH (t:Transaction {id: r.id}) SET t.description = r.memo",
+                {"rows": [{"id": t["id"], "memo": narratives.transaction_memo(t["id"], t["type"])} for t in txns]},
+            )
+
+            # Roughly a third of credit approvals about a person become conditional approvals.
+            decisions = session.run(
+                """
+                MATCH (d:Decision)-[:ABOUT]->(:Person)
+                WHERE d.category = 'credit' AND d.decision_type IN ['approval', 'exception']
+                RETURN DISTINCT d.id AS id ORDER BY id
+                """
+            ).data()
+            rows = []
+            for d in decisions:
+                if random.Random(f"conditional:{d['id']}").random() >= 0.35:
+                    continue
+                reasoning, _ = narratives.conditional_credit_decision(d["id"])
+                rows.append({"id": d["id"], "reasoning": reasoning, "summary": narratives.summary(reasoning)})
+                labels["decisions"][d["id"]] = {"open_condition": True, "variant": "conditional_unmet"}
+            session.run(
+                "UNWIND $rows AS r MATCH (d:Decision {id: r.id}) "
+                "SET d.reasoning = r.reasoning, d.reasoning_summary = r.summary "
+                "REMOVE d.reasoning_embedding",
+                {"rows": rows},
+            )
+
+        labels_path = labels_path or Path(__file__).resolve().parents[1] / "evals" / "narrative_labels.json"
+        labels_path.parent.mkdir(parents=True, exist_ok=True)
+        labels_path.write_text(json.dumps(labels, indent=1, sort_keys=True))
+        print(
+            f"Rewrote {len(tickets)} tickets, {len(alerts)} alerts, {len(txns)} transactions, "
+            f"{len(labels['decisions'])} conditional credit decisions. Labels: {labels_path}"
+        )
+        print("Re-run reasoning embeddings (POST /api/embeddings/batch-update) for rewritten decisions.")
+
     def generate_all(self):
         """Generate all sample data."""
         print("\n" + "=" * 50)
@@ -1056,6 +1135,8 @@ class DataGenerator:
         self.generate_support_tickets()
         self.create_causal_chains()
         self.connect_organizations()
+        self.enrich_credit_profiles()
+        self.enrich_narratives()
 
         print("\n" + "=" * 50)
         print("DATA GENERATION COMPLETE!")
@@ -1080,8 +1161,11 @@ if __name__ == "__main__":
 
     generator = DataGenerator()
     try:
-        if "--enrich-only" in sys.argv:
+        if "--enrich-only" in sys.argv:  # bring an existing database up to date
             generator.enrich_credit_profiles()
+            generator.enrich_narratives()
+        elif "--narratives-only" in sys.argv:
+            generator.enrich_narratives()
         else:
             generator.generate_all()
     finally:

@@ -4,20 +4,24 @@ TypeSafe AI (Jev) integration.
 Jev is a "System One" model: it evaluates a structured state and returns typed
 answers with calibrated probabilities in a single pass, without generating text.
 
-Two uses here:
+Three uses here:
 
 1. ``classify_request`` - a fast read of the user's message: is this an
    approve/deny request, and for which category? Code uses it to decide whether
    to run the fast-answer pipeline.
-2. ``evaluate_decision`` - the headline verdict over evidence collected from the
-   graph: ``yes`` / ``no`` / ``needs_llm_decision`` (escalate to Claude), plus
-   per-item judgments (each precedent, each policy) and reusable yes/no signals.
-   Questions are only asked about evidence that is actually present; empty
-   evidence yields a ``None`` signal, never a hollow probability.
+2. ``evaluate_judgments`` (default, "decomposed") - Jev makes *judgments*, code
+   makes the *decision*. One request asks a narrow Noul per evidence item that
+   needs reading, not computing: is this ticket an unresolved concern, did this
+   prior decision leave a condition unmet, is this alert unexplained, is this
+   precedent comparable? ``decision_policy.combine`` turns the answers plus the
+   code-computed facts into approve / reject / escalate with a guard trace.
+3. ``evaluate_decision`` ("monolithic", kept as the eval baseline) - one Choice
+   with business rules in its criteria returns ``yes`` / ``no`` /
+   ``needs_llm_decision``, plus supporting Nouls.
 
 Claude never sits between the graph and Jev. Code collects the evidence, Jev
-decides, and Claude explains (or, when escalated, decides) afterwards with the
-same evidence.
+judges, code decides, and Claude explains (or, when escalated, decides)
+afterwards with the same evidence.
 """
 
 from __future__ import annotations
@@ -29,6 +33,7 @@ from typing import Any
 from typesafe_sdk import Choice, Noul, TypeSafeClient, TypeSafeError
 
 from .config import config
+from .decision_policy import band
 
 logger = logging.getLogger(__name__)
 
@@ -200,6 +205,141 @@ def build_decision_questions(state: dict[str, Any]) -> dict[str, Choice | Noul]:
     return questions
 
 
+# ---------------------------------------------------------------------------
+# Decomposed judgments: one narrow question per evidence item that needs reading.
+# Families map to guards in decision_policy.JEV_ESCALATE_GUARDS.
+# ---------------------------------------------------------------------------
+
+JUDGMENT_FAMILIES = {
+    "ticket_unresolved_concern": "support_tickets",
+    "decision_open_condition": "decision_history",
+    "alert_unexplained_risk": "alerts",
+    "precedent_comparable": "precedents",
+}
+
+
+def _ticket_question(i: int) -> Noul:
+    return Noul(
+        instructions=(
+            f"Judging from what `support_tickets[{i}].subject` and `support_tickets[{i}].description` "
+            "say, the customer still has an unresolved dispute, fraud concern or complaint with "
+            f"the bank. Read the text itself: `support_tickets[{i}].status` may say resolved or "
+            "closed even when the customer's own words say otherwise."
+        ),
+        criteria={
+            "true": (
+                "The text shows the customer still disputing a charge, still waiting on a refund "
+                "or fraud investigation, or still unhappy and escalating a complaint."
+            ),
+            "false": (
+                "The text shows the issue was settled to the customer's satisfaction, or the "
+                "ticket is a routine request (password, statements, questions) with no grievance."
+            ),
+        },
+    )
+
+
+def _decision_question(i: int) -> Noul:
+    return Noul(
+        instructions=(
+            f"`decision_history[{i}].reasoning` attaches a condition, requirement or deadline to "
+            "its outcome (for example re-verifying income or fixing an overdrawn account), and no "
+            "other entry in `decision_history` or `support_tickets` states that this condition "
+            "was met."
+        ),
+        criteria={
+            "true": "A condition was attached and no later record says it was satisfied.",
+            "false": "No condition was attached, or a later record states it was satisfied.",
+        },
+    )
+
+
+def _alert_question(i: int) -> Noul:
+    return Noul(
+        instructions=(
+            f"Judging from what `alerts[{i}].description` says, the alert describes suspicious "
+            "activity (possible fraud, money laundering, structuring, account takeover or "
+            "sanctions exposure) that has not been explained or cleared by an analyst. Read the "
+            f"text itself: `alerts[{i}].status` may say resolved or false_positive even when no "
+            "explanation was recorded."
+        ),
+        criteria={
+            "true": "Suspicious activity is described and no documented explanation clears it.",
+            "false": "The text documents a benign explanation or an analyst verification that clears it.",
+        },
+    )
+
+
+def _precedent_question(i: int) -> Noul:
+    return Noul(
+        instructions=(
+            f"`precedents[{i}]` is a comparable case for deciding `request`: it concerns the same "
+            "kind of request for a customer in a broadly similar situation, so its outcome tells "
+            "us something about how `request` should be decided."
+        ),
+        criteria={
+            "true": "Same kind of request and a similar situation.",
+            "false": "A different kind of request (fraud, trading, compliance...) or an unrelated situation.",
+        },
+    )
+
+
+_QUESTION_BUILDERS = {
+    "ticket_unresolved_concern": _ticket_question,
+    "decision_open_condition": _decision_question,
+    "alert_unexplained_risk": _alert_question,
+    "precedent_comparable": _precedent_question,
+}
+
+
+def _item_ref(family: str, item: dict, i: int) -> tuple[str, str]:
+    """(stable item id for eval joins, short human label) for an evidence item."""
+    if family == "ticket_unresolved_concern":
+        return str(item.get("ticket_number")), f"{item.get('ticket_number')} ({item.get('ticket_type')}, {item.get('status')})"
+    if family == "alert_unexplained_risk":
+        return str(item.get("alert_number")), f"{item.get('alert_number')} ({item.get('alert_type')}, {item.get('status')})"
+    if family == "decision_open_condition":
+        return str(item.get("id")), f"decision {str(item.get('id'))[:8]} ({item.get('category')} {item.get('decision_type')})"
+    return str(item.get("id")), f"precedent {str(item.get('id'))[:8]} ({item.get('category')} {item.get('decision_type')})"
+
+
+def _judgeable(family: str, item: dict) -> bool:
+    """Only ask about items that carry the text the question reads."""
+    if family == "ticket_unresolved_concern":
+        return bool(item.get("description") or item.get("subject"))
+    if family == "alert_unexplained_risk":
+        return bool(item.get("description"))
+    if family == "decision_open_condition":
+        return bool(item.get("reasoning"))
+    return True
+
+
+def build_judgment_questions(state: dict[str, Any]) -> tuple[dict[str, Noul], dict[str, dict]]:
+    """
+    One Noul per judgeable evidence item, all independent, sent in one request.
+    Returns (questions, index) where index maps question id -> item metadata.
+    Empty evidence asks nothing.
+    """
+    questions: dict[str, Noul] = {}
+    index: dict[str, dict] = {}
+    for family, field in JUDGMENT_FAMILIES.items():
+        for i, item in enumerate((state.get(field) or [])[:MAX_ITEMS]):
+            if not isinstance(item, dict) or not _judgeable(family, item):
+                continue
+            qid = f"{family}_{i}"
+            questions[qid] = _QUESTION_BUILDERS[family](i)
+            item_id, ref = _item_ref(family, item, i)
+            index[qid] = {
+                "id": qid,
+                "family": family,
+                "path": f"{field}[{i}]",
+                "item_id": item_id,
+                "ref": ref,
+                **({"outcome": item.get("decision_type")} if family == "precedent_comparable" else {}),
+            }
+    return questions, index
+
+
 class JevClient:
     """Thin wrapper around the TypeSafe SDK with lazy initialisation."""
 
@@ -253,6 +393,47 @@ class JevClient:
             "request_id": response.request_id,
         }
 
+    def evaluate_judgments(self, state: dict[str, Any]) -> dict[str, Any]:
+        """
+        Ask Jev the per-item judgment questions for ``state`` in one request and band
+        each answer (yes / unsure / no). No decision here: see ``decision_policy``.
+        """
+        questions, index = build_judgment_questions(state)
+        yes, no = config.typesafe.yes_threshold, config.typesafe.no_threshold
+        if not questions:
+            return {
+                "model": self.model,
+                "judgments": [],
+                "question_count": 0,
+                "latency_ms": 0,
+                "usage": {"input_tokens": 0, "output_tokens": 0},
+                "request_id": None,
+                "thresholds": {"yes": yes, "no": no},
+            }
+        response, latency_ms = self._system_one(state, questions)
+        judgments = []
+        for qid, meta in index.items():
+            answer = response.nouls.get(qid)
+            if answer is None:
+                # Fail closed: a question Jev did not answer counts as unsure (escalates),
+                # never as a pass.
+                judgments.append({**meta, "p": 0.5, "band": "unsure", "missing": True})
+                continue
+            p = round(float(answer.noul), 4)
+            judgments.append({**meta, "p": p, "band": band(p, yes, no)})
+        return {
+            "model": response.model,
+            "judgments": judgments,
+            "question_count": len(questions),
+            "latency_ms": latency_ms,
+            "usage": {
+                "input_tokens": response.usage.input_tokens,
+                "output_tokens": response.usage.output_tokens,
+            },
+            "request_id": response.request_id,
+            "thresholds": {"yes": yes, "no": no},
+        }
+
     def evaluate_decision(self, state: dict[str, Any]) -> dict[str, Any]:
         """
         Ask Jev for a typed verdict on ``state``.
@@ -287,6 +468,7 @@ class JevClient:
         signals = derive_signals(state, nouls, item_judgments)
 
         return {
+            "mode": "monolithic",
             "model": response.model,
             "decision": decision.choice,
             "probabilities": probabilities,

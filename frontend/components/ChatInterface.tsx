@@ -13,6 +13,7 @@ import {
   IconButton,
   Code,
   Accordion,
+  Button,
 } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 import { InlineGraph } from "./ContextGraphView";
@@ -25,6 +26,9 @@ import {
   type GraphData,
   type AgentContext,
   type FastAnswer,
+  type JevVerdict,
+  type PolicyGuard,
+  type DecisionMode,
   type FinalRecommendation,
 } from "@/lib/api";
 
@@ -116,6 +120,8 @@ export function ChatInterface({
   const [messages, setMessages] = useState<MessageWithGraph[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // How the fast path decides: code guards over per-item Jev judgments, or one Jev Choice.
+  const [decisionMode, setDecisionMode] = useState<DecisionMode>("decomposed");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -166,6 +172,7 @@ export function ChatInterface({
       for await (const event of streamChatMessage(
         userMessage.content,
         messages.map((m) => ({ role: m.role, content: m.content })),
+        decisionMode,
       )) {
         switch (event.type) {
           case "agent_context":
@@ -368,6 +375,7 @@ export function ChatInterface({
       setIsLoading(false);
     }
   }, [
+    decisionMode,
     input,
     isLoading,
     messages,
@@ -488,6 +496,29 @@ export function ChatInterface({
         bg="bg.surface"
         zIndex={10}
       >
+        <HStack gap={2} mb={2} fontSize="xs" flexWrap="wrap">
+          <Text color="gray.600" whiteSpace="nowrap">
+            Decide with:
+          </Text>
+          {(
+            [
+              ["agent", "1 · Claude + tools"],
+              ["monolithic", "2 · 10 queries + one Jev choice"],
+              ["decomposed", "3 · 10 queries + Jev judgments + code"],
+            ] as [DecisionMode, string][]
+          ).map(([mode, label]) => (
+            <Button
+              key={mode}
+              size="2xs"
+              variant={decisionMode === mode ? "solid" : "outline"}
+              colorPalette={decisionMode === mode ? "purple" : "gray"}
+              onClick={() => setDecisionMode(mode)}
+              aria-pressed={decisionMode === mode}
+            >
+              {label}
+            </Button>
+          ))}
+        </HStack>
         <Flex gap={2}>
           <Textarea
             ref={textareaRef}
@@ -615,7 +646,13 @@ function FinalRecommendationRow({
       </Text>
     );
   }
-  const who = recommendation.escalated ? "Claude (escalated by Jev)" : "Jev";
+  const who = recommendation.escalated
+    ? recommendation.mode === "decomposed"
+      ? "Claude (escalated by a guard)"
+      : "Claude (escalated by Jev)"
+    : recommendation.mode === "decomposed"
+      ? "code guards over Jev judgments"
+      : "Jev";
   return (
     <HStack flexWrap="wrap" gap={2}>
       <Text fontSize="xs" color="gray.700" fontWeight="semibold">
@@ -644,6 +681,181 @@ function FinalRecommendationRow({
   );
 }
 
+// Decomposed verdict: which guard decided, every guard in order, Jev's per-item
+// judgments and the facts code computed. "Jev makes judgments, code makes decisions."
+const GUARD_STATUS_COLORS: Record<string, string> = {
+  fired: "red",
+  passed: "green",
+  not_applicable: "gray",
+};
+const BAND_COLORS: Record<string, string> = { yes: "orange", unsure: "yellow", no: "gray" };
+const FAMILY_LABELS: Record<string, string> = {
+  ticket_unresolved_concern: "unresolved concern in ticket",
+  decision_open_condition: "unmet condition in prior decision",
+  alert_unexplained_risk: "unexplained risk in alert",
+  precedent_comparable: "comparable precedent",
+};
+
+function guardLabel(name: string): string {
+  return name.replace(/^g_/, "").replace(/_/g, " ");
+}
+
+function GuardRow({ guard: g }: { guard: PolicyGuard }) {
+  return (
+    <HStack gap={2} fontSize="xs" align="start">
+      <Badge
+        colorPalette={
+          g.status === "fired" ? (g.effect === "reject" ? "red" : "orange") : GUARD_STATUS_COLORS[g.status]
+        }
+        variant={g.status === "fired" ? "solid" : "subtle"}
+        fontSize="xs"
+        minW="64px"
+        justifyContent="center"
+      >
+        {g.status === "fired" ? g.effect : "passed"}
+      </Badge>
+      <Badge colorPalette={g.source === "jev" ? "purple" : "blue"} variant="outline" fontSize="xs">
+        {g.source}
+      </Badge>
+      <Text color="gray.700" flex={1}>
+        <strong>{guardLabel(g.name)}</strong> · {g.reason}
+        {g.evidence.length > 0 ? ` (${g.evidence.join("; ")})` : ""}
+      </Text>
+    </HStack>
+  );
+}
+
+function DecomposedTrace({ verdict }: { verdict: JevVerdict }) {
+  const guards = verdict.guards ?? [];
+  const fired = guards.filter((g) => g.status === "fired");
+  const passed = guards.filter((g) => g.status === "passed");
+  const skipped = guards.filter((g) => g.status === "not_applicable");
+  const judgments = verdict.judgments ?? [];
+  const facts = verdict.facts ?? [];
+  const decider = verdict.decided_by;
+  return (
+    <Box mb={2}>
+      <Text fontSize="xs" color="gray.800" mb={2}>
+        {decider?.guard ? (
+          <>
+            Decided by <strong>{decider.guard}</strong> ({decider.source === "jev" ? "Jev judgment" : "written rule"}):{" "}
+            {decider.reason}.
+          </>
+        ) : (
+          <>Every guard passed, so code approves.</>
+        )}
+      </Text>
+
+      <VStack align="stretch" gap={0.5} mb={2}>
+        {fired.map((g) => (
+          <GuardRow key={g.name} guard={g} />
+        ))}
+      </VStack>
+
+      {verdict.escalation_policy && verdict.escalation_policy.entries.length > 0 && (
+        <Box mb={2} p={2} bg="orange.50" borderRadius="sm">
+          <Text fontSize="xs" color="gray.700" mb={1}>
+            Escalation policy v{verdict.escalation_policy.version} handed to Claude:
+          </Text>
+          {verdict.escalation_policy.entries.map((e) => (
+            <Text key={e.guard} fontSize="xs" color="gray.700">
+              <strong>{guardLabel(e.guard)}</strong> → default <strong>{e.final}</strong>: {e.instruction}
+            </Text>
+          ))}
+        </Box>
+      )}
+
+      <Accordion.Root collapsible defaultValue={[]} mb={1}>
+        <Accordion.Item value="guards" border="none">
+          <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
+            <Box flex="1" textAlign="left">
+              <Text fontSize="xs" color="gray.600">
+                {passed.length} guards passed
+                {skipped.length > 0 ? `, ${skipped.length} not applicable` : ""}
+              </Text>
+            </Box>
+            <Accordion.ItemIndicator />
+          </Accordion.ItemTrigger>
+          <Accordion.ItemContent>
+            <Accordion.ItemBody px={0} pb={1}>
+              <VStack align="stretch" gap={0.5}>
+                {passed.map((g) => (
+                  <GuardRow key={g.name} guard={g} />
+                ))}
+                {skipped.length > 0 && (
+                  <Text fontSize="xs" color="gray.500">
+                    Not applicable (no evidence):{" "}
+                    {skipped.map((g) => guardLabel(g.name)).join(", ")}
+                  </Text>
+                )}
+              </VStack>
+            </Accordion.ItemBody>
+          </Accordion.ItemContent>
+        </Accordion.Item>
+        <Accordion.Item value="judgments" border="none">
+          <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
+            <Box flex="1" textAlign="left">
+              <Text fontSize="xs" color="gray.600">
+                Jev judged {judgments.length} evidence items (yes ≥ {verdict.thresholds?.yes}, no ≤{" "}
+                {verdict.thresholds?.no}, between is unsure)
+              </Text>
+            </Box>
+            <Accordion.ItemIndicator />
+          </Accordion.ItemTrigger>
+          <Accordion.ItemContent>
+            <Accordion.ItemBody px={0} pb={1}>
+              <VStack align="stretch" gap={1}>
+                {judgments.map((j) => (
+                  <HStack key={j.id} gap={2} fontSize="xs" align="start">
+                    <Badge
+                      colorPalette={BAND_COLORS[j.band] ?? "gray"}
+                      variant={j.band === "no" ? "subtle" : "solid"}
+                      fontSize="xs"
+                      minW="72px"
+                      justifyContent="center"
+                    >
+                      {j.band} {(j.p * 100).toFixed(0)}%
+                    </Badge>
+                    <Text color="gray.700" flex={1}>
+                      {FAMILY_LABELS[j.family] ?? j.family} · <strong>{j.ref}</strong>
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </Accordion.ItemBody>
+          </Accordion.ItemContent>
+        </Accordion.Item>
+        <Accordion.Item value="facts" border="none">
+          <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
+            <Box flex="1" textAlign="left">
+              <Text fontSize="xs" color="gray.600">
+                {facts.length} facts computed by code (no model)
+              </Text>
+            </Box>
+            <Accordion.ItemIndicator />
+          </Accordion.ItemTrigger>
+          <Accordion.ItemContent>
+            <Accordion.ItemBody px={0} pb={1}>
+              <VStack align="stretch" gap={0.5}>
+                {facts.map((f) => (
+                  <HStack key={f.name} gap={2} fontSize="xs" align="start">
+                    <Badge colorPalette="blue" variant="subtle" fontSize="xs" minW="72px" justifyContent="center">
+                      {f.value === null ? "unknown" : String(f.value)}
+                    </Badge>
+                    <Text color="gray.700" flex={1}>
+                      <strong>{f.label || f.name}</strong> · {f.detail}
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </Accordion.ItemBody>
+          </Accordion.ItemContent>
+        </Accordion.Item>
+      </Accordion.Root>
+    </Box>
+  );
+}
+
 function FastAnswerCard({
   fastAnswer,
   additionalToolsUsed,
@@ -660,6 +872,7 @@ function FastAnswerCard({
   const routed = verdict.routed_decision ?? verdict.decision;
   const wasRerouted = routed !== verdict.decision;
   const escalated = routed === "needs_llm_decision";
+  const decomposed = verdict.mode === "decomposed";
 
   return (
     <Box
@@ -672,14 +885,16 @@ function FastAnswerCard({
     >
       <HStack mb={2} flexWrap="wrap" gap={2}>
         <Badge colorPalette="gray" fontSize="xs">
-          Fast answer · {verdict.model}
+          Fast answer · {decomposed ? "code guards + Jev judgments" : verdict.model}
         </Badge>
         <Badge colorPalette={VERDICT_COLORS[routed] ?? "gray"} fontSize="md" px={2}>
-          {escalated ? "escalated to Claude" : routed}
+          {escalated ? "escalated to Claude" : decomposed ? verdict.outcome : routed}
         </Badge>
         <Text fontSize="xs" color="gray.600">
-          confidence {(verdict.confidence * 100).toFixed(0)}% · Jev{" "}
-          {verdict.latency_ms} ms · total {fastAnswer.total_ms} ms
+          {decomposed
+            ? `${verdict.question_count ?? 0} Jev judgments in ${verdict.latency_ms} ms`
+            : `confidence ${((verdict.confidence ?? 0) * 100).toFixed(0)}% · Jev ${verdict.latency_ms} ms`}{" "}
+          · total {fastAnswer.total_ms} ms
         </Text>
       </HStack>
 
@@ -696,115 +911,121 @@ function FastAnswerCard({
         </Text>
       )}
 
-      {wasRerouted && (
-        <Text fontSize="xs" color="orange.700" mb={2}>
-          Jev&apos;s top pick was &quot;{verdict.decision}&quot;, but{" "}
-          {verdict.routing.reason}.
-        </Text>
+      {decomposed ? (
+        <DecomposedTrace verdict={verdict} />
+      ) : (
+        <>
+        {wasRerouted && (
+          <Text fontSize="xs" color="orange.700" mb={2}>
+            Jev&apos;s top pick was &quot;{verdict.decision}&quot;, but{" "}
+            {verdict.routing?.reason}.
+          </Text>
+        )}
+
+        <VStack align="stretch" gap={1} mb={2}>
+          {Object.entries(verdict.probabilities ?? {}).map(([option, p]) => (
+            <HStack key={option} gap={2}>
+              <Text fontSize="xs" w="150px" color="gray.700">
+                {option.replace(/_/g, " ")}
+              </Text>
+              <Box flex={1} h="8px" bg="gray.100" borderRadius="full">
+                <Box
+                  h="8px"
+                  w={`${Math.round(p * 100)}%`}
+                  bg={`${VERDICT_COLORS[option] ?? "gray"}.400`}
+                  borderRadius="full"
+                />
+              </Box>
+              <Text fontSize="xs" w="40px" textAlign="right" color="gray.700">
+                {(p * 100).toFixed(0)}%
+              </Text>
+            </HStack>
+          ))}
+        </VStack>
+
+        <Flex gap={1} flexWrap="wrap" mb={2}>
+          {Object.entries(verdict.signals ?? {}).map(([name, p]) =>
+            p === null ? (
+              <Badge
+                key={name}
+                colorPalette="gray"
+                variant="outline"
+                fontSize="xs"
+                title="Not asked: the evidence this signal depends on was empty"
+              >
+                {name.replace(/_/g, " ")} · no evidence
+              </Badge>
+            ) : (
+              <Badge
+                key={name}
+                colorPalette={p >= 0.5 ? "purple" : "gray"}
+                variant={p >= 0.5 ? "solid" : "subtle"}
+                fontSize="xs"
+              >
+                {name.replace(/_/g, " ")} {(p * 100).toFixed(0)}%
+              </Badge>
+            ),
+          )}
+        </Flex>
+
+        {verdict.item_judgments &&
+          (verdict.item_judgments.precedents.length > 0 ||
+            verdict.item_judgments.policies.length > 0) && (
+            <Accordion.Root collapsible defaultValue={[]} mb={1}>
+              <Accordion.Item value="items" border="none">
+                <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
+                  <Box flex="1" textAlign="left">
+                    <Text fontSize="xs" color="gray.600">
+                      How Jev judged each precedent (
+                      {verdict.item_judgments.precedents.length}) and policy (
+                      {verdict.item_judgments.policies.length})
+                    </Text>
+                  </Box>
+                  <Accordion.ItemIndicator />
+                </Accordion.ItemTrigger>
+                <Accordion.ItemContent>
+                  <Accordion.ItemBody px={0} pb={1}>
+                    <VStack align="stretch" gap={1}>
+                      {verdict.item_judgments.precedents.map((p) => (
+                        <HStack key={p.id} gap={2} fontSize="xs" align="start">
+                          <Badge
+                            colorPalette={p.supports_approval >= 0.5 ? "green" : "red"}
+                            fontSize="xs"
+                            minW="72px"
+                            justifyContent="center"
+                          >
+                            {p.supports_approval >= 0.5 ? "for" : "against"}{" "}
+                            {(p.supports_approval * 100).toFixed(0)}%
+                          </Badge>
+                          <Text color="gray.700" flex={1}>
+                            <strong>{p.decision_type}</strong> · {p.category} · {p.summary}
+                          </Text>
+                        </HStack>
+                      ))}
+                      {verdict.item_judgments.policies.map((p) => (
+                        <HStack key={p.id} gap={2} fontSize="xs" align="start">
+                          <Badge
+                            colorPalette={p.violated >= 0.5 ? "red" : "gray"}
+                            variant={p.violated >= 0.5 ? "solid" : "subtle"}
+                            fontSize="xs"
+                            minW="72px"
+                            justifyContent="center"
+                          >
+                            violated {(p.violated * 100).toFixed(0)}%
+                          </Badge>
+                          <Text color="gray.700" flex={1}>
+                            <strong>{p.name}</strong> · {p.description}
+                          </Text>
+                        </HStack>
+                      ))}
+                    </VStack>
+                  </Accordion.ItemBody>
+                </Accordion.ItemContent>
+              </Accordion.Item>
+            </Accordion.Root>
+          )}
+        </>
       )}
-
-      <VStack align="stretch" gap={1} mb={2}>
-        {Object.entries(verdict.probabilities).map(([option, p]) => (
-          <HStack key={option} gap={2}>
-            <Text fontSize="xs" w="150px" color="gray.700">
-              {option.replace(/_/g, " ")}
-            </Text>
-            <Box flex={1} h="8px" bg="gray.100" borderRadius="full">
-              <Box
-                h="8px"
-                w={`${Math.round(p * 100)}%`}
-                bg={`${VERDICT_COLORS[option] ?? "gray"}.400`}
-                borderRadius="full"
-              />
-            </Box>
-            <Text fontSize="xs" w="40px" textAlign="right" color="gray.700">
-              {(p * 100).toFixed(0)}%
-            </Text>
-          </HStack>
-        ))}
-      </VStack>
-
-      <Flex gap={1} flexWrap="wrap" mb={2}>
-        {Object.entries(verdict.signals).map(([name, p]) =>
-          p === null ? (
-            <Badge
-              key={name}
-              colorPalette="gray"
-              variant="outline"
-              fontSize="xs"
-              title="Not asked: the evidence this signal depends on was empty"
-            >
-              {name.replace(/_/g, " ")} · no evidence
-            </Badge>
-          ) : (
-            <Badge
-              key={name}
-              colorPalette={p >= 0.5 ? "purple" : "gray"}
-              variant={p >= 0.5 ? "solid" : "subtle"}
-              fontSize="xs"
-            >
-              {name.replace(/_/g, " ")} {(p * 100).toFixed(0)}%
-            </Badge>
-          ),
-        )}
-      </Flex>
-
-      {verdict.item_judgments &&
-        (verdict.item_judgments.precedents.length > 0 ||
-          verdict.item_judgments.policies.length > 0) && (
-          <Accordion.Root collapsible defaultValue={[]} mb={1}>
-            <Accordion.Item value="items" border="none">
-              <Accordion.ItemTrigger px={0} py={1} _hover={{ bg: "transparent" }}>
-                <Box flex="1" textAlign="left">
-                  <Text fontSize="xs" color="gray.600">
-                    How Jev judged each precedent (
-                    {verdict.item_judgments.precedents.length}) and policy (
-                    {verdict.item_judgments.policies.length})
-                  </Text>
-                </Box>
-                <Accordion.ItemIndicator />
-              </Accordion.ItemTrigger>
-              <Accordion.ItemContent>
-                <Accordion.ItemBody px={0} pb={1}>
-                  <VStack align="stretch" gap={1}>
-                    {verdict.item_judgments.precedents.map((p) => (
-                      <HStack key={p.id} gap={2} fontSize="xs" align="start">
-                        <Badge
-                          colorPalette={p.supports_approval >= 0.5 ? "green" : "red"}
-                          fontSize="xs"
-                          minW="72px"
-                          justifyContent="center"
-                        >
-                          {p.supports_approval >= 0.5 ? "for" : "against"}{" "}
-                          {(p.supports_approval * 100).toFixed(0)}%
-                        </Badge>
-                        <Text color="gray.700" flex={1}>
-                          <strong>{p.decision_type}</strong> · {p.category} · {p.summary}
-                        </Text>
-                      </HStack>
-                    ))}
-                    {verdict.item_judgments.policies.map((p) => (
-                      <HStack key={p.id} gap={2} fontSize="xs" align="start">
-                        <Badge
-                          colorPalette={p.violated >= 0.5 ? "red" : "gray"}
-                          variant={p.violated >= 0.5 ? "solid" : "subtle"}
-                          fontSize="xs"
-                          minW="72px"
-                          justifyContent="center"
-                        >
-                          violated {(p.violated * 100).toFixed(0)}%
-                        </Badge>
-                        <Text color="gray.700" flex={1}>
-                          <strong>{p.name}</strong> · {p.description}
-                        </Text>
-                      </HStack>
-                    ))}
-                  </VStack>
-                </Accordion.ItemBody>
-              </Accordion.ItemContent>
-            </Accordion.Item>
-          </Accordion.Root>
-        )}
 
       <Accordion.Root collapsible defaultValue={[]}>
         <Accordion.Item value="evidence" border="none">
@@ -853,7 +1074,7 @@ function FastAnswerCard({
             <Spinner size="xs" />
             <Text>
               {escalated
-                ? "Jev escalated. Claude is making the final call from the same evidence…"
+                ? "Escalated. Claude is making the final call from the same evidence…"
                 : "Claude is explaining the verdict from the same evidence…"}
             </Text>
           </HStack>

@@ -72,6 +72,16 @@ class TypeSafeConfig:
     # Below this Choice confidence, a yes/no verdict is escalated to the LLM for the final call.
     confidence_floor: float = 0.6
     timeout_seconds: float = 30.0
+    # "decomposed": per-item Jev judgments + code guards decide (default).
+    # "monolithic": one Jev Choice decides (the original baseline).
+    decision_mode: str = "decomposed"
+    # Noul bands for decomposed judgments: >= yes is yes, <= no is no, between is unsure.
+    # Asymmetric on purpose: "no" lets a case continue toward auto-approval, so it needs the
+    # stricter bar (TypeSafe: riskier actions get stricter thresholds). 0.2 chosen on the
+    # held-out hard items (evals/hard_items.json): a structuring alert explained away as
+    # "owns a restaurant" scored 0.37-0.42, too close to 0.3. Tuned for jev-1.14.0.
+    yes_threshold: float = 0.7
+    no_threshold: float = 0.2
 
     @classmethod
     def from_env(cls) -> "TypeSafeConfig":
@@ -80,6 +90,9 @@ class TypeSafeConfig:
             model=os.getenv("TYPESAFE_MODEL", "jev-latest"),
             confidence_floor=float(os.getenv("JEV_CONFIDENCE_FLOOR", "0.6")),
             timeout_seconds=float(os.getenv("TYPESAFE_TIMEOUT_SECONDS", "30")),
+            decision_mode=os.getenv("JEV_DECISION_MODE", "decomposed"),
+            yes_threshold=float(os.getenv("JEV_YES_THRESHOLD", "0.7")),
+            no_threshold=float(os.getenv("JEV_NO_THRESHOLD", "0.2")),
         )
 
 

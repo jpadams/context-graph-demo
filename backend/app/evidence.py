@@ -11,7 +11,8 @@ from __future__ import annotations
 import logging
 import re
 import time
-from typing import Any
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Optional
 
 from .context_graph_client import context_graph_client
 from .jev_client import jev_client
@@ -241,7 +242,7 @@ def _support_tickets(customer_id: str, limit: int = 10) -> list[dict]:
         UNWIND tickets AS t
         RETURN DISTINCT t.ticket_number AS ticket_number, t.ticket_type AS ticket_type,
                t.priority AS priority, t.status AS status, t.subject AS subject,
-               toString(t.submitted_at) AS submitted_at, toString(t.resolved_at) AS resolved_at
+               t.description AS description, toString(t.submitted_at) AS submitted_at, toString(t.resolved_at) AS resolved_at
         ORDER BY submitted_at DESC
         LIMIT $limit
         """,
@@ -306,43 +307,28 @@ def collect_evidence(
             }
         )
 
-    descriptions = dict(EVIDENCE_RETRIEVALS)
-    run(
-        "customer", descriptions["customer"], lambda: context_graph_client.get_customer(customer_id)
-    )
-    run("account_parties", descriptions["account_parties"], lambda: _account_parties(customer_id))
-    run(
-        "notable_transactions",
-        descriptions["notable_transactions"],
-        lambda: _notable_transactions(customer_id),
-    )
-    run(
-        "transaction_summary",
-        descriptions["transaction_summary"],
-        lambda: _transaction_summary(customer_id),
-    )
-    run("support_tickets", descriptions["support_tickets"], lambda: _support_tickets(customer_id))
-    run("alerts", descriptions["alerts"], lambda: _alerts(customer_id))
-    run(
-        "decision_history",
-        descriptions["decision_history"],
-        lambda: context_graph_client.get_customer_decisions(customer_id=customer_id, limit=10),
-    )
-    run(
-        "precedents",
-        descriptions["precedents"],
-        lambda: vector_client.find_precedents_hybrid(
+    plan = {
+        "customer": lambda: context_graph_client.get_customer(customer_id),
+        "account_parties": lambda: _account_parties(customer_id),
+        "notable_transactions": lambda: _notable_transactions(customer_id),
+        "transaction_summary": lambda: _transaction_summary(customer_id),
+        "support_tickets": lambda: _support_tickets(customer_id),
+        "alerts": lambda: _alerts(customer_id),
+        "decision_history": lambda: context_graph_client.get_customer_decisions(
+            customer_id=customer_id, limit=10
+        ),
+        "precedents": lambda: vector_client.find_precedents_hybrid(
             scenario=request_summary, category=category, limit=5
         ),
-    )
-    run(
-        "category_outcomes", descriptions["category_outcomes"], lambda: _category_outcomes(category)
-    )
-    run(
-        "policies",
-        descriptions["policies"],
-        lambda: context_graph_client.get_policies(category=category),
-    )
+        "category_outcomes": lambda: _category_outcomes(category),
+        "policies": lambda: context_graph_client.get_policies(category=category),
+    }
+    # The retrievals are independent: run them concurrently, report them in plan order.
+    with ThreadPoolExecutor(max_workers=len(plan)) as pool:
+        list(pool.map(lambda item: run(item[0], dict(EVIDENCE_RETRIEVALS)[item[0]], item[1]), plan.items()))
+    order = [name for name, _ in EVIDENCE_RETRIEVALS]
+    retrievals.sort(key=lambda r: order.index(r["name"]))
+    evidence = {name: evidence[name] for name in order if name in evidence}
 
     return {"evidence": evidence, "retrievals": retrievals}
 
@@ -423,14 +409,15 @@ def customer_graph_data(customer_id: str, depth: int = 2, limit: int = 30) -> di
 # ============================================
 
 
-def prepare_fast_answer(message: str) -> dict[str, Any] | None:
+def prepare_fast_answer(message: str, mode: str | None = None) -> dict[str, Any] | None:
     """
     Fast path for approve/deny questions.
 
     1. Jev reads the message: is it an approval request, which category and type?
     2. Code resolves the customer named in the message against the graph.
     3. Code runs the fixed evidence retrievals.
-    4. Jev returns the typed verdict over that evidence.
+    4. The verdict: by default code facts + per-item Jev judgments -> code guards
+       ("decomposed"); ``mode="monolithic"`` asks one Jev Choice instead.
 
     Returns None when the fast path does not apply (not an approval request,
     no customer resolved, or Jev not configured).
@@ -463,6 +450,6 @@ def prepare_fast_answer(message: str) -> dict[str, Any] | None:
     if amount is not None:
         request["requested_amount_usd"] = amount
 
-    result = run_case(customer, request, intent=intent)
+    result = run_case(customer, request, intent=intent, mode=mode)
     result["total_ms"] = round((time.perf_counter() - started) * 1000)
     return result

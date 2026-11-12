@@ -3,7 +3,7 @@ Pydantic models for API requests and responses.
 """
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -21,6 +21,10 @@ class ChatRequest(BaseModel):
     message: str
     session_id: Optional[str] = None
     conversation_history: list[ConversationMessage] = Field(default_factory=list)
+    # Demo arc. "agent": stage 1, Claude picks graph tools itself (no fast path; chat only).
+    # "monolithic": stage 2, fixed evidence plan + one Jev Choice. "decomposed": stage 3,
+    # fixed evidence plan + per-item Jev judgments + code guards. None uses JEV_DECISION_MODE.
+    decision_mode: Optional[Literal["agent", "decomposed", "monolithic"]] = None
 
 
 class ToolCall(BaseModel):
@@ -58,6 +62,10 @@ class FastAnswerRequest(BaseModel):
     """Request for the Jev fast path: evidence collection plus a typed verdict."""
 
     message: str
+    # Demo arc. "agent": stage 1, Claude picks graph tools itself (no fast path; chat only).
+    # "monolithic": stage 2, fixed evidence plan + one Jev Choice. "decomposed": stage 3,
+    # fixed evidence plan + per-item Jev judgments + code guards. None uses JEV_DECISION_MODE.
+    decision_mode: Optional[Literal["agent", "decomposed", "monolithic"]] = None
 
 
 class CreditLineIncreaseRequest(BaseModel):
@@ -66,6 +74,10 @@ class CreditLineIncreaseRequest(BaseModel):
     customer: str  # customer id, exact name, or partial name
     amount: float
     explain: bool = False  # also run Claude for the explanation / final call
+    # Demo arc. "agent": stage 1, Claude picks graph tools itself (no fast path; chat only).
+    # "monolithic": stage 2, fixed evidence plan + one Jev Choice. "decomposed": stage 3,
+    # fixed evidence plan + per-item Jev judgments + code guards. None uses JEV_DECISION_MODE.
+    decision_mode: Optional[Literal["agent", "decomposed", "monolithic"]] = None
 
 
 class GraphNode(BaseModel):

@@ -1,0 +1,4843 @@
+{
+  "args": {
+    "customers": "",
+    "sample": 10,
+    "amounts": "5000,25000",
+    "repeats": 1,
+    "arms": "fast_answer,decomposed",
+    "merge": "",
+    "skip_original": false,
+    "labeled": true,
+    "no_claude": true
+  },
+  "summary": {
+    "fast_answer": {
+      "runs": 34,
+      "mean_seconds": 0.5,
+      "median_seconds": 0.5,
+      "mean_tool_calls": 0,
+      "finals": {
+        "approve": 11,
+        "null": 11,
+        "reject": 12
+      },
+      "missing_final": 11,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "decomposed": {
+      "runs": 34,
+      "mean_seconds": 0.5,
+      "median_seconds": 0.5,
+      "mean_tool_calls": 0,
+      "finals": {
+        "approve": 8,
+        "null": 12,
+        "reject": 14
+      },
+      "missing_final": 12,
+      "cases_with_repeats": 0,
+      "consistent_cases": 0
+    },
+    "pairwise_agreement": {
+      "fast_answer vs decomposed": {
+        "agree": 18,
+        "compared": 18
+      }
+    },
+    "jev_fast_answer": {
+      "decided_without_claude": 23,
+      "escalated": 11,
+      "mean_confidence": 0.67,
+      "mean_fast_answer_ms": 510
+    },
+    "route_accuracy_fast_answer": {
+      "correct": 11,
+      "total": 14,
+      "by_scenario": {
+        "control_clean": "2/2",
+        "ticket_resolved_genuine": "2/2",
+        "ticket_closed_still_disputed": "1/2",
+        "condition_met": "2/2",
+        "condition_unmet": "0/2",
+        "alert_cleared_benign": "2/2",
+        "alert_closed_unexplained": "2/2"
+      },
+      "misses": [
+        "ticket_closed_still_disputed / Laurie Allen: expected needs_llm_decision, got yes",
+        "condition_unmet / Tanya Trujillo: expected needs_llm_decision, got yes",
+        "condition_unmet / Jim Walter: expected needs_llm_decision, got yes"
+      ]
+    },
+    "jev_decomposed": {
+      "decided_without_claude": 22,
+      "escalated": 12,
+      "mean_confidence": null,
+      "mean_fast_answer_ms": 516
+    },
+    "route_accuracy_decomposed": {
+      "correct": 14,
+      "total": 14,
+      "by_scenario": {
+        "control_clean": "2/2",
+        "ticket_resolved_genuine": "2/2",
+        "ticket_closed_still_disputed": "2/2",
+        "condition_met": "2/2",
+        "condition_unmet": "2/2",
+        "alert_cleared_benign": "2/2",
+        "alert_closed_unexplained": "2/2"
+      },
+      "misses": []
+    },
+    "judgment_accuracy": {
+      "ticket_unresolved_concern": {
+        "items": 28,
+        "correct": 28,
+        "unsure": 0,
+        "wrong": []
+      },
+      "decision_open_condition": {
+        "items": 6,
+        "correct": 6,
+        "unsure": 0,
+        "wrong": []
+      },
+      "alert_unexplained_risk": {
+        "items": 12,
+        "correct": 12,
+        "unsure": 0,
+        "wrong": []
+      }
+    }
+  },
+  "rows": [
+    {
+      "customer": "Jonathan Hunt",
+      "customer_id": "d67ff04e-3b91-53a7-93e5-164406a96e8c",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Hunt? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 947,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.9,
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.94,
+            "no": 0.01,
+            "needs_llm_decision": 0.05
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.756,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.08,
+            "requires_manual_review": 0.12,
+            "evidence_sufficient": 0.88
+          },
+          "jev_ms": 341,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 678,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.7,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT904202",
+              "ref": "TKT904202 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "213a637f-1345-4fc0-8975-19ea91be9ba3",
+              "ref": "precedent 213a637f (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 224,
+          "question_count": 6
+        }
+      },
+      "scenario": "control_clean",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Ashley Walker",
+      "customer_id": "d4350afe-3925-5d35-8a63-84c559f3ab9a",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Ashley Walker? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 531,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.92,
+          "jev_probabilities": {
+            "yes": 0.95,
+            "no": 0.01,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.766,
+            "violates_policy": 0.08,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.13,
+            "evidence_sufficient": 0.89
+          },
+          "jev_ms": 154,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 423,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT988071",
+              "ref": "TKT988071 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 122,
+          "question_count": 6
+        }
+      },
+      "scenario": "control_clean",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Kristie Logan",
+      "customer_id": "2244942c-16ee-50d4-ac6d-f0ce8e4e885e",
+      "amount": 6000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Kristie Logan? They are requesting a $6,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 459,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.85,
+          "jev_probabilities": {
+            "yes": 0.9,
+            "no": 0.01,
+            "needs_llm_decision": 0.09
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.706,
+            "violates_policy": 0.35,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.38,
+            "evidence_sufficient": 0.86
+          },
+          "jev_ms": 139,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 476,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT924434",
+              "ref": "TKT924434 (transaction_dispute, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT914372",
+              "ref": "TKT914372 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 134,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_resolved_genuine",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Monica Tate",
+      "customer_id": "c660be49-73d9-560b-a452-4524993e550d",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Monica Tate? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 513,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.92,
+          "jev_probabilities": {
+            "yes": 0.95,
+            "no": 0.01,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.764,
+            "violates_policy": 0.05,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.11,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.87
+          },
+          "jev_ms": 122,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 420,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT930317",
+              "ref": "TKT930317 (fraud_report, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT996245",
+              "ref": "TKT996245 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 138,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_resolved_genuine",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Laurie Allen",
+      "customer_id": "97af3a24-e286-56b0-a5c6-fa507fc04ff1",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laurie Allen? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 439,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.68,
+          "jev_probabilities": {
+            "yes": 0.79,
+            "no": 0.03,
+            "needs_llm_decision": 0.18
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.728,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.35,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.12,
+            "evidence_sufficient": 0.84
+          },
+          "jev_ms": 126,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 518,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": "g_unresolved_concern",
+          "fired": [
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT994849",
+              "ref": "TKT994849 (transaction_dispute, resolved)",
+              "p": 0.96,
+              "band": "yes"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT933893",
+              "ref": "TKT933893 (statement_request, resolved)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.84,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 127,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_closed_still_disputed",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Ashley Montoya",
+      "customer_id": "8dbd8244-9750-55c9-96cd-0ccdcd99f481",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Ashley Montoya? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 500,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.48,
+          "jev_probabilities": {
+            "yes": 0.65,
+            "no": 0.1,
+            "needs_llm_decision": 0.25
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.746,
+            "violates_policy": 0.08,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.36,
+            "elevated_customer_risk": 0.22,
+            "requires_manual_review": 0.12,
+            "evidence_sufficient": 0.81
+          },
+          "jev_ms": 144,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 424,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_unresolved_concern",
+          "fired": [
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT910885",
+              "ref": "TKT910885 (fraud_report, resolved)",
+              "p": 0.98,
+              "band": "yes"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT980309",
+              "ref": "TKT980309 (statement_request, resolved)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "precedent 326e4e79 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 129,
+          "question_count": 7
+        }
+      },
+      "scenario": "ticket_closed_still_disputed",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Robert Jennings",
+      "customer_id": "a8d73bce-5ee0-56f6-b8a7-37ce07ace2f9",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Robert Jennings? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 451,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.96,
+          "jev_probabilities": {
+            "yes": 0.97,
+            "no": 0.0,
+            "needs_llm_decision": 0.03
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.756,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.85
+          },
+          "jev_ms": 139,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 414,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT920542",
+              "ref": "TKT920542 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "49ae89f9-0405-55ed-bff7-a684b7e3a003",
+              "ref": "decision 49ae89f9 (credit review)",
+              "p": 0.23,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "decision 326e4e79 (credit approval)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "be3f131d-c03b-4a6b-ac66-07ad73e9ff43",
+              "ref": "precedent be3f131d (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "213a637f-1345-4fc0-8975-19ea91be9ba3",
+              "ref": "precedent 213a637f (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 123,
+          "question_count": 8
+        }
+      },
+      "scenario": "condition_met",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Christine King",
+      "customer_id": "5e3e7854-da4b-50b0-ab80-3a369f576c17",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Christine King? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 404,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.89,
+          "jev_probabilities": {
+            "yes": 0.93,
+            "no": 0.01,
+            "needs_llm_decision": 0.06
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.8,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.08,
+            "evidence_sufficient": 0.86
+          },
+          "jev_ms": 145,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 381,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT985298",
+              "ref": "TKT985298 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "b85855fb-acb9-5280-b5ac-5b610b9eefe3",
+              "ref": "decision b85855fb (credit review)",
+              "p": 0.14,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "decision 0e1fed50 (credit approval)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 122,
+          "question_count": 8
+        }
+      },
+      "scenario": "condition_met",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Tanya Trujillo",
+      "customer_id": "1c8e2d24-116b-52a5-974a-2825a08198e6",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Tanya Trujillo? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 443,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.85,
+          "jev_probabilities": {
+            "yes": 0.9,
+            "no": 0.01,
+            "needs_llm_decision": 0.09
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.746,
+            "violates_policy": 0.08,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.04,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.86
+          },
+          "jev_ms": 130,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 373,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_open_condition",
+          "fired": [
+            "g_open_condition"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT928876",
+              "ref": "TKT928876 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "88cb6990-6e4e-5024-ab35-aa644be99fc5",
+              "ref": "decision 88cb6990 (credit approval)",
+              "p": 0.94,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 125,
+          "question_count": 7
+        }
+      },
+      "scenario": "condition_unmet",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Jim Walter",
+      "customer_id": "514836c6-9a3d-5093-b4ed-7e3696e91863",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jim Walter? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 420,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.7,
+          "jev_probabilities": {
+            "yes": 0.8,
+            "no": 0.03,
+            "needs_llm_decision": 0.17
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.778,
+            "violates_policy": 0.05,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.02,
+            "elevated_customer_risk": 0.06,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.8
+          },
+          "jev_ms": 160,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 430,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_open_condition",
+          "fired": [
+            "g_open_condition"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT918048",
+              "ref": "TKT918048 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "decision 1f529734 (credit approval)",
+              "p": 0.95,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.92,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 118,
+          "question_count": 7
+        }
+      },
+      "scenario": "condition_unmet",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Laura Johnson",
+      "customer_id": "aff03420-e03c-5f71-a621-4bcb1f753e35",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Laura Johnson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 413,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.92,
+          "jev_probabilities": {
+            "yes": 0.95,
+            "no": 0.01,
+            "needs_llm_decision": 0.04
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.764,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.87
+          },
+          "jev_ms": 134,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 542,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT972986",
+              "ref": "TKT972986 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT927118",
+              "ref": "ALT927118 (geographic_anomaly, false_positive)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 246,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_cleared_benign",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Heidi Henderson",
+      "customer_id": "9c37f077-9fd9-585c-bef7-986d8e0136a0",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Heidi Henderson? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 485,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.89,
+          "jev_probabilities": {
+            "yes": 0.93,
+            "no": 0.01,
+            "needs_llm_decision": 0.06
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.786,
+            "violates_policy": 0.06,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.87
+          },
+          "jev_ms": 210,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "approve",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "yes",
+          "fast_answer_ms": 525,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": null,
+          "fired": [],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT931207",
+              "ref": "TKT931207 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT983502",
+              "ref": "ALT983502 (amount_threshold, false_positive)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 158,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_cleared_benign",
+      "expected_route": "yes"
+    },
+    {
+      "customer": "Kevin Jimenez",
+      "customer_id": "cf7402be-e09b-561f-a221-0c8bc4583e82",
+      "amount": 4000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Kevin Jimenez? They are requesting a $4,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 760,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.8,
+          "jev_confidence": 0.14,
+          "jev_probabilities": {
+            "yes": 0.43,
+            "no": 0.17,
+            "needs_llm_decision": 0.4
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.746,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.21,
+            "elevated_customer_risk": 0.05,
+            "requires_manual_review": 0.09,
+            "evidence_sufficient": 0.72
+          },
+          "jev_ms": 299,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 596,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": null,
+          "decided_by": "g_unexplained_alert",
+          "fired": [
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT965259",
+              "ref": "TKT965259 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT989226",
+              "ref": "ALT989226 (pattern_match, false_positive)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 206,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_closed_unexplained",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Jonathan Christensen",
+      "customer_id": "23f6dc0e-52f0-56e0-b679-cb7f74130f06",
+      "amount": 6000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Christensen? They are requesting a $6,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 600,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": 0.16,
+          "jev_probabilities": {
+            "yes": 0.37,
+            "no": 0.19,
+            "needs_llm_decision": 0.44
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.734,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.22,
+            "elevated_customer_risk": 0.06,
+            "requires_manual_review": 0.13,
+            "evidence_sufficient": 0.7
+          },
+          "jev_ms": 190,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 464,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": "g_unexplained_alert",
+          "fired": [
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT923908",
+              "ref": "TKT923908 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT914015",
+              "ref": "ALT914015 (amount_threshold, false_positive)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "d3f17b17-e8cf-43bf-ab03-0edea8bf4c2d",
+              "ref": "precedent d3f17b17 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.84,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 140,
+          "question_count": 7
+        }
+      },
+      "scenario": "alert_closed_unexplained",
+      "expected_route": "needs_llm_decision"
+    },
+    {
+      "customer": "Tracy Bishop",
+      "customer_id": "f78ee1e2-9a5f-40e1-8c90-2429f5e749dc",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Tracy Bishop? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 579,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": 0.6,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.73,
+            "needs_llm_decision": 0.27
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.676,
+            "violates_policy": 0.41,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.96,
+            "elevated_customer_risk": 0.54,
+            "requires_manual_review": 0.25,
+            "evidence_sufficient": 0.41
+          },
+          "jev_ms": 233,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 626,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": null,
+          "decided_by": "g_income_unverified",
+          "fired": [
+            "g_income_unverified",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty",
+            "g_open_condition",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "decision_open_condition",
+              "item_id": "9feb2050-d744-4237-9461-37e4e965d883",
+              "ref": "decision 9feb2050 (compliance escalation)",
+              "p": 0.7,
+              "band": "yes"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000077",
+              "ref": "ALT000077 (geographic_anomaly, investigating)",
+              "p": 0.96,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.84,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 158,
+          "question_count": 7
+        }
+      }
+    },
+    {
+      "customer": "Tracy Bishop",
+      "customer_id": "f78ee1e2-9a5f-40e1-8c90-2429f5e749dc",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Tracy Bishop? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 434,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.73,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.82,
+            "needs_llm_decision": 0.18
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.528,
+            "violates_policy": 0.93,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.96,
+            "elevated_customer_risk": 0.51,
+            "requires_manual_review": 0.96,
+            "evidence_sufficient": 0.3
+          },
+          "jev_ms": 147,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 430,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 4,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_income_cap",
+          "fired": [
+            "g_income_cap",
+            "g_income_unverified",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty",
+            "g_open_condition",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "decision_open_condition",
+              "item_id": "9feb2050-d744-4237-9461-37e4e965d883",
+              "ref": "decision 9feb2050 (compliance escalation)",
+              "p": 0.71,
+              "band": "yes"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000077",
+              "ref": "ALT000077 (geographic_anomaly, investigating)",
+              "p": 0.96,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.8,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.8,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "precedent 326e4e79 (credit approval)",
+              "p": 0.79,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 139,
+          "question_count": 7
+        }
+      }
+    },
+    {
+      "customer": "Lindsay Gonzalez",
+      "customer_id": "f27ca767-93ec-428d-859f-10afcc6324ce",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Lindsay Gonzalez? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 434,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.52,
+          "jev_probabilities": {
+            "yes": 0.1,
+            "no": 0.68,
+            "needs_llm_decision": 0.22
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.778,
+            "violates_policy": 0.08,
+            "sanctioned_party_exposure": 0.95,
+            "open_fraud_activity": 0.21,
+            "elevated_customer_risk": 0.23,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.7
+          },
+          "jev_ms": 145,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 1160,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 1.2,
+          "jev_confidence": null,
+          "decided_by": "g_sanctions",
+          "fired": [
+            "g_sanctions",
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000091",
+              "ref": "TKT000091 (fraud_report, resolved)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000099",
+              "ref": "TKT000099 (transaction_dispute, resolved)",
+              "p": 0.97,
+              "band": "yes"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "e3efe566-f181-476a-9be1-e8b84b7b0ed1",
+              "ref": "decision e3efe566 (trading escalation)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 206,
+          "question_count": 8
+        }
+      }
+    },
+    {
+      "customer": "Lindsay Gonzalez",
+      "customer_id": "f27ca767-93ec-428d-859f-10afcc6324ce",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Lindsay Gonzalez? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 500,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.94,
+            "needs_llm_decision": 0.06
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.466,
+            "violates_policy": 0.98,
+            "sanctioned_party_exposure": 0.95,
+            "open_fraud_activity": 0.24,
+            "elevated_customer_risk": 0.26,
+            "requires_manual_review": 0.85,
+            "evidence_sufficient": 0.62
+          },
+          "jev_ms": 221,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 413,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 2,
+            "notable_transactions": 1,
+            "transaction_summary": 2,
+            "support_tickets": 2,
+            "alerts": 0,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_sanctions",
+          "fired": [
+            "g_sanctions",
+            "g_income_cap",
+            "g_increase_cap",
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000091",
+              "ref": "TKT000091 (fraud_report, resolved)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000099",
+              "ref": "TKT000099 (transaction_dispute, resolved)",
+              "p": 0.97,
+              "band": "yes"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "e3efe566-f181-476a-9be1-e8b84b7b0ed1",
+              "ref": "decision e3efe566 (trading escalation)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "precedent 326e4e79 (credit approval)",
+              "p": 0.84,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.78,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 141,
+          "question_count": 8
+        }
+      }
+    },
+    {
+      "customer": "Mr. Thomas Thompson",
+      "customer_id": "5bf1ca6a-9fe0-4089-8602-0cffea572e81",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Mr. Thomas Thompson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 503,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 10,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.46,
+          "jev_probabilities": {
+            "yes": 0.02,
+            "no": 0.64,
+            "needs_llm_decision": 0.34
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.718,
+            "violates_policy": 0.89,
+            "sanctioned_party_exposure": 0.94,
+            "open_fraud_activity": 0.03,
+            "elevated_customer_risk": 0.85,
+            "requires_manual_review": 0.27,
+            "evidence_sufficient": 0.59
+          },
+          "jev_ms": 216,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 412,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 10,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_frozen_account",
+          "fired": [
+            "g_frozen_account",
+            "g_credit_score",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty"
+          ],
+          "judgments": [
+            {
+              "family": "decision_open_condition",
+              "item_id": "fb821da5-49bb-4a28-8056-c5baf49d4a0c",
+              "ref": "decision fb821da5 (compliance approval)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "b0031a1c-7287-40a2-ac09-93e210db03d2",
+              "ref": "decision b0031a1c (credit exception)",
+              "p": 0.07,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000070",
+              "ref": "ALT000070 (fraud_detection, resolved)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 139,
+          "question_count": 8
+        }
+      }
+    },
+    {
+      "customer": "Mr. Thomas Thompson",
+      "customer_id": "5bf1ca6a-9fe0-4089-8602-0cffea572e81",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Mr. Thomas Thompson? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 389,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 10,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.76,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.84,
+            "needs_llm_decision": 0.16
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.5,
+            "violates_policy": 0.98,
+            "sanctioned_party_exposure": 0.95,
+            "open_fraud_activity": 0.04,
+            "elevated_customer_risk": 0.82,
+            "requires_manual_review": 0.9,
+            "evidence_sufficient": 0.61
+          },
+          "jev_ms": 137,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 435,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 10,
+            "notable_transactions": 3,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_frozen_account",
+          "fired": [
+            "g_frozen_account",
+            "g_credit_score",
+            "g_income_cap",
+            "g_increase_cap",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty"
+          ],
+          "judgments": [
+            {
+              "family": "decision_open_condition",
+              "item_id": "fb821da5-49bb-4a28-8056-c5baf49d4a0c",
+              "ref": "decision fb821da5 (compliance approval)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "b0031a1c-7287-40a2-ac09-93e210db03d2",
+              "ref": "decision b0031a1c (credit exception)",
+              "p": 0.08,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000070",
+              "ref": "ALT000070 (fraud_detection, resolved)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.79,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.8,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 158,
+          "question_count": 8
+        }
+      }
+    },
+    {
+      "customer": "Oscar Howard",
+      "customer_id": "3f7efeae-e734-47c0-85dd-357e77b94142",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Oscar Howard? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 457,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 2,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.85,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.9,
+            "needs_llm_decision": 0.1
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.662,
+            "violates_policy": 0.97,
+            "sanctioned_party_exposure": 0.95,
+            "open_fraud_activity": 0.07,
+            "elevated_customer_risk": 0.94,
+            "requires_manual_review": 0.47,
+            "evidence_sufficient": 0.6
+          },
+          "jev_ms": 142,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 496,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 2,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": "g_frozen_account",
+          "fired": [
+            "g_frozen_account",
+            "g_credit_score",
+            "g_income_cap",
+            "g_customer_risk",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "decision_open_condition",
+              "item_id": "0a54e3af-9f26-43df-86ed-39f9d4508447",
+              "ref": "decision 0a54e3af (fraud approval)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000046",
+              "ref": "ALT000046 (behavioral_anomaly, resolved)",
+              "p": 0.93,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.79,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 146,
+          "question_count": 7
+        }
+      }
+    },
+    {
+      "customer": "Oscar Howard",
+      "customer_id": "3f7efeae-e734-47c0-85dd-357e77b94142",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Oscar Howard? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 403,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 2,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.89,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.93,
+            "needs_llm_decision": 0.07
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.44,
+            "violates_policy": 0.94,
+            "sanctioned_party_exposure": 0.96,
+            "open_fraud_activity": 0.07,
+            "elevated_customer_risk": 0.94,
+            "requires_manual_review": 0.79,
+            "evidence_sufficient": 0.64
+          },
+          "jev_ms": 138,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 583,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 6,
+            "notable_transactions": 2,
+            "transaction_summary": 3,
+            "support_tickets": 0,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": null,
+          "decided_by": "g_frozen_account",
+          "fired": [
+            "g_frozen_account",
+            "g_credit_score",
+            "g_income_cap",
+            "g_increase_cap",
+            "g_customer_risk",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "decision_open_condition",
+              "item_id": "0a54e3af-9f26-43df-86ed-39f9d4508447",
+              "ref": "decision 0a54e3af (fraud approval)",
+              "p": 0.07,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000046",
+              "ref": "ALT000046 (behavioral_anomaly, resolved)",
+              "p": 0.94,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.78,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.82,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 293,
+          "question_count": 7
+        }
+      }
+    },
+    {
+      "customer": "Corey Rodriguez",
+      "customer_id": "49fb57ba-f2c1-47ed-b6ae-bc44b60c62c6",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Corey Rodriguez? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 527,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 2,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.55,
+          "jev_probabilities": {
+            "yes": 0.03,
+            "no": 0.7,
+            "needs_llm_decision": 0.27
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.772,
+            "violates_policy": 0.11,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.92,
+            "elevated_customer_risk": 0.08,
+            "requires_manual_review": 0.13,
+            "evidence_sufficient": 0.68
+          },
+          "jev_ms": 139,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 502,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 2,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": "g_watchlisted_counterparty",
+          "fired": [
+            "g_watchlisted_counterparty",
+            "g_open_condition",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000039",
+              "ref": "TKT000039 (statement_request, in_progress)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000030",
+              "ref": "TKT000030 (general_inquiry, closed)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "eb8d0d89-58d7-4d1e-b876-949804d24853",
+              "ref": "decision eb8d0d89 (trading exception)",
+              "p": 0.78,
+              "band": "yes"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "11c5a363-7ee2-45d0-a8a4-863ce3cbe11a",
+              "ref": "decision 11c5a363 (compliance approval)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000036",
+              "ref": "ALT000036 (geographic_anomaly, investigating)",
+              "p": 0.96,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 181,
+          "question_count": 10
+        }
+      }
+    },
+    {
+      "customer": "Corey Rodriguez",
+      "customer_id": "49fb57ba-f2c1-47ed-b6ae-bc44b60c62c6",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Corey Rodriguez? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 763,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 2,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.8,
+          "jev_confidence": 0.83,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.89,
+            "needs_llm_decision": 0.11
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.512,
+            "violates_policy": 0.96,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.93,
+            "elevated_customer_risk": 0.09,
+            "requires_manual_review": 0.89,
+            "evidence_sufficient": 0.57
+          },
+          "jev_ms": 306,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 699,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 2,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.7,
+          "jev_confidence": null,
+          "decided_by": "g_income_cap",
+          "fired": [
+            "g_income_cap",
+            "g_increase_cap",
+            "g_watchlisted_counterparty",
+            "g_open_condition",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000039",
+              "ref": "TKT000039 (statement_request, in_progress)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000030",
+              "ref": "TKT000030 (general_inquiry, closed)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "eb8d0d89-58d7-4d1e-b876-949804d24853",
+              "ref": "decision eb8d0d89 (trading exception)",
+              "p": 0.71,
+              "band": "yes"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "11c5a363-7ee2-45d0-a8a4-863ce3cbe11a",
+              "ref": "decision 11c5a363 (compliance approval)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000036",
+              "ref": "ALT000036 (geographic_anomaly, investigating)",
+              "p": 0.96,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.81,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 252,
+          "question_count": 10
+        }
+      }
+    },
+    {
+      "customer": "Jonathan Christensen",
+      "customer_id": "23f6dc0e-52f0-56e0-b679-cb7f74130f06",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Christensen? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 393,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.13,
+          "jev_probabilities": {
+            "yes": 0.35,
+            "no": 0.23,
+            "needs_llm_decision": 0.42
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.758,
+            "violates_policy": 0.07,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.16,
+            "elevated_customer_risk": 0.07,
+            "requires_manual_review": 0.11,
+            "evidence_sufficient": 0.72
+          },
+          "jev_ms": 128,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 943,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.9,
+          "jev_confidence": null,
+          "decided_by": "g_unexplained_alert",
+          "fired": [
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT923908",
+              "ref": "TKT923908 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT914015",
+              "ref": "ALT914015 (amount_threshold, false_positive)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 137,
+          "question_count": 7
+        }
+      }
+    },
+    {
+      "customer": "Jonathan Christensen",
+      "customer_id": "23f6dc0e-52f0-56e0-b679-cb7f74130f06",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Jonathan Christensen? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 426,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.26,
+          "jev_probabilities": {
+            "yes": 0.01,
+            "no": 0.51,
+            "needs_llm_decision": 0.48
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.608,
+            "violates_policy": 0.96,
+            "sanctioned_party_exposure": null,
+            "open_fraud_activity": 0.19,
+            "elevated_customer_risk": 0.07,
+            "requires_manual_review": 0.84,
+            "evidence_sufficient": 0.58
+          },
+          "jev_ms": 134,
+          "question_count": 13
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 350,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 0,
+            "notable_transactions": 0,
+            "transaction_summary": 0,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 0,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_income_cap",
+          "fired": [
+            "g_income_cap",
+            "g_increase_cap",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT923908",
+              "ref": "TKT923908 (statement_request, resolved)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT914015",
+              "ref": "ALT914015 (amount_threshold, false_positive)",
+              "p": 0.9,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+              "ref": "precedent 0e1fed50 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.84,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "10116cff-a35b-4056-bf4b-f62f059c57ca",
+              "ref": "precedent 10116cff (credit approval)",
+              "p": 0.83,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.8,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "d3f17b17-e8cf-43bf-ab03-0edea8bf4c2d",
+              "ref": "precedent d3f17b17 (credit approval)",
+              "p": 0.8,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 119,
+          "question_count": 7
+        }
+      }
+    },
+    {
+      "customer": "Sharon Nicholson",
+      "customer_id": "beb4b655-b94a-4eec-aade-530fbd92a712",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Sharon Nicholson? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 478,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 7,
+            "transaction_summary": 4,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.38,
+          "jev_probabilities": {
+            "yes": 0.59,
+            "no": 0.16,
+            "needs_llm_decision": 0.25
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.758,
+            "violates_policy": 0.14,
+            "sanctioned_party_exposure": 0.74,
+            "open_fraud_activity": 0.06,
+            "elevated_customer_risk": 0.49,
+            "requires_manual_review": 0.11,
+            "evidence_sufficient": 0.81
+          },
+          "jev_ms": 169,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 422,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 7,
+            "transaction_summary": 4,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_frozen_account",
+          "fired": [
+            "g_frozen_account",
+            "g_poor_counterparty"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000049",
+              "ref": "TKT000049 (general_inquiry, pending_customer)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "44ef3563-6f78-4bb0-83ff-64c49cfc6ca3",
+              "ref": "decision 44ef3563 (support approval)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "f4523fb7-67fa-42d8-bfee-6faab8c75abd",
+              "ref": "decision f4523fb7 (credit override)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000068",
+              "ref": "ALT000068 (geographic_anomaly, false_positive)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.91,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 150,
+          "question_count": 9
+        }
+      }
+    },
+    {
+      "customer": "Sharon Nicholson",
+      "customer_id": "beb4b655-b94a-4eec-aade-530fbd92a712",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Sharon Nicholson? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 481,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 7,
+            "transaction_summary": 4,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.64,
+          "jev_probabilities": {
+            "yes": 0.01,
+            "no": 0.76,
+            "needs_llm_decision": 0.23
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.526,
+            "violates_policy": 0.95,
+            "sanctioned_party_exposure": 0.75,
+            "open_fraud_activity": 0.06,
+            "elevated_customer_risk": 0.55,
+            "requires_manual_review": 0.87,
+            "evidence_sufficient": 0.65
+          },
+          "jev_ms": 163,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 568,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 8,
+            "notable_transactions": 7,
+            "transaction_summary": 4,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": null,
+          "decided_by": "g_frozen_account",
+          "fired": [
+            "g_frozen_account",
+            "g_income_cap",
+            "g_increase_cap",
+            "g_poor_counterparty"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000049",
+              "ref": "TKT000049 (general_inquiry, pending_customer)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "44ef3563-6f78-4bb0-83ff-64c49cfc6ca3",
+              "ref": "decision 44ef3563 (support approval)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "f4523fb7-67fa-42d8-bfee-6faab8c75abd",
+              "ref": "decision f4523fb7 (credit override)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000068",
+              "ref": "ALT000068 (geographic_anomaly, false_positive)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.82,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.79,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 155,
+          "question_count": 9
+        }
+      }
+    },
+    {
+      "customer": "Bonnie Valencia",
+      "customer_id": "b5e78840-6641-4493-a645-e0f0115dc4e1",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Bonnie Valencia? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 582,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 4,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": 0.4,
+          "jev_probabilities": {
+            "yes": 0.1,
+            "no": 0.6,
+            "needs_llm_decision": 0.3
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.744,
+            "violates_policy": 0.17,
+            "sanctioned_party_exposure": 0.51,
+            "open_fraud_activity": 0.25,
+            "elevated_customer_risk": 0.62,
+            "requires_manual_review": 0.1,
+            "evidence_sufficient": 0.65
+          },
+          "jev_ms": 236,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 434,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 4,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_unresolved_concern",
+          "fired": [
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000005",
+              "ref": "TKT000005 (limit_increase, in_progress)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000043",
+              "ref": "TKT000043 (general_inquiry, closed)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000088",
+              "ref": "TKT000088 (limit_increase, in_progress)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000099",
+              "ref": "TKT000099 (transaction_dispute, resolved)",
+              "p": 0.95,
+              "band": "yes"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "6f65b381-103a-44ae-aab5-04c7c0569df8",
+              "ref": "decision 6f65b381 (fraud rejection)",
+              "p": 0.14,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "7ffe46d2-fbbc-4440-a5cc-3da2c93fead1",
+              "ref": "decision 7ffe46d2 (fraud approval)",
+              "p": 0.09,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000079",
+              "ref": "ALT000079 (sanctions_hit, resolved)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 169,
+          "question_count": 12
+        }
+      }
+    },
+    {
+      "customer": "Bonnie Valencia",
+      "customer_id": "b5e78840-6641-4493-a645-e0f0115dc4e1",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Bonnie Valencia? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 484,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 4,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": 0.74,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.83,
+            "needs_llm_decision": 0.17
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.534,
+            "violates_policy": 0.97,
+            "sanctioned_party_exposure": 0.56,
+            "open_fraud_activity": 0.23,
+            "elevated_customer_risk": 0.67,
+            "requires_manual_review": 0.86,
+            "evidence_sufficient": 0.6
+          },
+          "jev_ms": 224,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 502,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 5,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 4,
+            "alerts": 1,
+            "decision_history": 2,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": "g_income_cap",
+          "fired": [
+            "g_income_cap",
+            "g_increase_cap",
+            "g_unresolved_concern"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000005",
+              "ref": "TKT000005 (limit_increase, in_progress)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000043",
+              "ref": "TKT000043 (general_inquiry, closed)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000088",
+              "ref": "TKT000088 (limit_increase, in_progress)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000099",
+              "ref": "TKT000099 (transaction_dispute, resolved)",
+              "p": 0.95,
+              "band": "yes"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "6f65b381-103a-44ae-aab5-04c7c0569df8",
+              "ref": "decision 6f65b381 (fraud rejection)",
+              "p": 0.19,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "7ffe46d2-fbbc-4440-a5cc-3da2c93fead1",
+              "ref": "decision 7ffe46d2 (fraud approval)",
+              "p": 0.1,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000079",
+              "ref": "ALT000079 (sanctions_hit, resolved)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.84,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.8,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.82,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.81,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 189,
+          "question_count": 12
+        }
+      }
+    },
+    {
+      "customer": "Raymond Quinn",
+      "customer_id": "8470ff6d-2749-413a-9862-711887c0afaa",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Raymond Quinn? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 444,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 4,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.91,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.94,
+            "needs_llm_decision": 0.06
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.698,
+            "violates_policy": 0.13,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.96,
+            "elevated_customer_risk": 0.62,
+            "requires_manual_review": 0.14,
+            "evidence_sufficient": 0.44
+          },
+          "jev_ms": 140,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 378,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 4,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_watchlisted_counterparty",
+          "fired": [
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000053",
+              "ref": "TKT000053 (password_reset, closed)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "91146329-47b5-4525-afd0-df9eed7826a0",
+              "ref": "decision 91146329 (trading rejection)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000023",
+              "ref": "ALT000023 (velocity_check, open)",
+              "p": 0.97,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.84,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "5787e22b-d53d-4271-bc49-fd14c4c13751",
+              "ref": "precedent 5787e22b (credit exception)",
+              "p": 0.83,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 134,
+          "question_count": 8
+        }
+      }
+    },
+    {
+      "customer": "Raymond Quinn",
+      "customer_id": "8470ff6d-2749-413a-9862-711887c0afaa",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Raymond Quinn? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 401,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 4,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": 0.97,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.98,
+            "needs_llm_decision": 0.02
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.424,
+            "violates_policy": 0.97,
+            "sanctioned_party_exposure": 0.97,
+            "open_fraud_activity": 0.95,
+            "elevated_customer_risk": 0.62,
+            "requires_manual_review": 0.85,
+            "evidence_sufficient": 0.49
+          },
+          "jev_ms": 135,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 520,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 4,
+            "notable_transactions": 0,
+            "transaction_summary": 1,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 1,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.5,
+          "jev_confidence": null,
+          "decided_by": "g_income_cap",
+          "fired": [
+            "g_income_cap",
+            "g_increase_cap",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty",
+            "g_unexplained_alert"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000053",
+              "ref": "TKT000053 (password_reset, closed)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "91146329-47b5-4525-afd0-df9eed7826a0",
+              "ref": "decision 91146329 (trading rejection)",
+              "p": 0.06,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000023",
+              "ref": "ALT000023 (velocity_check, open)",
+              "p": 0.97,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.77,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.79,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.74,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1794e10e-50b2-4cd5-b5ea-395d4ae60bf5",
+              "ref": "precedent 1794e10e (credit approval)",
+              "p": 0.77,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.77,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 191,
+          "question_count": 8
+        }
+      }
+    },
+    {
+      "customer": "Amy Ramirez",
+      "customer_id": "1816bae5-d9a3-482f-b0d0-fd8d83b856ab",
+      "amount": 5000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Amy Ramirez? They are requesting a $5,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "yes",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 639,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 13,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 4,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": 0.14,
+          "jev_probabilities": {
+            "yes": 0.43,
+            "no": 0.27,
+            "needs_llm_decision": 0.3
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.784,
+            "violates_policy": 0.19,
+            "sanctioned_party_exposure": 0.91,
+            "open_fraud_activity": 0.05,
+            "elevated_customer_risk": 0.7,
+            "requires_manual_review": 0.13,
+            "evidence_sufficient": 0.78
+          },
+          "jev_ms": 255,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": null,
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "needs_llm_decision",
+          "jev_routed": "needs_llm_decision",
+          "fast_answer_ms": 408,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 13,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 4,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.4,
+          "jev_confidence": null,
+          "decided_by": "g_watchlisted_counterparty",
+          "fired": [
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000035",
+              "ref": "TKT000035 (transaction_dispute, closed)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "081739df-1e83-479a-ad0f-71779ab91cbe",
+              "ref": "decision 081739df (credit rejection)",
+              "p": 0.08,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "80e510cf-7e4e-4ca0-88c9-631e92c97f11",
+              "ref": "decision 80e510cf (trading rejection)",
+              "p": 0.05,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "fcedabbc-1b7c-4746-b60e-68783ce91275",
+              "ref": "decision fcedabbc (credit approval)",
+              "p": 0.08,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "085785a9-f640-40ae-a112-ee263f1cd513",
+              "ref": "decision 085785a9 (fraud rejection)",
+              "p": 0.13,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000013",
+              "ref": "ALT000013 (device_change, false_positive)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.89,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.87,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.88,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f787923e-59eb-464f-9cc8-64aac5562b8e",
+              "ref": "precedent f787923e (credit approval)",
+              "p": 0.86,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "f6838fb7-59a1-412f-af1b-c272687d8551",
+              "ref": "precedent f6838fb7 (credit approval)",
+              "p": 0.9,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 151,
+          "question_count": 11
+        }
+      }
+    },
+    {
+      "customer": "Amy Ramirez",
+      "customer_id": "1816bae5-d9a3-482f-b0d0-fd8d83b856ab",
+      "amount": 25000.0,
+      "repeat": 1,
+      "message": "Should we approve a credit limit increase for Amy Ramirez? They are requesting a $25,000 limit increase.",
+      "runs": {
+        "fast_answer": {
+          "path": "fast_answer",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 654,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 13,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 4,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.7,
+          "jev_confidence": 0.79,
+          "jev_probabilities": {
+            "yes": 0.0,
+            "no": 0.86,
+            "needs_llm_decision": 0.14
+          },
+          "jev_signals": {
+            "precedents_favor_approval": 0.538,
+            "violates_policy": 0.96,
+            "sanctioned_party_exposure": 0.91,
+            "open_fraud_activity": 0.05,
+            "elevated_customer_risk": 0.73,
+            "requires_manual_review": 0.84,
+            "evidence_sufficient": 0.59
+          },
+          "jev_ms": 288,
+          "question_count": 14
+        },
+        "decomposed": {
+          "path": "decomposed",
+          "final": "reject",
+          "confidence": null,
+          "tool_calls": [],
+          "tool_call_count": 0,
+          "jev_decision": "no",
+          "jev_routed": "no",
+          "fast_answer_ms": 588,
+          "retrievals": {
+            "customer": 1,
+            "account_parties": 13,
+            "notable_transactions": 6,
+            "transaction_summary": 3,
+            "support_tickets": 1,
+            "alerts": 1,
+            "decision_history": 4,
+            "precedents": 5,
+            "category_outcomes": 6,
+            "policies": 3
+          },
+          "seconds": 0.6,
+          "jev_confidence": null,
+          "decided_by": "g_income_cap",
+          "fired": [
+            "g_income_cap",
+            "g_increase_cap",
+            "g_watchlisted_counterparty",
+            "g_poor_counterparty"
+          ],
+          "judgments": [
+            {
+              "family": "ticket_unresolved_concern",
+              "item_id": "TKT000035",
+              "ref": "TKT000035 (transaction_dispute, closed)",
+              "p": 0.02,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "081739df-1e83-479a-ad0f-71779ab91cbe",
+              "ref": "decision 081739df (credit rejection)",
+              "p": 0.11,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "80e510cf-7e4e-4ca0-88c9-631e92c97f11",
+              "ref": "decision 80e510cf (trading rejection)",
+              "p": 0.04,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "fcedabbc-1b7c-4746-b60e-68783ce91275",
+              "ref": "decision fcedabbc (credit approval)",
+              "p": 0.08,
+              "band": "no"
+            },
+            {
+              "family": "decision_open_condition",
+              "item_id": "085785a9-f640-40ae-a112-ee263f1cd513",
+              "ref": "decision 085785a9 (fraud rejection)",
+              "p": 0.17,
+              "band": "no"
+            },
+            {
+              "family": "alert_unexplained_risk",
+              "item_id": "ALT000013",
+              "ref": "ALT000013 (device_change, false_positive)",
+              "p": 0.03,
+              "band": "no"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+              "ref": "precedent 1f529734 (credit approval)",
+              "p": 0.85,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "81803cd0-e37a-4bd2-99b8-65124cd586f7",
+              "ref": "precedent 81803cd0 (credit exception)",
+              "p": 0.81,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "1b5c57e4-a6fd-4fd3-a01e-fde6f3adc870",
+              "ref": "precedent 1b5c57e4 (credit exception)",
+              "p": 0.8,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+              "ref": "precedent 326e4e79 (credit approval)",
+              "p": 0.79,
+              "band": "yes"
+            },
+            {
+              "family": "precedent_comparable",
+              "item_id": "6a7c3e93-49a6-44fd-b7bf-b14ae6fa50d7",
+              "ref": "precedent 6a7c3e93 (credit approval)",
+              "p": 0.82,
+              "band": "yes"
+            }
+          ],
+          "jev_ms": 291,
+          "question_count": 11
+        }
+      }
+    }
+  ]
+}

@@ -157,18 +157,61 @@ export interface FinalRecommendation {
   escalated: boolean;
   agrees_with_jev: boolean | null;
   final: "approve" | "reject" | null;
+  mode?: "decomposed" | "monolithic";
 }
 
-// Fast typed verdict from TypeSafe's Jev model, produced before Claude runs
+// Decomposed verdict parts: code facts, per-item Jev judgments, ordered code guards
+export interface PolicyFact {
+  name: string;
+  value: boolean | string | null;
+  detail: string;
+  label: string;
+  source: "code";
+}
+
+export interface JevJudgment {
+  id: string;
+  family: string;
+  path: string;
+  item_id: string;
+  ref: string;
+  p: number;
+  band: "yes" | "no" | "unsure";
+  outcome?: string;
+}
+
+export interface PolicyGuard {
+  name: string;
+  effect: "reject" | "escalate";
+  source: "code" | "jev";
+  status: "fired" | "passed" | "not_applicable";
+  reason: string;
+  evidence: string[];
+}
+
+// Fast verdict, produced before Claude runs. "decomposed": code facts + Jev judgments ->
+// code guards. "monolithic": one Jev Choice (baseline; fields below the mode-specific block).
 export interface JevVerdict {
+  mode?: "decomposed" | "monolithic";
+  outcome?: "approve" | "reject" | "escalate";
+  decided_by?: { guard: string | null; source: string; reason: string };
+  fired?: string[];
+  facts?: PolicyFact[];
+  judgments?: JevJudgment[];
+  guards?: PolicyGuard[];
+  thresholds?: { yes: number; no: number };
+  escalation_policy?: {
+    version: string;
+    entries: Array<{ guard: string; final: string; instruction: string }>;
+  } | null;
   model: string;
   decision: "yes" | "no" | "needs_llm_decision" | string;
   routed_decision: string;
-  confidence: number;
-  probabilities: Record<string, number>;
-  routing: { confidence_floor: number; reason: string };
+  confidence?: number;
+  probabilities?: Record<string, number>;
+  routing?: { confidence_floor: number; reason: string };
   // null = the evidence this signal depends on was empty, so it was not asked
-  signals: Record<string, number | null>;
+  signals?: Record<string, number | null>;
   item_judgments?: {
     precedents: Array<{
       id: string;
@@ -234,9 +277,14 @@ export type StreamEvent =
   | StreamErrorEvent;
 
 // Streaming chat with SSE
+// Demo arc: 1 agent (Claude picks tools) -> 2 monolithic (fixed queries + one Jev choice)
+// -> 3 decomposed (fixed queries + per-item Jev judgments + code guards)
+export type DecisionMode = "agent" | "monolithic" | "decomposed";
+
 export async function* streamChatMessage(
   message: string,
   conversationHistory: ChatMessage[] = [],
+  decisionMode?: DecisionMode,
 ): AsyncGenerator<StreamEvent, void, unknown> {
   const response = await fetch(`${API_BASE_URL}/api/chat/stream`, {
     method: "POST",
@@ -246,6 +294,7 @@ export async function* streamChatMessage(
     body: JSON.stringify({
       message,
       conversation_history: conversationHistory,
+      ...(decisionMode ? { decision_mode: decisionMode } : {}),
     }),
   });
 

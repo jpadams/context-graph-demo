@@ -628,11 +628,18 @@ function NvlGraph({
     );
   }
 
+  // NVL throws on a relationship whose endpoint is not in `nodes`; drop those defensively
+  // (graph payloads from several tools are merged, and any of them may be truncated).
+  const nodeIds = new Set(nodes.map((n) => n.id));
+  const safeRelationships = relationships.filter(
+    (r) => nodeIds.has(r.from) && nodeIds.has(r.to),
+  );
+
   return (
     <NvlComponent
       ref={nvlRef}
       nodes={nodes}
-      rels={relationships}
+      rels={safeRelationships}
       nvlOptions={{
         layout: "d3Force",
         initialZoom: 1,

@@ -1,0 +1,299 @@
+{
+ "generated": "2026-11-01T00:00:00",
+ "cases": [
+  {
+   "scenario": "control_clean",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Jonathan Hunt",
+   "customer_id": "d67ff04e-3b91-53a7-93e5-164406a96e8c",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT904202",
+     "variant": "routine"
+    }
+   ]
+  },
+  {
+   "scenario": "control_clean",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Ashley Walker",
+   "customer_id": "d4350afe-3925-5d35-8a63-84c559f3ab9a",
+   "amount": 5000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT988071",
+     "variant": "routine"
+    }
+   ]
+  },
+  {
+   "scenario": "ticket_resolved_genuine",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Kristie Logan",
+   "customer_id": "2244942c-16ee-50d4-ac6d-f0ce8e4e885e",
+   "amount": 6000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT914372",
+     "variant": "routine"
+    },
+    {
+     "kind": "ticket",
+     "item_id": "TKT924434",
+     "variant": "resolved_concern"
+    }
+   ]
+  },
+  {
+   "scenario": "ticket_resolved_genuine",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Monica Tate",
+   "customer_id": "c660be49-73d9-560b-a452-4524993e550d",
+   "amount": 5000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT996245",
+     "variant": "routine"
+    },
+    {
+     "kind": "ticket",
+     "item_id": "TKT930317",
+     "variant": "resolved_concern"
+    }
+   ]
+  },
+  {
+   "scenario": "ticket_closed_still_disputed",
+   "expected_route": "escalate",
+   "expected_final": "reject",
+   "policy_version": "2026-11-11",
+   "customer": "Laurie Allen",
+   "customer_id": "97af3a24-e286-56b0-a5c6-fa507fc04ff1",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT933893",
+     "variant": "routine"
+    },
+    {
+     "kind": "ticket",
+     "item_id": "TKT994849",
+     "variant": "closed_but_unresolved"
+    }
+   ]
+  },
+  {
+   "scenario": "ticket_closed_still_disputed",
+   "expected_route": "escalate",
+   "expected_final": "reject",
+   "policy_version": "2026-11-11",
+   "customer": "Ashley Montoya",
+   "customer_id": "8dbd8244-9750-55c9-96cd-0ccdcd99f481",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT980309",
+     "variant": "routine"
+    },
+    {
+     "kind": "ticket",
+     "item_id": "TKT910885",
+     "variant": "closed_but_unresolved"
+    }
+   ]
+  },
+  {
+   "scenario": "condition_met",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Robert Jennings",
+   "customer_id": "a8d73bce-5ee0-56f6-b8a7-37ce07ace2f9",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT920542",
+     "variant": "routine"
+    },
+    {
+     "kind": "decision",
+     "item_id": "326e4e79-123a-5da2-8557-af416eabbb36",
+     "variant": "conditional_approval"
+    },
+    {
+     "kind": "decision",
+     "item_id": "49ae89f9-0405-55ed-bff7-a684b7e3a003",
+     "variant": "condition_follow_up"
+    }
+   ]
+  },
+  {
+   "scenario": "condition_met",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Christine King",
+   "customer_id": "5e3e7854-da4b-50b0-ab80-3a369f576c17",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT985298",
+     "variant": "routine"
+    },
+    {
+     "kind": "decision",
+     "item_id": "0e1fed50-9b22-5339-bda4-8cd126b11bbe",
+     "variant": "conditional_approval"
+    },
+    {
+     "kind": "decision",
+     "item_id": "b85855fb-acb9-5280-b5ac-5b610b9eefe3",
+     "variant": "condition_follow_up"
+    }
+   ]
+  },
+  {
+   "scenario": "condition_unmet",
+   "expected_route": "escalate",
+   "expected_final": "reject",
+   "policy_version": "2026-11-11",
+   "customer": "Tanya Trujillo",
+   "customer_id": "1c8e2d24-116b-52a5-974a-2825a08198e6",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT928876",
+     "variant": "routine"
+    },
+    {
+     "kind": "decision",
+     "item_id": "88cb6990-6e4e-5024-ab35-aa644be99fc5",
+     "variant": "conditional_approval"
+    }
+   ]
+  },
+  {
+   "scenario": "condition_unmet",
+   "expected_route": "escalate",
+   "expected_final": "reject",
+   "policy_version": "2026-11-11",
+   "customer": "Jim Walter",
+   "customer_id": "514836c6-9a3d-5093-b4ed-7e3696e91863",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT918048",
+     "variant": "routine"
+    },
+    {
+     "kind": "decision",
+     "item_id": "1f529734-1b01-5b53-8583-b681e188b102",
+     "variant": "conditional_approval"
+    }
+   ]
+  },
+  {
+   "scenario": "alert_cleared_benign",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Laura Johnson",
+   "customer_id": "aff03420-e03c-5f71-a621-4bcb1f753e35",
+   "amount": 5000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT972986",
+     "variant": "routine"
+    },
+    {
+     "kind": "alert",
+     "item_id": "ALT927118",
+     "variant": "cleared_benign"
+    }
+   ]
+  },
+  {
+   "scenario": "alert_cleared_benign",
+   "expected_route": "approve",
+   "expected_final": "approve",
+   "policy_version": "2026-11-11",
+   "customer": "Heidi Henderson",
+   "customer_id": "9c37f077-9fd9-585c-bef7-986d8e0136a0",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT931207",
+     "variant": "routine"
+    },
+    {
+     "kind": "alert",
+     "item_id": "ALT983502",
+     "variant": "cleared_benign"
+    }
+   ]
+  },
+  {
+   "scenario": "alert_closed_unexplained",
+   "expected_route": "escalate",
+   "expected_final": "reject",
+   "policy_version": "2026-11-11",
+   "customer": "Kevin Jimenez",
+   "customer_id": "cf7402be-e09b-561f-a221-0c8bc4583e82",
+   "amount": 4000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT965259",
+     "variant": "routine"
+    },
+    {
+     "kind": "alert",
+     "item_id": "ALT989226",
+     "variant": "closed_but_unexplained"
+    }
+   ]
+  },
+  {
+   "scenario": "alert_closed_unexplained",
+   "expected_route": "escalate",
+   "expected_final": "reject",
+   "policy_version": "2026-11-11",
+   "customer": "Jonathan Christensen",
+   "customer_id": "23f6dc0e-52f0-56e0-b679-cb7f74130f06",
+   "amount": 6000.0,
+   "planted": [
+    {
+     "kind": "ticket",
+     "item_id": "TKT923908",
+     "variant": "routine"
+    },
+    {
+     "kind": "alert",
+     "item_id": "ALT914015",
+     "variant": "closed_but_unexplained"
+    }
+   ]
+  }
+ ]
+}

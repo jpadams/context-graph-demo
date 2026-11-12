@@ -1,0 +1,1152 @@
+{
+ "alerts": {
+  "ALT000001": {
+   "status": "investigating",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000002": {
+   "status": "open",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000003": {
+   "status": "resolved",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000004": {
+   "status": "resolved",
+   "type": "amount_threshold",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000005": {
+   "status": "escalated",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000006": {
+   "status": "resolved",
+   "type": "geographic_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000007": {
+   "status": "open",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000008": {
+   "status": "escalated",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000009": {
+   "status": "resolved",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000010": {
+   "status": "false_positive",
+   "type": "pattern_match",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000011": {
+   "status": "investigating",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000012": {
+   "status": "resolved",
+   "type": "amount_threshold",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000013": {
+   "status": "false_positive",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000014": {
+   "status": "investigating",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000015": {
+   "status": "false_positive",
+   "type": "velocity_check",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000016": {
+   "status": "investigating",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000017": {
+   "status": "resolved",
+   "type": "amount_threshold",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000018": {
+   "status": "investigating",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000019": {
+   "status": "open",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000020": {
+   "status": "investigating",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000021": {
+   "status": "open",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000022": {
+   "status": "false_positive",
+   "type": "pattern_match",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000023": {
+   "status": "open",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000024": {
+   "status": "investigating",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000025": {
+   "status": "investigating",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000026": {
+   "status": "investigating",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000027": {
+   "status": "resolved",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000028": {
+   "status": "resolved",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000029": {
+   "status": "resolved",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000030": {
+   "status": "resolved",
+   "type": "velocity_check",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000031": {
+   "status": "investigating",
+   "type": "amount_threshold",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000032": {
+   "status": "open",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000033": {
+   "status": "resolved",
+   "type": "geographic_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000034": {
+   "status": "open",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000035": {
+   "status": "open",
+   "type": "geographic_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000036": {
+   "status": "investigating",
+   "type": "geographic_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000037": {
+   "status": "resolved",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000038": {
+   "status": "false_positive",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000039": {
+   "status": "resolved",
+   "type": "amount_threshold",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000040": {
+   "status": "resolved",
+   "type": "device_change",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000041": {
+   "status": "resolved",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000042": {
+   "status": "investigating",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000043": {
+   "status": "open",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000044": {
+   "status": "resolved",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000045": {
+   "status": "resolved",
+   "type": "amount_threshold",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000046": {
+   "status": "resolved",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000047": {
+   "status": "resolved",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000048": {
+   "status": "resolved",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000049": {
+   "status": "resolved",
+   "type": "fraud_detection",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000050": {
+   "status": "open",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000051": {
+   "status": "escalated",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000052": {
+   "status": "resolved",
+   "type": "pattern_match",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000053": {
+   "status": "false_positive",
+   "type": "pattern_match",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000054": {
+   "status": "investigating",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000055": {
+   "status": "escalated",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000056": {
+   "status": "false_positive",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000057": {
+   "status": "false_positive",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000058": {
+   "status": "resolved",
+   "type": "velocity_check",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000059": {
+   "status": "investigating",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000060": {
+   "status": "resolved",
+   "type": "sanctions_hit",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000061": {
+   "status": "resolved",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000062": {
+   "status": "investigating",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000063": {
+   "status": "open",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000064": {
+   "status": "investigating",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000065": {
+   "status": "false_positive",
+   "type": "geographic_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000066": {
+   "status": "investigating",
+   "type": "pattern_match",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000067": {
+   "status": "open",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000068": {
+   "status": "false_positive",
+   "type": "geographic_anomaly",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000069": {
+   "status": "investigating",
+   "type": "sanctions_hit",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000070": {
+   "status": "resolved",
+   "type": "fraud_detection",
+   "unexplained_risk": true,
+   "variant": "closed_but_unexplained"
+  },
+  "ALT000071": {
+   "status": "investigating",
+   "type": "geographic_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000072": {
+   "status": "investigating",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000073": {
+   "status": "false_positive",
+   "type": "device_change",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000074": {
+   "status": "resolved",
+   "type": "behavioral_anomaly",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000075": {
+   "status": "escalated",
+   "type": "geographic_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000076": {
+   "status": "resolved",
+   "type": "velocity_check",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000077": {
+   "status": "investigating",
+   "type": "geographic_anomaly",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000078": {
+   "status": "investigating",
+   "type": "device_change",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  },
+  "ALT000079": {
+   "status": "resolved",
+   "type": "sanctions_hit",
+   "unexplained_risk": false,
+   "variant": "cleared_benign"
+  },
+  "ALT000080": {
+   "status": "escalated",
+   "type": "velocity_check",
+   "unexplained_risk": true,
+   "variant": "open_suspicious"
+  }
+ },
+ "decisions": {
+  "06e3a1a0-907b-4c51-8f06-4231a084ff4b": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "1af87342-842f-41d8-8af7-61a38461721d": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "1e10fe60-208f-4996-92f5-624a0b2b7cf4": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "2b26939b-0d07-48e5-b17d-7490b8581605": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "3a2fbfb1-cb33-4bd2-8d7e-e1bef471c547": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "3ba3d45d-d6c1-4371-8667-548cf55895e8": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "40a3a411-0cdc-48cb-9ea5-2bac856037c5": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "580c502d-1db6-4e1c-afe5-0c2b15692b87": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "66ae97ab-2af9-4dce-82d7-b6854b87ab73": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "876b914a-768e-4000-8c1c-b3230e0654ab": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "a9c1cad4-87f0-4ce1-9a50-b6cb9dae06cb": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "b6af4240-d242-4588-97da-0da38bf466ee": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "c09905ba-0fb1-4a79-9d8c-3154e686c95f": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "cf6abe99-1e76-402e-8146-7df08cd92e2e": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "d670d836-64b8-4e30-991a-77c57ebd2bab": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  },
+  "fb6efe6f-7891-4632-9562-308820f8f64b": {
+   "open_condition": true,
+   "variant": "conditional_unmet"
+  }
+ },
+ "tickets": {
+  "TKT000001": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000002": {
+   "status": "pending_customer",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000003": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000004": {
+   "status": "in_progress",
+   "type": "complaint",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000005": {
+   "status": "in_progress",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000006": {
+   "status": "in_progress",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000007": {
+   "status": "in_progress",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000008": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000009": {
+   "status": "in_progress",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000010": {
+   "status": "in_progress",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000011": {
+   "status": "open",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000012": {
+   "status": "pending_customer",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000013": {
+   "status": "pending_customer",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000014": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000015": {
+   "status": "closed",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000016": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000017": {
+   "status": "resolved",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000018": {
+   "status": "open",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000019": {
+   "status": "closed",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000020": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000021": {
+   "status": "open",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000022": {
+   "status": "in_progress",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000023": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
+  },
+  "TKT000024": {
+   "status": "pending_customer",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000025": {
+   "status": "in_progress",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000026": {
+   "status": "resolved",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000027": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000028": {
+   "status": "pending_customer",
+   "type": "transaction_dispute",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000029": {
+   "status": "pending_customer",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000030": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000031": {
+   "status": "in_progress",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000032": {
+   "status": "in_progress",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000033": {
+   "status": "closed",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000034": {
+   "status": "open",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000035": {
+   "status": "closed",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000036": {
+   "status": "closed",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000037": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000038": {
+   "status": "closed",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000039": {
+   "status": "in_progress",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000040": {
+   "status": "resolved",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000041": {
+   "status": "in_progress",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000042": {
+   "status": "in_progress",
+   "type": "transaction_dispute",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000043": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000044": {
+   "status": "closed",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000045": {
+   "status": "resolved",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000046": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000047": {
+   "status": "closed",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000048": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000049": {
+   "status": "pending_customer",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000050": {
+   "status": "in_progress",
+   "type": "complaint",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000051": {
+   "status": "in_progress",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000052": {
+   "status": "open",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000053": {
+   "status": "closed",
+   "type": "password_reset",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000054": {
+   "status": "resolved",
+   "type": "password_reset",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000055": {
+   "status": "closed",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000056": {
+   "status": "in_progress",
+   "type": "password_reset",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000057": {
+   "status": "in_progress",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000058": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
+  },
+  "TKT000059": {
+   "status": "resolved",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000060": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000061": {
+   "status": "open",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000062": {
+   "status": "pending_customer",
+   "type": "transaction_dispute",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000063": {
+   "status": "closed",
+   "type": "password_reset",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000064": {
+   "status": "resolved",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000065": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
+  },
+  "TKT000066": {
+   "status": "pending_customer",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000067": {
+   "status": "pending_customer",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000068": {
+   "status": "open",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000069": {
+   "status": "in_progress",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000070": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000071": {
+   "status": "closed",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000072": {
+   "status": "closed",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000073": {
+   "status": "closed",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000074": {
+   "status": "resolved",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000075": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000076": {
+   "status": "in_progress",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000077": {
+   "status": "closed",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000078": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000079": {
+   "status": "resolved",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000080": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000081": {
+   "status": "open",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000082": {
+   "status": "closed",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000083": {
+   "status": "resolved",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000084": {
+   "status": "closed",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000085": {
+   "status": "resolved",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000086": {
+   "status": "resolved",
+   "type": "transaction_dispute",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000087": {
+   "status": "resolved",
+   "type": "password_reset",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000088": {
+   "status": "in_progress",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000089": {
+   "status": "open",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000090": {
+   "status": "open",
+   "type": "fraud_report",
+   "unresolved_concern": true,
+   "variant": "open_concern"
+  },
+  "TKT000091": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000092": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000093": {
+   "status": "closed",
+   "type": "statement_request",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000094": {
+   "status": "closed",
+   "type": "account_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000095": {
+   "status": "closed",
+   "type": "complaint",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  },
+  "TKT000096": {
+   "status": "pending_customer",
+   "type": "password_reset",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000097": {
+   "status": "closed",
+   "type": "general_inquiry",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000098": {
+   "status": "resolved",
+   "type": "limit_increase",
+   "unresolved_concern": false,
+   "variant": "routine"
+  },
+  "TKT000099": {
+   "status": "resolved",
+   "type": "transaction_dispute",
+   "unresolved_concern": true,
+   "variant": "closed_but_unresolved"
+  },
+  "TKT000100": {
+   "status": "resolved",
+   "type": "fraud_report",
+   "unresolved_concern": false,
+   "variant": "resolved_concern"
+  }
+ }
+}

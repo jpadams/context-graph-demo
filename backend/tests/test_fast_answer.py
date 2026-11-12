@@ -277,7 +277,8 @@ def test_prepare_fast_answer_returns_verdict_and_graph():
         ),
     ):
         result = evidence.prepare_fast_answer(
-            "Should we approve a credit limit increase for Jessica Norris? She's requesting a $25,000 limit increase."
+            "Should we approve a credit limit increase for Jessica Norris? She's requesting a $25,000 limit increase.",
+            "monolithic",
         )
     assert result["applicable"] is True
     assert result["verdict"] == verdict

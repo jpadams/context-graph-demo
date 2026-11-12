@@ -113,10 +113,13 @@ When helping users:
 For approve/deny questions the system may hand you a **fast answer** produced before you run:
 a fixed set of Cypher retrievals (customer, account parties with sanctions status, notable
 transactions, transaction summary, support tickets, alerts, decision history, precedents, category
-outcomes, policies) and a typed verdict from TypeSafe's Jev model - `yes`, `no` or
-`needs_llm_decision` - with calibrated probabilities, per-precedent and per-policy judgments, and
-supporting signals (a signal of null means that evidence was empty, so say "no precedents were
-found" rather than quoting a number). When present:
+outcomes, policies) and a verdict - `yes`, `no` or `needs_llm_decision`. Usually the verdict is
+*decomposed*: code computed the policy facts (thresholds, sanctions, open cases), TypeSafe's Jev
+model answered one narrow judgment per ticket, alert, prior decision and precedent (probability
+the statement is true), and named guards in code combined them; the guard that fired is the reason.
+Only written rules can reject; Jev's judgments can only escalate. (A *monolithic* verdict is a
+single Jev choice with probabilities and supporting signals; a signal of null means that evidence
+was empty.) When present:
 - Treat the pre-collected evidence as already retrieved; do not re-run the same lookups.
 - Explain the verdict for the user: cite the specific precedents, policies and risk signals
   in the evidence that support or complicate it, and state the probabilities plainly.
@@ -624,26 +627,29 @@ async def get_schema(args: dict[str, Any]) -> dict[str, Any]:
 # ============================================
 
 
-def create_context_graph_server():
-    """Create the MCP server with all context graph tools."""
+ALL_TOOLS = [
+    search_customer,
+    get_customer_decisions,
+    find_similar_decisions,
+    find_precedents,
+    get_causal_chain,
+    record_decision,
+    detect_fraud_patterns,
+    find_decision_community,
+    find_accounts_with_high_shared_transaction_volume,
+    compute_credit_figures,
+    get_policy,
+    execute_cypher,
+    get_schema,
+]
+
+
+def create_context_graph_server(exclude_tools: tuple[str, ...] = ()):
+    """Create the MCP server with the context graph tools, minus ``exclude_tools``."""
     return create_sdk_mcp_server(
         name="context-graph",
         version="1.0.0",
-        tools=[
-            search_customer,
-            get_customer_decisions,
-            find_similar_decisions,
-            find_precedents,
-            get_causal_chain,
-            record_decision,
-            detect_fraud_patterns,
-            find_decision_community,
-            find_accounts_with_high_shared_transaction_volume,
-            compute_credit_figures,
-            get_policy,
-            execute_cypher,
-            get_schema,
-        ],
+        tools=[t for t in ALL_TOOLS if t.name not in exclude_tools],
     )
 
 
@@ -652,30 +658,16 @@ def get_agent_options(exclude_tools: tuple[str, ...] = ()) -> ClaudeAgentOptions
     Get the agent options with context graph server configured.
 
     ``exclude_tools`` removes tools by short name (e.g. "compute_credit_figures") so
-    the eval harness can reproduce the original tool set exactly.
+    the eval harness and demo stage 1 reproduce the original tool set. Excluded tools are
+    not registered at all; denying them instead lets Claude see and attempt them.
     """
-    context_graph_server = create_context_graph_server()
-    excluded = {f"mcp__graph__{name}" for name in exclude_tools}
-
+    context_graph_server = create_context_graph_server(exclude_tools)
     return ClaudeAgentOptions(
         system_prompt=CONTEXT_GRAPH_SYSTEM_PROMPT,
         model=config.anthropic.model or None,
         mcp_servers={"graph": context_graph_server},
-        disallowed_tools=sorted(excluded),
         allowed_tools=[
-            "mcp__graph__search_customer",
-            "mcp__graph__get_customer_decisions",
-            "mcp__graph__find_similar_decisions",
-            "mcp__graph__find_precedents",
-            "mcp__graph__get_causal_chain",
-            "mcp__graph__record_decision",
-            "mcp__graph__detect_fraud_patterns",
-            "mcp__graph__find_decision_community",
-            "mcp__graph__find_accounts_with_high_shared_transaction_volume",
-            "mcp__graph__compute_credit_figures",
-            "mcp__graph__get_policy",
-            "mcp__graph__execute_cypher",
-            "mcp__graph__get_schema",
+            f"mcp__graph__{t.name}" for t in ALL_TOOLS if t.name not in exclude_tools
         ],
     )
 
@@ -761,6 +753,7 @@ def parse_final_recommendation(text: str, fast_answer: dict[str, Any] | None) ->
             "escalated": escalated,
             "agrees_with_jev": None,
             "final": None if escalated else {"yes": "approve", "no": "reject"}.get(jev_routed),
+            "mode": verdict.get("mode"),
         }
 
     decision = match.group(1).lower()
@@ -774,32 +767,99 @@ def parse_final_recommendation(text: str, fast_answer: dict[str, Any] | None) ->
         "escalated": escalated,
         "agrees_with_jev": None if escalated else decision == jev_as_recommendation,
         "final": decision,
+        "mode": verdict.get("mode"),
     }
 
 
+def _decomposed_trace(verdict: dict[str, Any]) -> str:
+    facts = "\n".join(f"- {f['name']}: {f['value']} ({f['detail']})" for f in verdict.get("facts", []))
+    judgments = "\n".join(
+        f"- {j['family']} on {j['path']} = {j['ref']}: p={j['p']:.2f} ({j['band']})"
+        for j in verdict.get("judgments", [])
+    ) or "- none (no tickets, alerts, prior decisions or precedents to judge)"
+    guards = "\n".join(
+        f"- {g['name']} [{g['source']}, {g['effect']}]: {g['status']} - {g['reason']}"
+        + (f" ({'; '.join(g['evidence'])})" if g.get("evidence") else "")
+        for g in verdict.get("guards", [])
+        if g["status"] != "not_applicable"
+    )
+    decided = verdict.get("decided_by") or {}
+    return f"""Outcome: {verdict.get("outcome")} (decided by {decided.get("guard") or "no guard fired"}: {decided.get("reason")})
+Thresholds for Jev judgments: yes >= {verdict.get("thresholds", {}).get("yes")}, no <= {verdict.get("thresholds", {}).get("no")}, between is unsure.
+
+Facts computed by code:
+{facts}
+
+Jev judgments (probability the statement is true):
+{judgments}
+
+Guards, in order (first fired guard decides; rejections before escalations):
+{guards}"""
+
+
 def format_fast_answer_context(fast_answer: dict[str, Any]) -> str:
-    """Render the Jev fast answer and its evidence as context for Claude."""
+    """Render the fast answer (decomposed trace or monolithic verdict) and its evidence for Claude."""
     verdict = fast_answer.get("verdict", {})
     retrievals = ", ".join(r["name"] for r in fast_answer.get("retrievals", []))
     routed = verdict.get("routed_decision")
+    decomposed = verdict.get("mode") == "decomposed"
     if routed == "needs_llm_decision":
+        policy = (verdict.get("escalation_policy") or {}).get("entries") if decomposed else None
+        if policy:
+            rules = "\n".join(
+                f"- {e['guard']} (default: {e['final']}): {e['instruction']}" for e in policy
+            )
+            why = (
+                f"The guards escalated it ({', '.join(verdict.get('fired', []))}). The bank's "
+                f"escalation policy (version {verdict['escalation_policy']['version']}) for these "
+                f"guards:\n{rules}\n\nApply this policy; do not substitute your own risk appetite. "
+                "For each fired guard, read the evidence item it cites, say whether you agree with "
+                "the judgment, and apply the guard's instruction. Depart from a guard's default "
+                "only when the instruction's own condition for doing so is met, and say which "
+                "evidence meets it. 'defer' means reject for now (re-apply once resolved). If "
+                "several guards fired, the most restrictive outcome wins. "
+            )
+        elif decomposed:
+            why = (
+                f"The guards escalated it ({', '.join(verdict.get('fired', []))}). Address each "
+                "fired guard: read the evidence item it cites and say whether it should block "
+                "approval. "
+            )
+        else:
+            why = ""
         task = (
-            "Jev could not decide this case and escalated it to you. The user has been shown the "
-            "escalation. Make the final call: should this request be approved or rejected? Weigh "
-            "the evidence, name the precedents, policies and risk signals that drive your call, and "
-            "say what would change your mind. Call tools only if something specific is missing from "
-            "the evidence, and say what you needed. End with the FINAL_RECOMMENDATION line."
+            "The fast path could not decide this case and escalated it to you. The user has been "
+            f"shown the escalation. {why}Make the final call: should this request be approved or "
+            "rejected? Weigh the evidence, name the precedents, policies and risk signals that drive "
+            "your call, and say what would change your mind. Call tools only if something specific "
+            "is missing from the evidence, and say what you needed. End with the "
+            "FINAL_RECOMMENDATION line."
         )
     else:
         task = (
-            f"The user has already been shown Jev's verdict ({routed}). Explain it: which precedents, "
-            "policies and risk signals in the evidence support or complicate it, and what happens "
-            "next. Confirm the verdict unless the evidence clearly contradicts it; if you disagree, "
-            "say so and why. Call tools only if something specific is missing from the evidence, and "
-            "say what you needed. End with the FINAL_RECOMMENDATION line."
+            f"The user has already been shown the fast verdict ({routed}). Explain it: "
+            + (
+                "which rule or judgment decided it (the fired guard), and which facts and "
+                "judgments passed. "
+                if decomposed
+                else "which precedents, policies and risk signals in the evidence support or complicate it. "
+            )
+            + "Say what happens next. Confirm the verdict unless the evidence clearly contradicts "
+            "it; if you disagree, say so and why. Call tools only if something specific is missing "
+            "from the evidence, and say what you needed. End with the FINAL_RECOMMENDATION line."
         )
-    return f"""<fast_answer>
-A fast typed verdict was produced by TypeSafe's Jev model ({verdict.get("model")}) in {verdict.get("latency_ms")} ms
+    if decomposed:
+        verdict_block = f"""A fast decomposed verdict: code computed the policy facts, TypeSafe's Jev model ({verdict.get("model")})
+answered {verdict.get("question_count")} per-item judgments in {verdict.get("latency_ms")} ms, and code guards combined them.
+Evidence came from a fixed set of Cypher retrievals ({retrievals}).
+
+Request understood as: {json.dumps(fast_answer.get("request"), default=str)}
+Resolved customer: {json.dumps(fast_answer.get("customer"), default=str)}
+
+Verdict: {routed}
+{_decomposed_trace(verdict)}"""
+    else:
+        verdict_block = f"""A fast typed verdict was produced by TypeSafe's Jev model ({verdict.get("model")}) in {verdict.get("latency_ms")} ms
 from evidence collected by a fixed set of Cypher retrievals ({retrievals}).
 
 Request understood as: {json.dumps(fast_answer.get("request"), default=str)}
@@ -808,7 +868,9 @@ Resolved customer: {json.dumps(fast_answer.get("customer"), default=str)}
 Jev verdict: {verdict.get("decision")}  (routed decision after confidence floor: {routed})
 Probabilities: {json.dumps(verdict.get("probabilities"))}
 Confidence: {verdict.get("confidence")}  Routing: {json.dumps(verdict.get("routing"))}
-Supporting signals (probability each statement is true): {json.dumps(verdict.get("signals"))}
+Supporting signals (probability each statement is true): {json.dumps(verdict.get("signals"))}"""
+    return f"""<fast_answer>
+{verdict_block}
 
 Pre-collected evidence (JSON):
 {json.dumps(fast_answer.get("evidence"), indent=1, default=str)}
@@ -851,7 +913,22 @@ async def run_agent_only(
     }
 
 
-def format_evidence_only_context(case: dict[str, Any]) -> str:
+def full_escalation_policy_text() -> str:
+    """The whole written escalation policy as prose, for arms that have no guards to cite."""
+    from .decision_policy import ESCALATION_POLICY, ESCALATION_POLICY_VERSION
+
+    rules = "\n".join(
+        f"- {name.removeprefix('g_').replace('_', ' ')} (default: {e['final']}): {e['instruction']}"
+        for name, e in ESCALATION_POLICY.items()
+    )
+    return (
+        f"\n\nThe bank's written credit policy for situations that need judgment (version "
+        f"{ESCALATION_POLICY_VERSION}). Apply it; do not substitute your own risk appetite. "
+        f"'defer' means reject for now; the most restrictive applicable outcome wins:\n{rules}"
+    )
+
+
+def format_evidence_only_context(case: dict[str, Any], with_policy: bool = False) -> str:
     """The fixed evidence plan handed to Claude with no Jev verdict (eval arm 3)."""
     retrievals = ", ".join(r["name"] for r in case.get("retrievals", []))
     return f"""<evidence>
@@ -868,10 +945,12 @@ Evidence (JSON):
 </evidence>
 
 Decide whether this request should be approved. Name the precedents, policies and risk signals that
-drive your call. Call tools only if something specific is missing, and say what you needed.{FINAL_LINE_INSTRUCTION}"""
+drive your call. Call tools only if something specific is missing, and say what you needed.{full_escalation_policy_text() if with_policy else ""}{FINAL_LINE_INSTRUCTION}"""
 
 
-async def run_claude_on_evidence(message: str, case: dict[str, Any]) -> dict[str, Any]:
+async def run_claude_on_evidence(
+    message: str, case: dict[str, Any], with_policy: bool = False
+) -> dict[str, Any]:
     """
     Eval arm 3: same fixed evidence as the fast path, Claude decides, no Jev.
     Isolates what code-owned evidence gathering is worth on its own.
@@ -881,7 +960,7 @@ async def run_claude_on_evidence(message: str, case: dict[str, Any]) -> dict[str
     started = time.perf_counter()
     text_parts: list[str] = []
     done: dict[str, Any] = {}
-    full_message = format_evidence_only_context(case) + "\n\n" + message
+    full_message = format_evidence_only_context(case, with_policy) + "\n\n" + message
     async with ContextGraphAgent() as agent:
         async for event in agent.query_stream(full_message):
             if event["type"] == "text":
@@ -891,7 +970,7 @@ async def run_claude_on_evidence(message: str, case: dict[str, Any]) -> dict[str
     response = "\n".join(text_parts)
     decision, confidence = extract_final_recommendation(response)
     return {
-        "path": "evidence_claude",
+        "path": "evidence_claude_policy" if with_policy else "evidence_claude",
         "response": response,
         "tool_calls": done.get("additional_tools_used", []),
         "tool_call_count": len(done.get("additional_tools_used", [])),

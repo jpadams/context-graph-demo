@@ -251,16 +251,194 @@ pass/fail list (`policy_checks`), so models weigh exceptions instead of noticing
 
 Full tables in `backend/evals/results/eval_20260921_221040.md`.
 
-## 6. Adding a new case
+## 6. Jev makes judgments, code makes decisions (2026-11-10)
+
+TypeSafe's ["Don't call it a decision model"](https://typesafe.ai/blog/dont-call-it-a-decision-model)
+describes the design above as the anti-pattern: one Choice whose criteria hold the business rules
+("Approve when within policy, no sanctions, precedents approved..."). Eval 3 had already shown
+the symptom. Jev and Claude agreed 20/20 on identical evidence, because nearly every question
+we asked Jev (thresholds, sanctions status, field presence) was something code can compute.
+
+### What changed
+
+| Question | Before | Now |
+|---|---|---|
+| Approve / reject / escalate | Jev Choice with rules in its criteria | **code** guards (`decision_policy.combine`) |
+| Policy violated (score, income cap, increase cap) | Jev Noul per policy | **code**, from `threshold_rules` + `request.derived` |
+| Evidence sufficient | Jev Noul | **code**: required fields present |
+| Sanctions exposure | Jev Noul | **code**: blocked anywhere or watch-listed co-owner rejects; watch-listed transaction counterparty escalates |
+| Elevated risk / manual review | Jev Nouls | **code**: risk_score threshold, senior-review amount, approval tier |
+| Open fraud activity | Jev Noul | **code** by type + status; the *text* is read by Jev below |
+| Precedent supports approval | Jev Noul | split: **Jev** judges "comparable?", **code** reads the outcome |
+| Ticket is an unresolved concern | (not asked) | **Jev**, one Noul per ticket |
+| Prior decision left a condition unmet | (not asked) | **Jev**, one Noul per prior decision |
+| Alert describes unexplained risk | (not asked) | **Jev**, one Noul per alert |
+| Is the message an approval request | Jev | Jev (unchanged; already a judgment) |
+
+Rules of the combiner:
+
+1. **Only written rules reject.** A Jev judgment can stop an automatic approval and escalate, but
+   it never denies credit on its own. The semantic read of a ticket is advisory, and a denial
+   must rest on a written rule. That also matters for fair-lending review.
+2. **Bands, not a confidence floor.** Each Noul is banded: yes at 0.7 or above, no at 0.2 or
+   below, unsure in between (`JEV_YES_THRESHOLD`, `JEV_NO_THRESHOLD`). The bands started at
+   TypeSafe's suggested 0.7/0.3. The "no" cut-off was then tightened to 0.2 on held-out items,
+   because "no" is the answer that lets a case continue toward auto-approval (see section 7).
+   An unsure judgment on a deciding family escalates (`g_unsure_judgment`). A question Jev did
+   not answer counts as unsure (fail closed).
+3. **Order is policy.** Rejections are checked first, then code escalations, then Jev
+   escalations; otherwise approve. Every guard is reported as fired, passed or not applicable,
+   so a wrong answer is traceable to a wrong judgment or a wrong rule.
+4. **Judgments are independent.** They go in one request (speculative fan-out), each reading one
+   item by path (`support_tickets[2].description`). Adding a judgment family does not change
+   the existing ones.
+
+The monolithic path is kept (`JEV_DECISION_MODE=monolithic`, the chat toggle, or
+`"decision_mode"` on the API) so the demo can show both modes on the same question.
+
+### The data had to change first
+
+The generator filled ticket, alert and transaction text with Faker lorem ipsum, so there was
+nothing for a semantic model to read. `scripts/narratives.py` replaces it with case-note text
+(`generate_sample_data.py --narratives-only`, also part of `--enrich-only` and a full run). About
+30% of closed concern tickets and closed alerts contradict their own `status`: "Auto-closed... customer
+wrote back: I still have not been refunded". About a third of credit approvals become conditional
+approvals. Ground truth per item goes to `evals/narrative_labels.json`, never to the graph.
+`_support_tickets` now returns the ticket description.
+
+`scripts/plant_decision_scenarios.py` adds 14 synthetic customers (two per scenario) who pass
+every written rule, so only the text can change the route. It writes `evals/labeled_cases.json`.
+Planted nodes have deterministic uuid5 ids and no marker property (see the lesson below).
+`narrative_labels.json` is regenerated per database: variants are seeded by node id, and the
+generator's ids are uuid4. `labeled_cases.json` is stable.
+
+Note: the original local database was lost (its Docker container was gone) and was regenerated.
+Person ids are uuid4, so credit profiles and links differ from the September runs. Sections 4b and 5
+describe the old data.
+
+### Results (`evals/results/eval_20261110_182851.md`, routing only, `--no-claude`)
+
+| | monolithic (one Choice) | decomposed |
+|---|---|---|
+| labeled cases routed correctly | 11/14 | **14/14** |
+| per-item judgments correct (tickets / conditions / alerts) | n/a | 28/28, 6/6, 12/12 |
+| mean fast answer (case path; ~1 s from chat incl. intent read) | 0.5 s | 0.5 s |
+
+Monolithic misses: it auto-approved one closed-but-still-disputed ticket and both
+unmet-condition cases, with confidence 0.7 to 0.9. It caught the unexplained alerts, but only
+because its confidence fell below the floor (about 0.16). The decomposed trace names the cause
+instead: for Tanya Trujillo, `g_open_condition` fired on `decision_history[0]` at p=0.94.
+
+**Fairness check: what the 14 vs 11 does and does not show.** The decomposed questions were
+written knowing what the planted text looks like; the monolithic criteria were not. A one-off
+run (not a third mode) appended matching prose to the monolithic Choice: "not if a ticket's text
+shows the customer still disputing... even when its status says resolved; not if a prior decision
+attached a condition and nothing shows it was met; not if an alert... was never explained". With
+that, the monolithic Choice also routed 14/14 in two runs. One unmet-condition case only got
+there through the confidence floor; its top pick was still "yes", at 0.26 confidence.
+
+So the accuracy gap measures the prompt, not decomposition itself. What the decomposition does
+buy is what the article argues:
+- **Each edge case is a new guard plus one narrow question**, not another "not if..." clause in
+  the criteria of a single Choice that every other case also depends on.
+- **The trace names the guard and the item.** "g_open_condition fired on decision 88cb6990 at
+  0.94" is checkable; "yes 0.26 → escalated by the floor" is not.
+- **Judgments are isolated and individually scored.** Per-item labels let you measure each one
+  (above); the monolithic Choice can only be scored end to end.
+- **Rules stay rules.** Thresholds and sanctions are computed exactly, and only they can reject.
+
+### Claude on escalations
+
+Claude now receives the full trace and is asked to address each fired guard. Example from the UI
+(Tanya Trujillo, $4,000): monolithic says yes (0.85). Decomposed escalates on `g_open_condition`.
+Claude queried the graph for evidence that the 30-day overdraft condition from March was met,
+found none, and recommended reject as a hold until it is verified (confidence 0.6). It said what
+would change its mind: core-banking history showing the account was back in positive balance by
+early April.
+
+Full labeled run with the Claude pass (`evals/results/eval_20261111_121815.md`, Claude Sonnet 5.5):
+
+| | monolithic | decomposed |
+|---|---|---|
+| routed correctly | 11/14 | 14/14 |
+| escalated to Claude | 3 | 6 |
+| final answers | approve 14 | approve 11, reject 3 |
+| mean seconds end to end / extra tool calls | 14.5 / 0.43 | 12.7 / 0.14 |
+
+- **Monolithic:** every case ended in approve. That includes the three Jev auto-approved without
+  noticing the text, and the two unexplained-alert cases, which Claude approved after escalation.
+- **Decomposed:** every escalation reached Claude, but Claude's calls on them split 3 approve and
+  3 reject, and **disagreed within each scenario pair.** Laurie Allen was approved and Ashley
+  Montoya rejected (both disputed tickets). Tanya Trujillo was approved and Jim Walter rejected
+  (both unmet conditions). Kevin Jimenez was approved and Jonathan Christensen rejected (both
+  unexplained structuring alerts). In the UI, Tanya Trujillo had earlier ended in reject.
+
+So the fast tier is now consistent and inspectable, and the inconsistency has moved to the
+escalation tier. Claude gets a named reason to look closer, but nothing tells it what this
+bank's policy is for an unmet condition or an unexplained alert. Next options:
+- Write the escalation policy per guard: for example, an unmet condition means hold until it is
+  verified, and an unexplained structuring alert means route to AML review, not approve.
+- Or have code map those guards straight to a "hold" outcome and send them to a person.
+- Label the expected final answer per scenario, so this tier can be scored the way routing is.
+
+Running Claude needed two environment fixes: the `ANTHROPIC_API_KEY` in `.env` was rejected, and
+the Agent SDK's default model (`claude-sonnet-4-5-20250929`) now returns 404. With the key blank
+(CLI login) and `CLAUDE_MODEL=claude-sonnet-5-5` it works.
+
+**Lesson: nothing marks planted data.** The first version tagged planted nodes with a
+`planted_scenario` property and stripped it from the fast-path evidence. Claude's own
+`execute_cypher` tool still returned it ("condition_unmet#0"). Planted nodes now carry no
+marker; they are found by deterministic uuid5 ids.
+
+On 10 sampled customers × 2 amounts, the decomposed path decides most cases from written rules
+(income cap, open fraud case, credit score, sanctions). Jev's judgments matter where the rules pass and the
+text does not.
+
+## 7. Written escalation policy, calibration and the demo arc (2026-11-11)
+
+**Escalation policy.** `decision_policy.ESCALATION_POLICY` (v2026-11-11) says, for each
+escalating guard, what the bank does by default and when Claude may depart from it. For
+example, an unmet condition means defer unless a record shows it was met, and indirect signs
+don't count. Only the entries for the guards that fired are handed to Claude, and the card
+shows them. Expected final answers per scenario are in `evals/labeled_cases.json`.
+
+**Results** (`evals/results/eval_20261111_123713.md`): decomposed 14/14 final answers vs.
+policy; one Jev choice 9/14; Claude + tools 11/14; 10 queries + Claude 10/14. The control
+arm, 10 queries + Claude with the whole policy in its prompt, also scored 14/14. So the
+accuracy comes from writing the policy down. What the decomposition adds is that 8/14 cases
+are decided in ~0.45 s without an LLM, plus the trace, per-judgment scoring and failing closed.
+
+**Consistency, 3 repeats** (`eval_20261111_125026.md`): Claude + whole policy and decomposed
+both 42/42 correct and fully consistent across repeats. Claude + policy is 8.1 s end to end; decomposed is 10.1 s,
+with 24/42 runs answered in ~0.56 s without an LLM.
+
+**Calibration** (`scripts/eval_judgments.py`):
+- All 211 labeled items in the graph: 211/211 correct, Brier score 0.0007, 3 of 713 answers
+  changed band between two runs. These items come from the same templates as the generator,
+  so this is easy and in-distribution; it says little about calibration.
+- 21 held-out hard items (`evals/hard_items.json`: partial refunds, sarcasm, negation, mixed
+  signals): 16/18 labeled items correct, no confident errors; 2 true items landed unsure.
+  1 of 3 ambiguous items was flagged unsure, and the other 2 came back "yes". Both of those
+  escalate, so it's the safe direction.
+- A structuring alert explained away as "owns a restaurant" scored 0.37-0.42. On that basis the
+  "no" cut-off for the approve path went from 0.3 to 0.2.
+
+**Fail closed.** A question Jev does not answer counts as unsure and escalates.
+
+The three-stage demo script, the full comparison and an assessment against published guidance
+(TypeSafe, Cloudflare Clef, AWS Strands Decider, Superteams) are in
+[demo-arc.md](demo-arc.md).
+
+## 8. Adding a new case
 
 1. Decide the slots and write the canonical message (see `credit_line_increase_message`).
 2. Add or reuse named retrievals in `EVIDENCE_RETRIEVALS`; every retrieval reports count and
    status, and failures degrade to empty evidence rather than aborting.
-3. Write the Jev questions in the case's terms: a Choice when the answer is one of a fixed
-   set, a Noul for a yes/no condition, a Score for a degree along described levels. Keep one
-   judgment per question, reference state fields with backticks, and include a no-match or
-   escalate option.
+3. Sort the case's checks: anything that is a lookup, comparison or arithmetic becomes a
+   fact in code; only what needs reading becomes a Jev judgment. Write one narrow question
+   per evidence item (a Noul for a yes/no condition, a Score for a degree, a Choice for one of a
+   fixed set), referencing the item by backticked path.
 4. Gate every question on the evidence it needs; derive aggregates in code.
-5. Set the routing policy (floor, which options escalate) and what Claude is asked to do on
-   escalation.
+5. Write the guards: which facts reject, which facts and judgments escalate, in what order,
+   and what Claude is asked to do on escalation. Plant labeled cases where each judgment decides.
 6. Add the case to the eval harness and run it against the original path before relying on it.

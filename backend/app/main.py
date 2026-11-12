@@ -22,7 +22,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from sse_starlette.sse import EventSourceResponse
 
-from .agent import ContextGraphAgent, run_fast_answer_explanation
+from .agent import POST_ORIGINAL_TOOLS, ContextGraphAgent, run_fast_answer_explanation
 from .cases import run_credit_line_increase
 from .config import config
 from .context_graph_client import context_graph_client
@@ -170,7 +170,11 @@ async def chat_fast_answer(request: FastAnswerRequest):
     try:
         import asyncio
 
-        result = await asyncio.to_thread(prepare_fast_answer, request.message)
+        if request.decision_mode == "agent":
+            raise HTTPException(status_code=400, detail="decision_mode 'agent' has no fast answer")
+        result = await asyncio.to_thread(
+            prepare_fast_answer, request.message, request.decision_mode
+        )
         return result or {"applicable": False, "reason": "jev_not_configured"}
     except Exception as e:
         logger.error(f"Fast answer failed: {traceback.format_exc()}")
@@ -186,11 +190,13 @@ async def credit_line_increase_case(request: CreditLineIncreaseRequest):
     """
     if not jev_client.is_configured:
         raise HTTPException(status_code=503, detail="TYPESAFE_API_KEY is not configured")
+    if request.decision_mode == "agent":
+        raise HTTPException(status_code=400, detail="decision_mode 'agent' has no fast answer")
     import asyncio
 
     try:
         fast_answer = await asyncio.to_thread(
-            run_credit_line_increase, request.customer, request.amount
+            run_credit_line_increase, request.customer, request.amount, request.decision_mode
         )
     except Exception as e:
         logger.error(f"Case failed: {traceback.format_exc()}")
@@ -226,9 +232,12 @@ async def chat_stream(request: ChatRequest):
 
             # Fast path: fixed Cypher evidence set + typed Jev verdict, before Claude runs.
             fast_answer = None
-            if jev_client.is_configured:
+            agent_only = request.decision_mode == "agent"  # demo stage 1: no fast path
+            if jev_client.is_configured and not agent_only:
                 try:
-                    fast_answer = await asyncio.to_thread(prepare_fast_answer, request.message)
+                    fast_answer = await asyncio.to_thread(
+                        prepare_fast_answer, request.message, request.decision_mode
+                    )
                 except Exception as e:
                     logger.warning(f"Fast answer failed, falling back to agent only: {e}")
                     fast_answer = {"applicable": False, "reason": f"error: {e}"}
@@ -246,7 +255,10 @@ async def chat_stream(request: ChatRequest):
                     }
 
             logger.info("Creating ContextGraphAgent for streaming...")
-            async with ContextGraphAgent() as agent:
+            # Stage 1 uses the original demo's tool set, as in the eval's `original` arm.
+            async with ContextGraphAgent(
+                exclude_tools=POST_ORIGINAL_TOOLS if agent_only else ()
+            ) as agent:
                 logger.info("Agent connected, starting stream...")
 
                 # Use an async queue to enable keep-alive pings during long operations

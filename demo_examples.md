@@ -25,22 +25,38 @@ Check Alan Kramer's margin account for suspicious activity. He has several flagg
 
 ---
 
-## 1b. Fast Typed Verdict with Jev (Jessica Norris)
+## 1b. Jev Judgments, Code Decisions (run it both ways)
 
-**Best for:** Showing a sub-second typed decision from TypeSafe's Jev model, then Claude's explanation
+**Best for:** Showing why "Jev makes judgments, code makes decisions" beats one big Jev question.
+Use the toggle above the chat input to run the same message in each mode.
 
 ```
-Should we approve a credit limit increase for Jessica Norris? She's requesting a $25,000 limit increase.
+Should we approve a credit limit increase for Tanya Trujillo? She is requesting a $4,000 limit increase.
 ```
 
-**What this demonstrates:**
-- A fixed set of Cypher retrievals runs in code, not via tool calls: customer, flagged transactions,
-  decision history, precedents, category outcomes, policies
-- Jev returns `yes` / `no` / `needs_llm_decision` with probabilities, confidence and supporting signals
-- When Jev escalates, Claude makes the final approve/reject call; the card shows the final recommendation
-- The verdict card appears before Claude starts writing
-- Claude explains the verdict from the same evidence; the card reports which additional tools (if any) it used
-- Requires `TYPESAFE_API_KEY`; otherwise the question falls back to the tool-use agent flow
+- **One Jev choice:** approves (confidence ~0.9). Every written rule passes, and the single Choice
+  misses the text.
+- **Code guards + Jev judgments:** escalates via `g_open_condition`. Jev read a prior credit
+  approval granted on condition that an overdrawn account return to a positive balance within
+  30 days, and nothing shows that happened. The card shows the guard that fired and the item it
+  cites, with the passed guards, Jev's judgments and the code-computed facts folded below.
+  Claude then checks the condition and recommends a hold.
+
+More planted customers (all pass every written rule; only the text differs):
+
+| Customer | Amount | What the text says | Decomposed | Monolithic |
+|---|---|---|---|---|
+| Laurie Allen | $4,000 | dispute ticket marked *resolved*; customer replied it is not | escalate | approve |
+| Jim Walter | $4,000 | conditional approval, condition never met | escalate | approve |
+| Christine King | $4,000 | conditional approval, follow-up says condition met | approve | approve |
+| Kevin Jimenez | $4,000 | alert bulk-closed as false positive; structuring never explained | escalate | escalate |
+| Laura Johnson | $5,000 | alert cleared with a documented travel notice | approve | approve |
+| Jonathan Hunt | $4,000 | nothing notable (control) | approve | approve |
+
+A rule-driven case for contrast: **Jessica Norris, $25,000** is rejected by code (`g_sanctions`: a blocked
+counterparty). No model is needed for that. Names and outcomes come from
+`backend/scripts/plant_decision_scenarios.py` and `backend/evals/labeled_cases.json`. Re-running the
+data generator changes the random customers but not the planted ones.
 
 ---
 

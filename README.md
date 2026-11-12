@@ -106,39 +106,49 @@ Combine semantic similarity (text embeddings) with structural similarity (FastRP
 
 ## Fast Answers with TypeSafe Jev
 
-Approve/deny questions get two answers: a **fast typed verdict** and a **regular-speed explanation**,
-both from the same evidence.
+Approve/deny questions get two answers: a **fast verdict** (about a second from chat) and a
+**regular-speed explanation**, both from the same evidence. The fast verdict follows TypeSafe's
+guidance: *Jev makes judgments, code makes decisions.*
 
 ```
-User: "Should we approve a credit limit increase for Jessica Norris? She's requesting a $25,000 limit increase."
+User: "Should we approve a credit limit increase for Tanya Trujillo? She is requesting a $4,000 limit increase."
 
-1. Jev reads the message       -> approval request? category=credit, type=credit_limit_increase   (~100 ms)
-2. Code resolves the customer  -> Person "Jessica Norris" matched in the graph
-3. Code runs a fixed set of Cypher retrievals (no tool-use LLM):
+1. Jev reads the message       -> approval request? category=credit, type=credit_limit_increase
+2. Code resolves the customer  -> Person matched in the graph
+3. Code runs a fixed set of Cypher retrievals, concurrently (no tool-use LLM):
    customer, account_parties (co-owners/counterparties + sanctions), notable_transactions,
    transaction_summary, support_tickets, alerts, decision_history, precedents,
    category_outcomes, policies
-4. Jev evaluates the evidence  -> yes | no | needs_llm_decision, with probabilities + confidence,
-   one judgment per precedent ("supports approval?") and per policy ("violated?"), and signals:
-   precedents_favor_approval, violates_policy, sanctioned_party_exposure, open_fraud_activity,
-   elevated_customer_risk, requires_manual_review, evidence_sufficient. Signals are only asked
-   about evidence that exists; an empty list yields null, never a hollow percentage.
-5. Claude receives the same evidence and the verdict. If Jev decided, Claude explains and confirms
-   (or flags disagreement). If Jev escalated, Claude makes the final approve/reject call. It may
-   still call tools; the UI reports exactly which additional tools it used (or that none were needed).
-6. Claude ends with `FINAL_RECOMMENDATION: approve|reject (confidence x)`, which the UI shows as the
-   final answer next to Jev's verdict.
+4. Code computes the facts      -> credit score vs minimum, total limit vs income cap, increase cap,
+   income verified, sanctions / watch-list, frozen accounts, open fraud cases, approval tier
+5. Jev judges each item that needs reading, in one request, one Noul per item:
+   is this ticket an unresolved concern? did this prior decision leave a condition unmet?
+   is this alert unexplained? is this precedent comparable?
+6. Code guards decide           -> approve | reject | escalate, and name the guard that fired.
+   Only written rules reject; Jev judgments can only escalate; unsure judgments escalate.
+7. Claude receives the same evidence and the full trace. If the guards decided, Claude explains;
+   if they escalated, Claude makes the final approve/reject call, addressing each fired guard.
 ```
 
-[Jev](https://typesafe.ai) is TypeSafe AI's *System One* model: it returns typed decisions with calibrated
-probabilities in a single pass instead of generating text. A confidence floor (`JEV_CONFIDENCE_FLOOR`,
-default 0.6) escalates low-confidence verdicts to `needs_llm_decision`, i.e. Claude decides.
+**Run it three ways.** The chat input has a toggle for the three stages of the demo arc:
+*1 · Claude + tools* (no fast path; Claude picks graph tools), *2 · 10 queries + one Jev choice*
+(monolithic: one Choice with business rules in its criteria), and *3 · 10 queries + Jev judgments
++ code* (decomposed, default). The API takes `"decision_mode": "agent" | "monolithic" |
+"decomposed"`; the default comes from `JEV_DECISION_MODE`. On the planted labeled cases the decomposed path routes 14/14 correctly,
+the monolithic path as written 11/14. It auto-approves a "resolved" dispute the customer says is
+not resolved, and conditional approvals whose condition was never met. Adding those cases to the
+monolithic criteria also reaches 14/14. That is the "prompt gymnastics" the TypeSafe post
+describes, and the decomposed path avoids it: each new case is a new guard plus one narrow
+question, and the trace names the rule and the item that decided.
 
+- Demo script for the three stages (Claude + tools → 10 queries + one Jev choice → Jev judgments + code), with eval results and a best-practice assessment: [docs/demo-arc.md](docs/demo-arc.md)
 - Design notes and the choices behind this: [docs/decision-sop-with-jev.md](docs/decision-sop-with-jev.md)
-- Fast path code: `backend/app/cases.py` (parameterized case), `backend/app/evidence.py` (retrievals, customer resolution), `backend/app/jev_client.py` (questions)
-- Any customer, any amount: `POST /api/cases/credit-line-increase` with `{"customer": "Katherine Miller", "amount": 40000, "explain": true}`
-- Compare against the original tool-loop path: `backend/scripts/eval_decision_paths.py` writes results to `backend/evals/results/`
-- Try it without the UI: `POST /api/chat/fast-answer` with `{"message": "..."}` returns the verdict and the full evidence
+- Code: `backend/app/decision_policy.py` (facts + guards), `backend/app/jev_client.py` (judgment questions),
+  `backend/app/cases.py` (`decide`, parameterized case), `backend/app/evidence.py` (retrievals)
+- Any customer, any amount: `POST /api/cases/credit-line-increase` with `{"customer": "Katherine Miller", "amount": 40000, "decision_mode": "monolithic", "explain": true}`
+- Labeled scenarios: `backend/scripts/plant_decision_scenarios.py`; compare modes with
+  `backend/scripts/eval_decision_paths.py --labeled --arms fast_answer,decomposed --no-claude`
+- Try it without the UI: `POST /api/chat/fast-answer` with `{"message": "...", "decision_mode": "decomposed"}`
 - Requires `TYPESAFE_API_KEY` in `.env`; without it the app falls back to the agent-only flow
 
 ## Prerequisites
